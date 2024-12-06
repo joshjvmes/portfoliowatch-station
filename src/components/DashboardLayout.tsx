@@ -28,12 +28,16 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      navigate("/login");
+      if (error) {
+        console.error("Logout error:", error);
+        toast.error("Error logging out");
+        return;
+      }
       toast.success("Logged out successfully");
+      navigate("/login");
     } catch (error) {
-      toast.error("Error logging out");
       console.error("Error:", error);
+      toast.error("Error logging out");
     }
   };
 
