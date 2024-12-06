@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Balance from "./pages/Balance";
 import History from "./pages/History";
 import Messages from "./pages/Messages";
+import Landing from "./pages/Landing";
 
 const queryClient = new QueryClient();
 
@@ -19,7 +20,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
