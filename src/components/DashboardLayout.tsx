@@ -6,6 +6,7 @@ import {
   History,
   MessageSquare,
   LogOut,
+  ArrowDownToLine,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -21,6 +22,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Balance", href: "/balance", icon: Wallet },
+    { name: "Withdrawal", href: "/withdrawal", icon: ArrowDownToLine },
     { name: "History", href: "/history", icon: History },
     { name: "Messages", href: "/messages", icon: MessageSquare },
   ];

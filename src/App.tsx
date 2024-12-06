@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Balance from "./pages/Balance";
 import History from "./pages/History";
 import Messages from "./pages/Messages";
+import Withdrawal from "./pages/Withdrawal";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/balance" element={<Balance />} />
           <Route path="/history" element={<History />} />
           <Route path="/messages" element={<Messages />} />
+          <Route path="/withdrawal" element={<Withdrawal />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
