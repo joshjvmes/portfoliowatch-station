@@ -37,15 +37,15 @@ const Login = () => {
               variables: {
                 default: {
                   colors: {
-                    brand: '#00E5BE',
-                    brandAccent: '#00E5BE',
+                    brand: '#7FE0A1',
+                    brandAccent: '#0EA5E9',
                     brandButtonText: '#0B1221',
                     defaultButtonBackground: '#1A2333',
                     defaultButtonBackgroundHover: '#243044',
                     inputBackground: '#0B1221',
                     inputBorder: '#1A2333',
                     inputBorderHover: '#243044',
-                    inputBorderFocus: '#00E5BE',
+                    inputBorderFocus: '#7FE0A1',
                   },
                   space: {
                     buttonPadding: '14px',
@@ -69,9 +69,9 @@ const Login = () => {
               className: {
                 container: 'space-y-4',
                 label: 'text-white text-sm font-medium block mb-1.5',
-                input: 'w-full bg-[#0B1221]/80 border border-[#1A2333] text-white placeholder-gray-400 text-sm transition-all duration-200 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/20',
-                button: 'w-full bg-gradient-to-r from-[#00E5BE] to-[#00E5BE]/90 hover:from-[#00E5BE]/90 hover:to-[#00E5BE] text-[#0B1221] font-medium text-base transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-[#00E5BE]/20',
-                anchor: 'text-[#00E5BE] hover:text-[#00E5BE]/90 transition-colors duration-200 text-sm',
+                input: 'w-full bg-[#0B1221]/80 border border-[#1A2333] text-white placeholder-gray-400 text-sm transition-all duration-200 focus:border-[#7FE0A1] focus:ring-2 focus:ring-[#7FE0A1]/20',
+                button: 'w-full bg-gradient-to-r from-[#7FE0A1] to-[#0EA5E9] hover:from-[#0EA5E9] hover:to-[#7FE0A1] text-[#0B1221] font-medium text-base transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-[#7FE0A1]/20 backdrop-blur-sm bg-opacity-80 border border-white/10',
+                anchor: 'text-[#7FE0A1] hover:text-[#0EA5E9] transition-colors duration-200 text-sm',
               },
             }}
             providers={[]}
