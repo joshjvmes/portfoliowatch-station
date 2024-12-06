@@ -51,3 +51,8 @@
 .font-space-grotesk {
   font-family: 'Space Grotesk', sans-serif;
 }
+
+/* Add smooth transitions for all interactive elements */
+button, input, a {
+  @apply transition-all duration-200 ease-in-out;
+}

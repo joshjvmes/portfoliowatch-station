@@ -18,8 +18,8 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0B1221] p-4">
-      <Card className="w-full max-w-md bg-[#0F172A]/50 border-[#1E293B] backdrop-blur-sm">
-        <div className="p-8">
+      <Card className="w-full max-w-md bg-[#0F172A]/50 border-[#1E293B] backdrop-blur-sm rounded-3xl">
+        <div className="p-10">
           <h1 className="text-4xl font-bold text-white mb-2">Welcome back</h1>
           <p className="text-gray-400 mb-8">Enter your credentials to access your account</p>
           <Auth
@@ -45,16 +45,16 @@ const Login = () => {
                   space: {
                     labelBottomMargin: '8px',
                     anchorBottomMargin: '4px',
-                    inputPadding: '12px',
+                    inputPadding: '16px',
                   },
                   borderWidths: {
                     buttonBorderWidth: '0px',
                     inputBorderWidth: '1px',
                   },
                   radii: {
-                    borderRadiusButton: '8px',
-                    buttonBorderRadius: '8px',
-                    inputBorderRadius: '8px',
+                    borderRadiusButton: '16px',
+                    buttonBorderRadius: '16px',
+                    inputBorderRadius: '16px',
                   },
                   fontSizes: {
                     baseInputSize: '14px',
@@ -64,10 +64,10 @@ const Login = () => {
                 },
               },
               className: {
-                container: 'space-y-4',
+                container: 'space-y-6',
                 label: 'text-white font-medium',
-                button: 'w-full py-3 font-medium transition-colors',
-                input: 'w-full bg-[#1E293B] border border-[#1E293B] text-white placeholder-gray-500',
+                button: 'w-full py-4 font-medium transition-colors rounded-2xl',
+                input: 'w-full bg-[#1E293B] border border-[#1E293B] text-white placeholder-gray-500 rounded-2xl',
                 anchor: 'text-[#38BDF8] hover:text-[#0EA5E9] transition-colors',
               },
             }}
