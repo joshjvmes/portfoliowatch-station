@@ -18,10 +18,10 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0B1221] p-4">
-      <Card className="w-full max-w-[800px] aspect-video bg-[#0F172A]/50 border-[#1E293B] backdrop-blur-sm rounded-[32px]">
-        <div className="p-12 h-full flex flex-col justify-center">
-          <h1 className="text-5xl font-bold text-white mb-3 tracking-tight">Welcome back</h1>
-          <p className="text-gray-400 mb-10 text-lg">Enter your credentials to access your account</p>
+      <Card className="w-full max-w-md bg-[#0F172A]/50 border-[#1E293B] backdrop-blur-sm rounded-3xl">
+        <div className="p-10">
+          <h1 className="text-4xl font-bold text-white mb-2">Welcome back</h1>
+          <p className="text-gray-400 mb-8">Enter your credentials to access your account</p>
           <Auth
             supabaseClient={supabase}
             appearance={{
@@ -43,32 +43,32 @@ const Login = () => {
                     inputPlaceholder: '#64748B',
                   },
                   space: {
-                    labelBottomMargin: '12px',
-                    anchorBottomMargin: '8px',
-                    inputPadding: '18px',
+                    labelBottomMargin: '8px',
+                    anchorBottomMargin: '4px',
+                    inputPadding: '16px',
                   },
                   borderWidths: {
                     buttonBorderWidth: '0px',
                     inputBorderWidth: '1px',
                   },
                   radii: {
-                    borderRadiusButton: '20px',
-                    buttonBorderRadius: '20px',
-                    inputBorderRadius: '20px',
+                    borderRadiusButton: '16px',
+                    buttonBorderRadius: '16px',
+                    inputBorderRadius: '16px',
                   },
                   fontSizes: {
-                    baseInputSize: '16px',
-                    baseButtonSize: '16px',
-                    baseLabelSize: '16px',
+                    baseInputSize: '14px',
+                    baseButtonSize: '14px',
+                    baseLabelSize: '14px',
                   },
                 },
               },
               className: {
-                container: 'space-y-8',
-                label: 'text-white font-medium text-lg',
-                button: 'w-full py-5 font-medium transition-colors rounded-3xl text-lg',
-                input: 'w-full bg-[#1E293B] border border-[#1E293B] text-white placeholder-gray-500 rounded-3xl text-lg',
-                anchor: 'text-[#38BDF8] hover:text-[#0EA5E9] transition-colors text-lg',
+                container: 'space-y-6',
+                label: 'text-white font-medium',
+                button: 'w-full py-4 font-medium transition-colors rounded-2xl',
+                input: 'w-full bg-[#1E293B] border border-[#1E293B] text-white placeholder-gray-500 rounded-2xl',
+                anchor: 'text-[#38BDF8] hover:text-[#0EA5E9] transition-colors',
               },
             }}
             providers={[]}

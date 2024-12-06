@@ -52,16 +52,7 @@
   font-family: 'Space Grotesk', sans-serif;
 }
 
-/* Add smooth transitions and improved focus states */
+/* Add smooth transitions for all interactive elements */
 button, input, a {
-  @apply transition-all duration-300 ease-in-out;
-}
-
-input:focus {
-  @apply outline-none ring-2 ring-[#38BDF8] ring-opacity-50;
-}
-
-/* Improve placeholder text */
-::placeholder {
-  @apply text-gray-500 opacity-70;
+  @apply transition-all duration-200 ease-in-out;
 }
