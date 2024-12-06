@@ -39,6 +39,15 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[#0B1221] text-foreground;
   }
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+}
+
+.font-space-grotesk {
+  font-family: 'Space Grotesk', sans-serif;
 }
