@@ -1,98 +1,87 @@
-import { useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Info } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
 
 const Register = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        navigate("/dashboard");
-      }
-    });
-  }, [navigate]);
+  const handleRegister = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password || !confirmPassword) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    // TODO: Implement actual registration
+    toast.success("Registration successful!");
+    navigate("/login");
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0B1221] via-[#0d1829] to-[#0B1221] p-4">
-      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
-      <Link 
-        to="/" 
-        className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
-      >
-        <Tooltip>
-          <TooltipTrigger>
-            <Info className="w-6 h-6" />
-          </TooltipTrigger>
-          <TooltipContent>
-            Learn more about our platform
-          </TooltipContent>
-        </Tooltip>
-      </Link>
-      <Card className="w-full max-w-[400px] bg-[#0B1221]/30 border border-white/10 backdrop-blur-xl relative overflow-hidden rounded-2xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#2563EB]/5 via-transparent to-transparent pointer-events-none rounded-2xl" />
-        <CardHeader className="relative pb-2">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-[#2563EB] bg-clip-text text-transparent mb-1">
-            Create an account
-          </h1>
-          <p className="text-gray-400 text-sm">
-            Sign up to start trading on our platform
-          </p>
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-center">
+            Create your $ROK Account
+          </CardTitle>
         </CardHeader>
-        <CardContent className="relative pt-0">
-          <Auth
-            supabaseClient={supabase}
-            appearance={{
-              theme: ThemeSupa,
-              variables: {
-                default: {
-                  colors: {
-                    brand: '#2563EB',
-                    brandAccent: '#1E40AF',
-                    brandButtonText: '#0B1221',
-                    defaultButtonBackground: '#1A2333',
-                    defaultButtonBackgroundHover: '#243044',
-                    inputBackground: '#0B1221',
-                    inputBorder: '#1A2333',
-                    inputBorderHover: '#243044',
-                    inputBorderFocus: '#2563EB',
-                  },
-                  space: {
-                    buttonPadding: '10px',
-                    inputPadding: '10px',
-                  },
-                  borderWidths: {
-                    buttonBorderWidth: '0px',
-                    inputBorderWidth: '1px',
-                  },
-                  radii: {
-                    borderRadiusButton: '8px',
-                    buttonBorderRadius: '8px',
-                    inputBorderRadius: '8px',
-                  },
-                  fonts: {
-                    bodyFontFamily: `ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`,
-                    buttonFontFamily: `ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`,
-                  },
-                },
-              },
-              className: {
-                container: 'space-y-3',
-                label: 'text-white text-xs font-medium block mb-1',
-                input: 'w-full bg-[#0B1221]/80 border border-[#1A2333] text-white placeholder-gray-400 text-sm transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20',
-                button: 'w-full bg-gradient-to-r from-[#2563EB] to-[#1E40AF] hover:from-[#1E40AF] hover:to-[#2563EB] text-[#0B1221] font-medium text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-[#2563EB]/20 backdrop-blur-sm bg-opacity-80 border border-white/10',
-                anchor: 'text-[#1E40AF] hover:text-[#2563EB] transition-colors duration-200 text-xs',
-              },
-            }}
-            providers={[]}
-            redirectTo={`${window.location.origin}/dashboard`}
-            view="sign_up"
-          />
+        <CardContent>
+          <form onSubmit={handleRegister} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium">
+                Email
+              </label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-sm font-medium">
+                Password
+              </label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="confirmPassword" className="text-sm font-medium">
+                Confirm Password
+              </label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
+            <Button type="submit" className="w-full">
+              Register
+            </Button>
+            <p className="text-center text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <Link to="/login" className="text-primary hover:underline">
+                Login
+              </Link>
+            </p>
+          </form>
         </CardContent>
       </Card>
     </div>
