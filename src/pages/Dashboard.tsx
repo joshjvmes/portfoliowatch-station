@@ -15,24 +15,30 @@ const mockData = [
 const Dashboard = () => {
   return (
     <DashboardLayout>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
           <CardHeader>
-            <CardTitle>$ROK Price</CardTitle>
+            <CardTitle className="text-xl text-white">$ROK Price</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$1.70</div>
-            <div className="text-success">+5.2%</div>
+            <div className="text-3xl font-bold text-[#00E5BE]">$1.70</div>
+            <div className="text-green-400">+5.2%</div>
             <div className="h-[200px] mt-4">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={mockData}>
-                  <XAxis dataKey="time" />
-                  <YAxis />
-                  <Tooltip />
+                  <XAxis dataKey="time" stroke="#4B5563" />
+                  <YAxis stroke="#4B5563" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#1A2333",
+                      border: "none",
+                      borderRadius: "8px",
+                    }}
+                  />
                   <Line
                     type="monotone"
                     dataKey="price"
-                    stroke="#2563EB"
+                    stroke="#00E5BE"
                     strokeWidth={2}
                   />
                 </LineChart>
@@ -41,23 +47,23 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
           <CardHeader>
-            <CardTitle>Portfolio Value</CardTitle>
+            <CardTitle className="text-xl text-white">Portfolio Value</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$12,450.00</div>
-            <div className="text-success">+2.5%</div>
+            <div className="text-3xl font-bold text-[#00E5BE]">$12,450.00</div>
+            <div className="text-green-400">+2.5%</div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
           <CardHeader>
-            <CardTitle>Available Balance</CardTitle>
+            <CardTitle className="text-xl text-white">Available Balance</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$5,280.00</div>
-            <div className="text-muted-foreground">Ready to trade</div>
+            <div className="text-3xl font-bold text-[#00E5BE]">$5,280.00</div>
+            <div className="text-gray-400">Ready to trade</div>
           </CardContent>
         </Card>
       </div>
