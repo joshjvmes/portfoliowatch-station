@@ -39,7 +39,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-[#0B1221] text-foreground;
+    @apply bg-[#0B1221] text-foreground antialiased;
   }
 }
 
