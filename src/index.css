@@ -39,20 +39,6 @@
     @apply border-border;
   }
   body {
-    @apply bg-[#0B1221] text-foreground antialiased;
+    @apply bg-background text-foreground;
   }
-}
-
-@font-face {
-  font-family: 'Space Grotesk';
-  src: url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-}
-
-.font-space-grotesk {
-  font-family: 'Space Grotesk', sans-serif;
-}
-
-/* Add smooth transitions for all interactive elements */
-button, input, a {
-  @apply transition-all duration-200 ease-in-out;
 }
