@@ -90,6 +90,9 @@ const Login = () => {
             }}
             providers={[]}
             redirectTo={`${window.location.origin}/dashboard`}
+            magicLink={false}
+            showLinks={false}
+            view="sign_in"
           />
         </CardContent>
       </Card>
