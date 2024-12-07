@@ -1,17 +1,20 @@
 import DashboardLayout from "@/components/DashboardLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import AIAgentCard from "@/components/dashboard/AIAgentCard";
+import MarketIndicators from "@/components/dashboard/MarketIndicators";
+import CrossMargin from "@/components/dashboard/CrossMargin";
+import MarginBalance from "@/components/dashboard/MarginBalance";
 
 const PortfolioMargin = () => {
   return (
     <DashboardLayout>
-      <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
-        <CardHeader>
-          <CardTitle className="text-xl text-white">Portfolio Margin</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-400">Portfolio margin content coming soon...</p>
-        </CardContent>
-      </Card>
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <AIAgentCard />
+          <MarketIndicators />
+        </div>
+        <CrossMargin />
+        <MarginBalance />
+      </div>
     </DashboardLayout>
   );
 };
