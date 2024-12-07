@@ -15,7 +15,7 @@ const Dashboard = () => {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header Section */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 bg-black/20 p-6 rounded-xl backdrop-blur-xl border border-white/10">
           <div className="h-12 w-12 rounded-full bg-[#1A2333] p-2">
             <img src="/placeholder.svg" alt="Vault" className="h-full w-full" />
           </div>
@@ -24,7 +24,7 @@ const Dashboard = () => {
             <div className="flex items-center gap-4">
               <div>
                 <span className="text-gray-400">Est. APR</span>
-                <div className="text-[#00E5BE] text-xl font-bold">44%</div>
+                <div className="text-[#2563EB] text-xl font-bold">44%</div>
               </div>
               <div>
                 <span className="text-gray-400">TVL</span>
@@ -37,12 +37,12 @@ const Dashboard = () => {
         {/* Main Content */}
         <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
           {/* Left Column - Chart */}
-          <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
+          <Card className="bg-black/20 border-white/10 backdrop-blur-xl">
             <CardHeader className="border-b border-white/10">
               <div className="flex justify-between items-center">
                 <div>
                   <div className="text-xl font-bold text-white">$1,151,119.42</div>
-                  <div className="text-[#00E5BE]">+ $1,129,512.69 (47.76%)</div>
+                  <div className="text-[#2563EB]">+ $1,129,512.69 (47.76%)</div>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" className="bg-[#1A2333] text-white border-white/10 hover:bg-[#243044]">
@@ -80,7 +80,7 @@ const Dashboard = () => {
                     <Line
                       type="monotone"
                       dataKey="value"
-                      stroke="#00E5BE"
+                      stroke="#2563EB"
                       strokeWidth={2}
                       dot={false}
                     />
@@ -92,7 +92,7 @@ const Dashboard = () => {
 
           {/* Right Column - Balance & Actions */}
           <div className="space-y-6">
-            <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
+            <Card className="bg-black/20 border-white/10 backdrop-blur-xl">
               <CardContent className="pt-6">
                 <div className="space-y-4">
                   <div>
@@ -108,15 +108,15 @@ const Dashboard = () => {
             </Card>
 
             <div className="flex gap-2">
-              <Button className="flex-1 bg-[#1A2333] text-white hover:bg-[#243044]">
+              <Button className="flex-1 bg-[#2563EB] text-white hover:bg-[#1D4ED8]">
                 Deposit
               </Button>
-              <Button variant="outline" className="flex-1 bg-transparent text-gray-400 border-white/10 hover:bg-[#1A2333]">
+              <Button variant="outline" className="flex-1 bg-transparent text-gray-400 border-white/10 hover:bg-black/20">
                 Withdraw
               </Button>
             </div>
 
-            <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
+            <Card className="bg-black/20 border-white/10 backdrop-blur-xl">
               <CardContent className="pt-6">
                 <div className="space-y-4">
                   <div>
@@ -128,7 +128,7 @@ const Dashboard = () => {
                         placeholder="$0.00"
                       />
                       <Button
-                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#6366F1] text-white text-sm px-3 py-1 rounded"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#2563EB] text-white text-sm px-3 py-1 rounded hover:bg-[#1D4ED8]"
                       >
                         Max
                       </Button>
@@ -146,14 +146,14 @@ const Dashboard = () => {
                     <div className="text-gray-400 mb-1">Your Vault Balance</div>
                     <div className="text-white">—</div>
                   </div>
-                  <Button className="w-full bg-[#1A2333] text-white hover:bg-[#243044]">
+                  <Button className="w-full bg-[#2563EB] text-white hover:bg-[#1D4ED8]">
                     Connect wallet
                   </Button>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
+            <Card className="bg-black/20 border-white/10 backdrop-blur-xl">
               <CardContent className="py-8 text-center">
                 <div className="text-gray-400">You have no vault deposits.</div>
               </CardContent>
