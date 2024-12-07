@@ -2,7 +2,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Eye, ChevronRight, ChevronDown } from "lucide-react";
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
 
@@ -15,6 +15,15 @@ const mockTradingData = [
   { time: '12/1', value: 950000, profit: 1150000.00 },
   { time: '12/4', value: 1000000, profit: 1152025.79 },
 ];
+
+// Mock data for the pie chart
+const data = [
+  { name: 'BTC', value: 45 },
+  { name: 'ETH', value: 30 },
+  { name: 'Other', value: 25 },
+];
+
+const COLORS = ['#FF8042', '#00C49F', '#FFBB28'];
 
 const Dashboard = () => {
   const [tradeAmount, setTradeAmount] = useState([50]); // Percentage of available balance
