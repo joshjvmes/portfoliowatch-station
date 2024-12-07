@@ -7,6 +7,12 @@ import {
   MessageSquare,
   LogOut,
   ArrowDownToLine,
+  Home,
+  Database,
+  Coins,
+  ScrollText,
+  Gift,
+  ChevronDown,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -19,12 +25,20 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const navigation = [
+  const sideNavigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Balance", href: "/balance", icon: Wallet },
     { name: "Withdrawal", href: "/withdrawal", icon: ArrowDownToLine },
     { name: "History", href: "/history", icon: History },
     { name: "Messages", href: "/messages", icon: MessageSquare },
+  ];
+
+  const topNavigation = [
+    { name: "Dashboard", href: "/dashboard", icon: Home },
+    { name: "Assets", href: "/assets", icon: Database, hasSubmenu: true },
+    { name: "Portfolio Margin", href: "/portfolio-margin", icon: Coins },
+    { name: "Orders", href: "/orders", icon: ScrollText, hasSubmenu: true },
+    { name: "Rewards Hub", href: "/rewards", icon: Gift },
   ];
 
   const handleLogout = async () => {
@@ -45,7 +59,35 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-[#0B1221]">
-      <div className="flex h-screen">
+      {/* Top Navigation */}
+      <div className="border-b border-white/10 bg-[#0B1221]/50 backdrop-blur-xl">
+        <nav className="flex px-4 py-2 space-x-1">
+          {topNavigation.map((item) => {
+            const isActive = location.pathname === item.href;
+            return (
+              <Link key={item.name} to={item.href}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`h-8 text-xs border border-white/10 rounded px-3 ${
+                    isActive
+                      ? "bg-[#1A2333] text-[#00E5BE]"
+                      : "text-gray-400 hover:text-white hover:bg-[#1A2333]"
+                  }`}
+                >
+                  <item.icon className="mr-2 h-4 w-4" />
+                  {item.name}
+                  {item.hasSubmenu && (
+                    <ChevronDown className="ml-1 h-3 w-3 opacity-50" />
+                  )}
+                </Button>
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+
+      <div className="flex h-[calc(100vh-48px)]">
         {/* Sidebar */}
         <div className="w-64 bg-[#0B1221]/50 border-r border-white/10 backdrop-blur-xl">
           <div className="h-full flex flex-col">
@@ -53,7 +95,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <h1 className="text-2xl font-bold text-[#00E5BE]">$ROK Trading</h1>
             </div>
             <nav className="flex-1 p-4 space-y-2">
-              {navigation.map((item) => {
+              {sideNavigation.map((item) => {
                 const isActive = location.pathname === item.href;
                 return (
                   <Link key={item.name} to={item.href}>
