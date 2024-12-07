@@ -20,7 +20,7 @@ const Dashboard = () => {
             <img src="/placeholder.svg" alt="Vault" className="h-full w-full" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">MegaVault</h1>
+            <h1 className="text-2xl font-bold text-white">$ROK</h1>
             <div className="flex items-center gap-4">
               <div>
                 <span className="text-gray-400">Est. APR</span>
