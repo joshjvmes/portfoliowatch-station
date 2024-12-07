@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import Balance from "./pages/Balance";
+import Holdings from "./pages/Holdings";
 import History from "./pages/History";
 import Messages from "./pages/Messages";
 import Withdrawal from "./pages/Withdrawal";
@@ -28,7 +28,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/balance" element={<Balance />} />
+          <Route path="/holdings" element={<Holdings />} />
           <Route path="/history" element={<History />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/withdrawal" element={<Withdrawal />} />

@@ -27,7 +27,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const sideNavigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Balance", href: "/balance", icon: Wallet },
+    { name: "Holdings", href: "/holdings", icon: Wallet },
     { name: "Withdrawal", href: "/withdrawal", icon: ArrowDownToLine },
     { name: "History", href: "/history", icon: History },
     { name: "Messages", href: "/messages", icon: MessageSquare },
