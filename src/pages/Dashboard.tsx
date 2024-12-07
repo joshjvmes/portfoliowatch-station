@@ -1,164 +1,161 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import DashboardLayout from "@/components/DashboardLayout";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Eye, ChevronRight, ChevronDown } from "lucide-react";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
-const mockData = [
-  { time: "11/17", value: 200000 },
-  { time: "11/24", value: 350000 },
-  { time: "12/1", value: 450000 },
-  { time: "12/7", value: 500000 },
+const data = [
+  { name: "Available", value: 85 },
+  { name: "Used", value: 15 },
 ];
+
+const COLORS = ["#3B82F6", "#1E293B"];
 
 const Dashboard = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Header Section */}
-        <div className="flex items-center gap-4 bg-black/20 p-6 rounded-xl backdrop-blur-xl border border-white/10">
-          <div className="h-12 w-12 rounded-full bg-[#1A2333] p-2">
-            <img src="/placeholder.svg" alt="Vault" className="h-full w-full" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-white">$ROK</h1>
-            <div className="flex items-center gap-4">
-              <div>
-                <span className="text-gray-400">Est. APR</span>
-                <div className="text-[#2563EB] text-xl font-bold">44%</div>
-              </div>
-              <div>
-                <span className="text-gray-400">TVL</span>
-                <div className="text-white text-xl font-bold">$43,164,916</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
-          {/* Left Column - Chart */}
-          <Card className="bg-black/20 border-white/10 backdrop-blur-xl">
-            <CardHeader className="border-b border-white/10">
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="text-xl font-bold text-white">$1,151,119.42</div>
-                  <div className="text-[#2563EB]">+ $1,129,512.69 (47.76%)</div>
+        {/* Margin Balance Card */}
+        <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
+          <CardContent className="pt-6">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-xl font-semibold text-white">Margin Balance</h2>
+                  <Eye className="h-5 w-5 text-gray-400" />
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" className="bg-[#1A2333] text-white border-white/10 hover:bg-[#243044]">
-                    Vault P&L
+                  <Button variant="outline" className="bg-yellow-400 text-black hover:bg-yellow-500">
+                    Change Mode
                   </Button>
-                  <Button variant="outline" className="bg-[#1A2333] text-gray-400 border-white/10 hover:bg-[#243044]">
-                    Vault Equity
+                  <Button variant="outline" className="text-gray-400 border-white/10">
+                    Transfer
                   </Button>
                 </div>
               </div>
-            </CardHeader>
+
+              <div>
+                <div className="text-4xl font-bold text-white">59,977.3129 <span className="text-gray-400">USD</span></div>
+                <div className="flex items-center gap-2 text-gray-400 mt-1">
+                  ≈ $59,977.31 / Today's Realized PnL $0.00 (+0.00%) <ChevronRight className="h-4 w-4" />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <div className="text-white font-semibold">UniMMR</div>
+                <div className="flex items-center">
+                  <div className="h-4 w-4 rounded-full bg-gradient-to-r from-blue-500 to-green-500" />
+                  <span className="text-green-400 ml-2">999.99</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-8">
+                <div>
+                  <div className="text-gray-400 mb-2">Adjusted Equity (USD)</div>
+                  <div className="text-xl font-semibold text-white">59,853.3433</div>
+                  <div className="text-gray-400">≈ $59,853.34</div>
+                </div>
+                <div>
+                  <div className="text-gray-400 mb-2">Available Balance (USD)</div>
+                  <div className="text-xl font-semibold text-white">59,853.3433</div>
+                  <div className="text-gray-400">≈ $59,853.34</div>
+                </div>
+                <div>
+                  <div className="text-gray-400 mb-2">Initial Margin (USD)</div>
+                  <div className="text-xl font-semibold text-white">0.0000</div>
+                  <div className="text-gray-400">≈ $0.00</div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-8">
+                <div>
+                  <div className="text-gray-400 mb-2">Maintenance Margin (USD)</div>
+                  <div className="text-xl font-semibold text-white">0.0000</div>
+                  <div className="text-gray-400">≈ $0.00</div>
+                </div>
+                <div>
+                  <div className="text-gray-400 mb-2">Total Debt (USD)</div>
+                  <div className="text-xl font-semibold text-white">0.0000</div>
+                  <div className="text-gray-400">≈ $0.00</div>
+                  <Button variant="ghost" className="text-gray-400 px-0 hover:bg-transparent hover:text-white">
+                    Auto Repay <ChevronDown className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
+                <div>
+                  <div className="text-gray-400 mb-2">Unrealized PNL (USD)</div>
+                  <div className="text-xl font-semibold text-white">0.0000</div>
+                  <div className="text-gray-400">≈ $0.00</div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="grid grid-cols-[1fr_400px] gap-6">
+          {/* Cross Margin Card */}
+          <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
             <CardContent className="pt-6">
-              <div className="h-[400px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={mockData}>
-                    <XAxis 
-                      dataKey="time" 
-                      stroke="#4B5563"
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <YAxis 
-                      stroke="#4B5563"
-                      axisLine={false}
-                      tickLine={false}
-                      tickFormatter={(value) => `$${value.toLocaleString()}`}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "#1A2333",
-                        border: "none",
-                        borderRadius: "8px",
-                      }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="value"
-                      stroke="#2563EB"
-                      strokeWidth={2}
-                      dot={false}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+              <div className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="text-white font-semibold border-b-2 border-yellow-400 pb-2">Cross Margin</div>
+                  <div className="text-gray-400">USD⚡-M</div>
+                  <div className="text-gray-400">COIN-M</div>
+                </div>
+
+                <div className="grid grid-cols-4 gap-8">
+                  <div>
+                    <div className="text-gray-400 mb-2">Total Balance (USD)</div>
+                    <div className="text-xl font-semibold text-white">59,772.01</div>
+                    <div className="text-gray-400">≈ $59,772.01</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-400 mb-2">Total Debt (USD)</div>
+                    <div className="text-xl font-semibold text-white">0.00</div>
+                    <div className="text-gray-400">≈ $0.00</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-400 mb-2">Account Equity (USD)</div>
+                    <div className="text-xl font-semibold text-white">59,772.01</div>
+                    <div className="text-gray-400">≈ $59,772.01</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-400 mb-2">Today's PNL</div>
+                    <div className="text-xl font-semibold text-white">0.00</div>
+                    <div className="text-gray-400">≈ $0.00</div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Right Column - Balance & Actions */}
-          <div className="space-y-6">
-            <Card className="bg-black/20 border-white/10 backdrop-blur-xl">
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  <div>
-                    <div className="text-gray-400 mb-1">Your Vault Balance</div>
-                    <div className="text-2xl font-bold text-white">—</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-400 mb-1">Your All-time P&L</div>
-                    <div className="text-2xl font-bold text-white">—</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="flex gap-2">
-              <Button className="flex-1 bg-[#2563EB] text-white hover:bg-[#1D4ED8]">
-                Deposit
-              </Button>
-              <Button variant="outline" className="flex-1 bg-transparent text-gray-400 border-white/10 hover:bg-black/20">
-                Withdraw
-              </Button>
-            </div>
-
-            <Card className="bg-black/20 border-white/10 backdrop-blur-xl">
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-gray-400 mb-1 block">Amount to Deposit</label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        className="w-full bg-[#1A2333] border border-white/10 rounded-lg px-4 py-2 text-white"
-                        placeholder="$0.00"
-                      />
-                      <Button
-                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#2563EB] text-white text-sm px-3 py-1 rounded hover:bg-[#1D4ED8]"
-                      >
-                        Max
-                      </Button>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-gray-400 mb-1">Cross Free Collateral</div>
-                    <div className="text-white">—</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-400 mb-1">Cross Margin Usage</div>
-                    <div className="text-white">—</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-400 mb-1">Your Vault Balance</div>
-                    <div className="text-white">—</div>
-                  </div>
-                  <Button className="w-full bg-[#2563EB] text-white hover:bg-[#1D4ED8]">
-                    Connect wallet
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-black/20 border-white/10 backdrop-blur-xl">
-              <CardContent className="py-8 text-center">
-                <div className="text-gray-400">You have no vault deposits.</div>
-              </CardContent>
-            </Card>
-          </div>
+          {/* Asset Allocation Card */}
+          <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
+            <CardHeader>
+              <CardTitle className="text-xl text-white">Asset Allocation</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[200px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={data}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {data.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </DashboardLayout>
