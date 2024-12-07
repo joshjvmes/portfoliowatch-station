@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import DashboardLayout from "@/components/DashboardLayout";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { Button } from "@/components/ui/button";
-import { Bitcoin, Ethereum } from "lucide-react";
+import { Bitcoin, Hexagon } from "lucide-react";
 
 const mockBalanceHistory = [
   { date: "Jan", balance: 5000 },
@@ -16,7 +16,7 @@ const mockBalanceHistory = [
 const depositOptions = [
   {
     name: "Ethereum",
-    icon: <Ethereum className="h-8 w-8" />,
+    icon: <Hexagon className="h-8 w-8" />,
     description: "Deposit using ETH",
   },
   {
