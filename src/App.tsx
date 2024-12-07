@@ -14,6 +14,7 @@ import Assets from "./pages/Assets";
 import PortfolioMargin from "./pages/PortfolioMargin";
 import Orders from "./pages/Orders";
 import Rewards from "./pages/Rewards";
+import TradingBots from "./pages/TradingBots";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/portfolio-margin" element={<PortfolioMargin />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/rewards" element={<Rewards />} />
+          <Route path="/trading-bots" element={<TradingBots />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
