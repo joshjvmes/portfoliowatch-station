@@ -4,29 +4,45 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { toast } from "sonner";
 
 const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
     // Check current auth status
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        navigate("/dashboard");
+    const checkSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error("Session check error:", error);
+          return;
+        }
+        if (session) {
+          navigate("/dashboard");
+        }
+      } catch (error) {
+        console.error("Session check error:", error);
       }
-    });
+    };
+
+    checkSession();
 
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
         navigate("/dashboard");
+      } else if (event === 'SIGNED_OUT') {
+        navigate("/login");
       }
     });
 
     // Cleanup subscription on unmount
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   return (
@@ -90,6 +106,10 @@ const Login = () => {
             }}
             providers={[]}
             redirectTo={`${window.location.origin}/dashboard`}
+            onError={(error) => {
+              console.error('Auth error:', error);
+              toast.error(error.message);
+            }}
             magicLink={false}
             showLinks={false}
             view="sign_in"
