@@ -12,55 +12,75 @@ export interface ExchangePrice {
 }
 
 export const fetchCoinData = async (coinId: string, days: number = 90): Promise<MarketData> => {
-  const response = await fetch(
-    `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}`
-  );
-  
-  if (!response.ok) {
-    throw new Error('Failed to fetch market data');
+  console.log('Fetching coin data for:', coinId);
+  try {
+    const response = await fetch(
+      `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}`
+    );
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch market data: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log('Received coin data:', { coinId, dataPoints: data.prices?.length || 0 });
+    return data;
+  } catch (error) {
+    console.error('Error fetching coin data:', error);
+    throw error;
   }
-  
-  return response.json();
 };
 
-export const fetchTopCoins = async (): Promise<string[]> => {
-  const response = await fetch(
-    'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1'
-  );
+export const fetchTopCoins = async (): Promise<any[]> => {
+  console.log('Fetching top coins');
+  try {
+    const response = await fetch(
+      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1'
+    );
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch top coins');
+    if (!response.ok) {
+      throw new Error(`Failed to fetch top coins: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('Received top coins:', data.length);
+    return data;
+  } catch (error) {
+    console.error('Error fetching top coins:', error);
+    throw error;
   }
-
-  const data = await response.json();
-  return data.map((coin: any) => ({
-    id: coin.id,
-    symbol: coin.symbol.toUpperCase(),
-    name: coin.name
-  }));
 };
 
 export const fetchExchangePrices = async (coinId: string): Promise<ExchangePrice[]> => {
-  // Fetch tickers from multiple exchanges for a given coin
-  const response = await fetch(
-    `https://api.coingecko.com/api/v3/coins/${coinId}/tickers`
-  );
-  
-  if (!response.ok) {
-    throw new Error('Failed to fetch exchange prices');
+  console.log('Fetching exchange prices for:', coinId);
+  try {
+    const response = await fetch(
+      `https://api.coingecko.com/api/v3/coins/${coinId}/tickers`
+    );
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch exchange prices: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log('Received exchange prices:', { 
+      coinId, 
+      exchanges: data.tickers?.length || 0 
+    });
+    
+    // Process and normalize exchange data
+    return data.tickers
+      .filter((ticker: any) => ticker.target === 'USD' || ticker.target === 'USDT')
+      .map((ticker: any) => ({
+        exchange: ticker.market.name,
+        price: ticker.last,
+        volume24h: ticker.volume,
+        last_updated: ticker.last_traded_at
+      }));
+  } catch (error) {
+    console.error('Error fetching exchange prices:', error);
+    throw error;
   }
-  
-  const data = await response.json();
-  
-  // Process and normalize exchange data
-  return data.tickers
-    .filter((ticker: any) => ticker.target === 'USD' || ticker.target === 'USDT')
-    .map((ticker: any) => ({
-      exchange: ticker.market.name,
-      price: ticker.last,
-      volume24h: ticker.volume,
-      last_updated: ticker.last_traded_at
-    }));
 };
 
 export const formatChartData = (data: MarketData) => {
