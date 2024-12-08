@@ -8,15 +8,16 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useTour } from "@/contexts/TourContext";
 import { Button } from "@/components/ui/button";
 import { HelpCircle } from "lucide-react";
+import { format } from "date-fns";
 
-// Mock data for the candlestick chart
+// Mock data for the candlestick chart with proper date formatting
 const mockTradingData = [
-  { time: '11/17', value: 500000, profit: 1130419.05 },
-  { time: '11/20', value: 600000, profit: 1135000.00 },
-  { time: '11/24', value: 450000, profit: 1140000.00 },
-  { time: '11/28', value: 800000, profit: 1145000.00 },
-  { time: '12/1', value: 950000, profit: 1150000.00 },
-  { time: '12/4', value: 1000000, profit: 1152025.79 },
+  { time: format(new Date('2024-03-17'), 'MM/dd'), value: 500000, profit: 1130419.05 },
+  { time: format(new Date('2024-03-20'), 'MM/dd'), value: 600000, profit: 1135000.00 },
+  { time: format(new Date('2024-03-24'), 'MM/dd'), value: 450000, profit: 1140000.00 },
+  { time: format(new Date('2024-03-28'), 'MM/dd'), value: 800000, profit: 1145000.00 },
+  { time: format(new Date('2024-04-01'), 'MM/dd'), value: 950000, profit: 1150000.00 },
+  { time: format(new Date('2024-04-04'), 'MM/dd'), value: 1000000, profit: 1152025.79 },
 ];
 
 const Dashboard = () => {
