@@ -26,14 +26,13 @@ const TradingSignals = () => {
       const rsi = new RSI(14);
       const bb = new BollingerBands(20, 2);
       const macd = new MACD({ 
-        shortPeriod: 12,  // Changed from 'short'
-        longPeriod: 26,   // Changed from 'long'
-        signalPeriod: 9   // Changed from 'signal'
+        fast: 12,    // Changed from 'shortPeriod'
+        slow: 26,    // Changed from 'longPeriod'
+        signal: 9    // Changed from 'signalPeriod'
       });
       
       const newSignals: SignalData[] = [];
       
-      // Generate 100 data points
       for (let i = 0; i < 100; i++) {
         const price = 40000 + Math.sin(i / 10) * 1000 + Math.random() * 500;
         rsi.update(price);
@@ -68,6 +67,7 @@ const TradingSignals = () => {
     }, 30000);
 
     return () => clearInterval(interval);
+
   }, [toast]);
 
   return (
