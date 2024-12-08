@@ -15,11 +15,20 @@ const TradingChart = ({ data }: TradingChartProps) => {
   const [tradeAmount, setTradeAmount] = useState([50]);
   const [stopLoss, setStopLoss] = useState([10]);
   const [takeProfit, setTakeProfit] = useState([20]);
+  const [selectedRange, setSelectedRange] = useState('7d');
   const isMobile = useIsMobile();
   const { showBalances, toggleBalances } = useBalanceVisibility();
   const vaultBalance = "$1,152,025.79";
   const vaultProfit = "+$1,130,419.05 (47.80%)";
   const hiddenValue = "*****";
+
+  const dateRanges = [
+    { label: '24h', value: '24h' },
+    { label: '7d', value: '7d' },
+    { label: '30d', value: '30d' },
+    { label: 'Q', value: 'Q' },
+    { label: 'All', value: 'all' },
+  ];
 
   return (
     <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
@@ -50,9 +59,21 @@ const TradingChart = ({ data }: TradingChartProps) => {
             Available for withdrawal: {showBalances ? vaultBalance : hiddenValue}
           </p>
         </div>
-        <Button variant="outline" className="text-gray-400 border-white/10">
-          7d
-        </Button>
+        <div className="flex gap-2">
+          {dateRanges.map((range) => (
+            <Button
+              key={range.value}
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectedRange(range.value)}
+              className={`text-gray-400 border-white/10 ${
+                selectedRange === range.value ? 'bg-[#1A2333]' : ''
+              }`}
+            >
+              {range.label}
+            </Button>
+          ))}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="h-[300px] md:h-[400px] mt-4">
