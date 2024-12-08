@@ -14,7 +14,7 @@ const DashboardLayoutContent = ({ children }: DashboardLayoutProps) => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#0B1221] transition-colors duration-300">
+    <div className="min-h-screen bg-[#0B1221]">
       <TopNavigation />
       <div className="flex h-[calc(100vh-48px)]">
         {isMobile ? (
@@ -43,9 +43,10 @@ const DashboardLayoutContent = ({ children }: DashboardLayoutProps) => {
               </div>
             </Button>
             
+            {/* Mobile Navigation Overlay */}
             {showMobileMenu && (
               <div className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm">
-                <div className="fixed inset-y-0 right-0 w-64 bg-[#0B1221] border-l border-white/10 transition-colors duration-300">
+                <div className="fixed inset-y-0 right-0 w-64 bg-[#0B1221] border-l border-white/10">
                   <div className="p-4">
                     <SideNavigation />
                   </div>
