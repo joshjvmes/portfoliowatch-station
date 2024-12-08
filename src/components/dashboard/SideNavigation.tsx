@@ -9,6 +9,7 @@ import {
   ArrowDownLeft,
   LogOut,
   Settings,
+  ArrowUp,
 } from "lucide-react";
 
 const SideNavigation = () => {
@@ -20,6 +21,7 @@ const SideNavigation = () => {
 
   const navigationItems = [
     { name: "Dashboard", icon: LayoutDashboard, route: "/dashboard" },
+    { name: "Deposit", icon: ArrowUp, route: "/deposit" },
     { name: "History", icon: History, route: "/history" },
     { name: "Virtual Card", icon: CreditCard, route: "/virtual-card" },
     { name: "Messages", icon: MessageCircle, route: "/messages" },
