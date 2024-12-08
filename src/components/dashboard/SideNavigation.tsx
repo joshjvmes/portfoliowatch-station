@@ -1,99 +1,67 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Link, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   Wallet,
   History,
-  MessageSquare,
-  LogOut,
-  ArrowDownToLine,
+  CreditCard,
+  Gift,
   Bot,
-  Eye,
-  EyeOff,
-  PlusCircle,
+  Building2,
+  CircleDollarSign,
+  LogOut,
+  Settings,
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { useBalanceVisibility } from "@/contexts/BalanceVisibilityContext";
-
-const sideNavigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Holdings", href: "/holdings", icon: Wallet },
-  { name: "Trading Bots", href: "/trading-bots", icon: Bot },
-  { name: "Deposit", href: "/deposit", icon: PlusCircle },
-  { name: "Withdrawal", href: "/withdrawal", icon: ArrowDownToLine },
-  { name: "History", href: "/history", icon: History },
-  { name: "Messages", href: "/messages", icon: MessageSquare },
-];
 
 const SideNavigation = () => {
   const location = useLocation();
-  const { showBalances, toggleBalances } = useBalanceVisibility();
 
-  const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error("Logout error:", error);
-        toast.error("Error logging out");
-        return;
-      }
-      toast.success("Logged out successfully");
-      // No need to navigate manually - the auth state change listener in PrivateRoute will handle it
-    } catch (error) {
-      console.error("Unexpected error during logout:", error);
-      toast.error("Error logging out");
-    }
+  const isActiveRoute = (route: string) => {
+    return location.pathname === route;
   };
 
+  const navigationItems = [
+    { name: "Dashboard", icon: LayoutDashboard, route: "/dashboard" },
+    { name: "Assets", icon: Wallet, route: "/assets" },
+    { name: "History", icon: History, route: "/history" },
+    { name: "Virtual Card", icon: CreditCard, route: "/virtual-card" },
+    { name: "Rewards", icon: Gift, route: "/rewards" },
+    { name: "Trading Bots", icon: Bot, route: "/trading-bots" },
+    { name: "Portfolio Margin", icon: Building2, route: "/portfolio-margin" },
+    { name: "Deposit", icon: CircleDollarSign, route: "/deposit" },
+  ];
+
   return (
-    <div className="w-64 bg-[#0B1221]/50 border-r border-white/10 backdrop-blur-xl">
-      <div className="h-full flex flex-col">
-        <div className="p-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-[#00E5BE]">$ROK Trading</h1>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleBalances}
-            className="text-gray-400 hover:text-white hover:bg-[#1A2333]"
-          >
-            {showBalances ? (
-              <Eye className="h-5 w-5" />
-            ) : (
-              <EyeOff className="h-5 w-5" />
+    <div className="w-64 bg-[#0B1221] border-r border-white/10 p-4 flex flex-col h-full">
+      <nav className="space-y-2 flex-1">
+        {navigationItems.map((item) => (
+          <Link
+            key={item.route}
+            to={item.route}
+            className={cn(
+              "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors",
+              isActiveRoute(item.route) &&
+                "text-white bg-white/5 font-medium"
             )}
-          </Button>
-        </div>
-        <nav className="flex-1 p-4 space-y-2">
-          {sideNavigation.map((item) => {
-            const isActive = location.pathname === item.href;
-            return (
-              <Link key={item.name} to={item.href}>
-                <Button
-                  variant={isActive ? "secondary" : "ghost"}
-                  className={`w-full justify-start text-lg ${
-                    isActive
-                      ? "bg-[#1A2333] text-[#00E5BE]"
-                      : "text-gray-400 hover:text-white hover:bg-[#1A2333]"
-                  }`}
-                >
-                  <item.icon className="mr-2 h-5 w-5" />
-                  {item.name}
-                </Button>
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="p-4">
-          <Button
-            variant="ghost"
-            className="w-full justify-start text-lg text-gray-400 hover:text-white hover:bg-[#1A2333]"
-            onClick={handleLogout}
           >
-            <LogOut className="mr-2 h-5 w-5" />
-            Logout
-          </Button>
-        </div>
+            <item.icon className="h-5 w-5" />
+            {item.name}
+          </Link>
+        ))}
+      </nav>
+
+      <div className="border-t border-white/10 pt-4 space-y-2">
+        <Link
+          to="/settings"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+        >
+          <Settings className="h-5 w-5" />
+          Settings
+        </Link>
+        <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors">
+          <LogOut className="h-5 w-5" />
+          Logout
+        </button>
       </div>
     </div>
   );
