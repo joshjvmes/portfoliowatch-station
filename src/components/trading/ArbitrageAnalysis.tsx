@@ -83,17 +83,21 @@ const ArbitrageAnalysis = () => {
     queryKey: ['arbitrage-opportunities'],
     queryFn: calculateArbitrageOpportunities,
     refetchInterval: 30000, // Refetch every 30 seconds
-    onSuccess: (data) => {
-      // Notify of new opportunities above threshold
-      data.forEach(opp => {
-        if (opp.profitPercentage > 1.0) {
-          toast({
-            title: "High Profit Opportunity",
-            description: `${opp.profitPercentage.toFixed(2)}% profit potential on ${opp.coin}`,
-            duration: 5000,
+    meta: {
+      onSettled: (data: ArbitrageOpportunity[] | undefined) => {
+        if (data) {
+          // Notify of new opportunities above threshold
+          data.forEach(opp => {
+            if (opp.profitPercentage > 1.0) {
+              toast({
+                title: "High Profit Opportunity",
+                description: `${opp.profitPercentage.toFixed(2)}% profit potential on ${opp.coin}`,
+                duration: 5000,
+              });
+            }
           });
         }
-      });
+      }
     },
   });
 

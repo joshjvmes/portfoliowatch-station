@@ -11,6 +11,8 @@ export interface ExchangePrice {
   last_updated: string;
 }
 
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export const fetchCoinData = async (coinId: string, days: number = 90): Promise<MarketData> => {
   console.log('Fetching coin data for:', coinId);
   try {
@@ -19,6 +21,11 @@ export const fetchCoinData = async (coinId: string, days: number = 90): Promise<
     );
     
     if (!response.ok) {
+      if (response.status === 429) {
+        console.log('Rate limited, waiting before retry...');
+        await delay(2000); // Wait 2 seconds before retry
+        return fetchCoinData(coinId, days);
+      }
       throw new Error(`Failed to fetch market data: ${response.statusText}`);
     }
     
@@ -39,6 +46,11 @@ export const fetchTopCoins = async (): Promise<any[]> => {
     );
 
     if (!response.ok) {
+      if (response.status === 429) {
+        console.log('Rate limited, waiting before retry...');
+        await delay(2000);
+        return fetchTopCoins();
+      }
       throw new Error(`Failed to fetch top coins: ${response.statusText}`);
     }
 
@@ -59,6 +71,11 @@ export const fetchExchangePrices = async (coinId: string): Promise<ExchangePrice
     );
     
     if (!response.ok) {
+      if (response.status === 429) {
+        console.log('Rate limited, waiting before retry...');
+        await delay(2000);
+        return fetchExchangePrices(coinId);
+      }
       throw new Error(`Failed to fetch exchange prices: ${response.statusText}`);
     }
     
