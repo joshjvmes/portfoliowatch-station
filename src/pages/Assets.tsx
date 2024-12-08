@@ -24,7 +24,7 @@ const Assets = () => {
               </div>
               <div className="bg-[#1A2333]/50 p-4 rounded-lg border border-white/10">
                 <p className="text-gray-400">Total P&L</p>
-                <p className="text-2xl font-bold text-[#00E5BE] mt-1">+$31,245</p>
+                <p className="text-2xl font-bold text-[#00E5BE] mt-1">+$1,130,419.05</p>
                 <p className="text-gray-400 text-sm">All time</p>
               </div>
             </div>
