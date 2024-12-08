@@ -11,6 +11,8 @@ import {
   CircleDollarSign,
   LogOut,
   Settings,
+  MessageCircle,
+  ArrowDownLeft,
 } from "lucide-react";
 
 const SideNavigation = () => {
@@ -25,10 +27,12 @@ const SideNavigation = () => {
     { name: "Assets", icon: Wallet, route: "/assets" },
     { name: "History", icon: History, route: "/history" },
     { name: "Virtual Card", icon: CreditCard, route: "/virtual-card" },
+    { name: "Messages", icon: MessageCircle, route: "/messages" },
     { name: "Rewards", icon: Gift, route: "/rewards" },
     { name: "Trading Bots", icon: Bot, route: "/trading-bots" },
     { name: "Portfolio Margin", icon: Building2, route: "/portfolio-margin" },
     { name: "Deposit", icon: CircleDollarSign, route: "/deposit" },
+    { name: "Withdrawal", icon: ArrowDownLeft, route: "/withdrawal" },
   ];
 
   return (

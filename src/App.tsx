@@ -21,6 +21,8 @@ import TradingBots from "./pages/TradingBots";
 import SystemStatus from "./pages/SystemStatus";
 import NotFound from "./pages/NotFound";
 import Deposit from "./pages/Deposit";
+import VirtualCard from "./pages/VirtualCard";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -129,6 +131,22 @@ const App = () => (
               element={
                 <PrivateRoute>
                   <SystemStatus />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/virtual-card"
+              element={
+                <PrivateRoute>
+                  <VirtualCard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <PrivateRoute>
+                  <Settings />
                 </PrivateRoute>
               }
             />
