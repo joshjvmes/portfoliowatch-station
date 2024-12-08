@@ -45,6 +45,34 @@ export const tourSteps: Record<string, TourStep[]> = {
       content: "Your personal AI trading assistant that helps manage and optimize your trades.",
       placement: "right"
     }
+  ],
+  "/deposit": [
+    {
+      target: "[data-tour='balance-cards']",
+      title: "Account Balance",
+      content: "View your current balance and available funds for trading.",
+      placement: "bottom"
+    },
+    {
+      target: "[data-tour='deposit-methods']",
+      title: "Deposit Methods",
+      content: "Choose from multiple secure deposit options including crypto, card, wire transfer, and ACH.",
+      placement: "bottom"
+    }
+  ],
+  "/withdrawal": [
+    {
+      target: "[data-tour='withdrawal-balance']",
+      title: "Available for Withdrawal",
+      content: "Check your available balance and 24-hour withdrawal limits.",
+      placement: "bottom"
+    },
+    {
+      target: "[data-tour='withdrawal-form']",
+      title: "Withdrawal Form",
+      content: "Select your preferred withdrawal method and enter the amount you wish to withdraw.",
+      placement: "bottom"
+    }
   ]
 };
 

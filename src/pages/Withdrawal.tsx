@@ -40,7 +40,7 @@ const WithdrawalContent = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       {/* Balance Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div data-tour="withdrawal-balance" className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -72,6 +72,7 @@ const WithdrawalContent = () => {
       </div>
 
       {/* Withdrawal Form */}
+      <div data-tour="withdrawal-form">
         <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
           <CardHeader>
             <CardTitle className="text-2xl text-[#00E5BE] flex items-center gap-2">
@@ -165,6 +166,7 @@ const WithdrawalContent = () => {
             </form>
           </CardContent>
         </Card>
+      </div>
     </div>
   );
 };

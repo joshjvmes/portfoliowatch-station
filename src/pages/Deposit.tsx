@@ -11,7 +11,9 @@ import { ACHDeposit } from "@/components/deposit/ACHDeposit";
 const DepositContent = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <BalanceCards />
+      <div data-tour="balance-cards">
+        <BalanceCards />
+      </div>
       
       <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
         <CardHeader>
@@ -23,42 +25,44 @@ const DepositContent = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="crypto" className="space-y-6">
-            <TabsList className="grid grid-cols-2 md:grid-cols-4 bg-[#1A2333]">
-              <TabsTrigger value="crypto" className="data-[state=active]:bg-[#00E5BE] data-[state=active]:text-black">
-                <Wallet className="mr-2 h-4 w-4" />
-                Crypto
-              </TabsTrigger>
-              <TabsTrigger value="card" className="data-[state=active]:bg-[#00E5BE] data-[state=active]:text-black">
-                <CreditCard className="mr-2 h-4 w-4" />
-                Card
-              </TabsTrigger>
-              <TabsTrigger value="wire" className="data-[state=active]:bg-[#00E5BE] data-[state=active]:text-black">
-                <Building2 className="mr-2 h-4 w-4" />
-                Wire
-              </TabsTrigger>
-              <TabsTrigger value="ach" className="data-[state=active]:bg-[#00E5BE] data-[state=active]:text-black">
-                <CreditCard className="mr-2 h-4 w-4" />
-                ACH
-              </TabsTrigger>
-            </TabsList>
+          <div data-tour="deposit-methods">
+            <Tabs defaultValue="crypto" className="space-y-6">
+              <TabsList className="grid grid-cols-2 md:grid-cols-4 bg-[#1A2333]">
+                <TabsTrigger value="crypto" className="data-[state=active]:bg-[#00E5BE] data-[state=active]:text-black">
+                  <Wallet className="mr-2 h-4 w-4" />
+                  Crypto
+                </TabsTrigger>
+                <TabsTrigger value="card" className="data-[state=active]:bg-[#00E5BE] data-[state=active]:text-black">
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Card
+                </TabsTrigger>
+                <TabsTrigger value="wire" className="data-[state=active]:bg-[#00E5BE] data-[state=active]:text-black">
+                  <Building2 className="mr-2 h-4 w-4" />
+                  Wire
+                </TabsTrigger>
+                <TabsTrigger value="ach" className="data-[state=active]:bg-[#00E5BE] data-[state=active]:text-black">
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  ACH
+                </TabsTrigger>
+              </TabsList>
 
-            <TabsContent value="crypto">
-              <CryptoDeposit />
-            </TabsContent>
+              <TabsContent value="crypto">
+                <CryptoDeposit />
+              </TabsContent>
 
-            <TabsContent value="card">
-              <CardDeposit />
-            </TabsContent>
+              <TabsContent value="card">
+                <CardDeposit />
+              </TabsContent>
 
-            <TabsContent value="wire">
-              <WireDeposit />
-            </TabsContent>
+              <TabsContent value="wire">
+                <WireDeposit />
+              </TabsContent>
 
-            <TabsContent value="ach">
-              <ACHDeposit />
-            </TabsContent>
-          </Tabs>
+              <TabsContent value="ach">
+                <ACHDeposit />
+              </TabsContent>
+            </Tabs>
+          </div>
         </CardContent>
       </Card>
     </div>
