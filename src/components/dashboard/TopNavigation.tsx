@@ -7,7 +7,7 @@ import {
   ScrollText,
   Gift,
   Circle,
-  Snake,
+  Viper,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
@@ -58,7 +58,7 @@ const TopNavigation = () => {
           className="flex items-center space-x-2 cursor-pointer group"
           onClick={toggleViperMode}
         >
-          <Snake 
+          <Viper 
             className={`h-4 w-4 transition-colors ${
               isViperMode ? 'text-[#00ff00]' : 'text-gray-400 group-hover:text-white'
             }`}
