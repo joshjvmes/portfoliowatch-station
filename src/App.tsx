@@ -23,13 +23,13 @@ import NotFound from "./pages/NotFound";
 import Deposit from "./pages/Deposit";
 import VirtualCard from "./pages/VirtualCard";
 import Settings from "./pages/Settings";
-import React from 'react';
+import * as React from 'react';
 
-// Create a client
+// Create a client outside the component
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 5 * 60 * 1000,
       retry: 1,
     },
   },
@@ -37,8 +37,8 @@ const queryClient = new QueryClient({
 
 const App = () => {
   return (
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <React.StrictMode>
         <TooltipProvider>
           <BrowserRouter>
             <TourProvider>
@@ -166,8 +166,8 @@ const App = () => {
             </TourProvider>
           </BrowserRouter>
         </TooltipProvider>
-      </QueryClientProvider>
-    </React.StrictMode>
+      </React.StrictMode>
+    </QueryClientProvider>
   );
 };
 
