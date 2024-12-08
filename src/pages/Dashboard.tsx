@@ -5,6 +5,9 @@ import MarginBalance from "@/components/dashboard/MarginBalance";
 import CrossMargin from "@/components/dashboard/CrossMargin";
 import AssetAllocation from "@/components/dashboard/AssetAllocation";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useTour } from "@/contexts/TourContext";
+import { Button } from "@/components/ui/button";
+import { HelpCircle } from "lucide-react";
 
 // Mock data for the candlestick chart
 const mockTradingData = [
@@ -18,30 +21,52 @@ const mockTradingData = [
 
 const Dashboard = () => {
   const isMobile = useIsMobile();
+  const { startTour } = useTour();
 
   return (
     <DashboardLayout>
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-between items-center mb-4">
         <VIPIndicator level={3} />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={startTour}
+          className="flex items-center gap-2"
+        >
+          <HelpCircle className="h-4 w-4" />
+          Platform Tour
+        </Button>
       </div>
       
       <div className="space-y-4 md:space-y-6">
-        <TradingChart data={mockTradingData} />
+        <div data-tour="trading-chart">
+          <TradingChart data={mockTradingData} />
+        </div>
         
         {isMobile ? (
-          // Mobile view - Stacked layout with simplified components
           <div className="space-y-4">
-            <MarginBalance />
-            <CrossMargin />
-            <AssetAllocation />
+            <div data-tour="margin-balance">
+              <MarginBalance />
+            </div>
+            <div data-tour="cross-margin">
+              <CrossMargin />
+            </div>
+            <div data-tour="asset-allocation">
+              <AssetAllocation />
+            </div>
           </div>
         ) : (
-          // Desktop view - Grid layout with full components
           <>
-            <MarginBalance />
+            <div data-tour="margin-balance">
+              <MarginBalance />
+            </div>
             <div className="grid grid-cols-[1fr_400px] gap-6">
-              <CrossMargin />
-              <AssetAllocation />
+              <div data-tour="cross-margin">
+                <CrossMargin />
+              </div>
+              <div data-tour="asset-allocation">
+                <AssetAllocation />
+              </div>
             </div>
           </>
         )}
