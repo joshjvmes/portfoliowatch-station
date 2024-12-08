@@ -1,82 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PriceChart from "@/components/trading/PriceChart";
 import RSIChart from "@/components/trading/RSIChart";
 import MACDChart from "@/components/trading/MACDChart";
 import ArbitrageOpportunities from "@/components/trading/ArbitrageOpportunities";
-import { fetchCoinData, formatChartData } from "@/utils/marketData";
-import { calculateIndicators } from "@/utils/indicators";
-import { calculateArbitrageOpportunities } from "@/utils/arbitrage";
-import { useToast } from "@/hooks/use-toast";
-
-const EXCHANGES = [
-  { name: "Binance", price: 0 },
-  { name: "Coinbase", price: 0 },
-  { name: "Kraken", price: 0 },
-  { name: "Gemini", price: 0 }
-];
+import ArbitrageAnalysis from "@/components/trading/ArbitrageAnalysis";
 
 const TradingSignals = () => {
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [exchangePrices, setExchangePrices] = useState(EXCHANGES);
-  const { toast } = useToast();
-
-  // Simulate different exchange prices with small variations
-  const simulateExchangePrices = (basePrice: number) => {
-    return EXCHANGES.map(exchange => ({
-      exchange: exchange.name,
-      price: basePrice * (1 + (Math.random() - 0.5) * 0.02) // +/- 1% variation
-    }));
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const rawData = await fetchCoinData('bitcoin');
-        const formattedData = formatChartData(rawData);
-        const dataWithIndicators = calculateIndicators(formattedData);
-        setData(dataWithIndicators);
-
-        // Simulate exchange prices based on the latest price
-        const latestPrice = formattedData[formattedData.length - 1].price;
-        const prices = simulateExchangePrices(latestPrice);
-        setExchangePrices(prices);
-
-      } catch (err) {
-        console.error('Error fetching data:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch data');
-        toast({
-          title: "Error",
-          description: "Failed to fetch market data. Please try again later.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-
-    // Refresh data every minute
-    const interval = setInterval(fetchData, 60000);
-    return () => clearInterval(interval);
-  }, [toast]);
-
-  const arbitrageOpportunities = calculateArbitrageOpportunities(exchangePrices);
-
-  if (error) {
-    return (
-      <DashboardLayout>
-        <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-          <p className="text-red-500">Error: {error}</p>
-        </div>
-      </DashboardLayout>
-    );
-  }
+  const [activeTab, setActiveTab] = useState("overview");
 
   return (
     <DashboardLayout>
@@ -88,19 +21,32 @@ const TradingSignals = () => {
           </Badge>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <PriceChart data={data} loading={loading} />
-          </div>
-          <div>
-            <ArbitrageOpportunities opportunities={arbitrageOpportunities} />
-          </div>
-        </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="bg-[#0B1221]/50 border-white/10">
+            <TabsTrigger value="overview">Market Overview</TabsTrigger>
+            <TabsTrigger value="arbitrage">Cross-Exchange Analysis</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="overview" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <PriceChart data={[]} loading={false} />
+              </div>
+              <div>
+                <ArbitrageOpportunities opportunities={[]} />
+              </div>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <RSIChart data={data} loading={loading} />
-          <MACDChart data={data} loading={loading} />
-        </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <RSIChart data={[]} loading={false} />
+              <MACDChart data={[]} loading={false} />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="arbitrage">
+            <ArbitrageAnalysis />
+          </TabsContent>
+        </Tabs>
       </div>
     </DashboardLayout>
   );
