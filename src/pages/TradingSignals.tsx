@@ -11,10 +11,10 @@ import { calculateArbitrageOpportunities } from "@/utils/arbitrage";
 import { useToast } from "@/hooks/use-toast";
 
 const EXCHANGES = [
-  { exchange: "Binance", price: 0, tradingFee: 0.1, transferTime: 15 },
-  { exchange: "Coinbase", price: 0, tradingFee: 0.5, transferTime: 20 },
-  { exchange: "Kraken", price: 0, tradingFee: 0.26, transferTime: 18 },
-  { exchange: "Gemini", price: 0, tradingFee: 0.35, transferTime: 25 }
+  { name: "Binance", price: 0 },
+  { name: "Coinbase", price: 0 },
+  { name: "Kraken", price: 0 },
+  { name: "Gemini", price: 0 }
 ];
 
 const TradingSignals = () => {
@@ -27,7 +27,7 @@ const TradingSignals = () => {
   // Simulate different exchange prices with small variations
   const simulateExchangePrices = (basePrice: number) => {
     return EXCHANGES.map(exchange => ({
-      ...exchange,
+      exchange: exchange.name,
       price: basePrice * (1 + (Math.random() - 0.5) * 0.02) // +/- 1% variation
     }));
   };

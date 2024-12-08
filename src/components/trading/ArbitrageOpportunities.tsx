@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { AlertCircle, Clock, DollarSign } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface ArbitrageOpportunity {
@@ -9,9 +9,6 @@ interface ArbitrageOpportunity {
   profitPercentage: number;
   buyPrice: number;
   sellPrice: number;
-  totalFees: number;
-  estimatedTime: number;
-  netProfit: number;
 }
 
 interface Props {
@@ -84,38 +81,11 @@ const ArbitrageOpportunities = ({ opportunities }: Props) => {
                   })}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-sm text-gray-400">
-                <span className="flex items-center">
-                  <Clock className="h-4 w-4 mr-1" />
-                  Est. Time
-                </span>
-                <span>{opportunity.estimatedTime} mins</span>
-              </div>
-              <div className="flex justify-between items-center text-sm text-gray-400">
-                <span className="flex items-center">
-                  <DollarSign className="h-4 w-4 mr-1" />
-                  Total Fees
-                </span>
-                <span>
-                  ${opportunity.totalFees.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </span>
-              </div>
               <div className="flex justify-between items-center border-t border-white/10 pt-2">
-                <span className="text-sm">Net Profit</span>
-                <div className="flex flex-col items-end">
-                  <span className="text-green-400 font-medium">
-                    ${opportunity.netProfit.toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </span>
-                  <span className="text-xs text-green-400">
-                    ({opportunity.profitPercentage.toFixed(2)}%)
-                  </span>
-                </div>
+                <span className="text-sm">Potential Profit</span>
+                <span className="text-green-400 font-medium">
+                  {opportunity.profitPercentage.toFixed(2)}%
+                </span>
               </div>
             </div>
           ))}
