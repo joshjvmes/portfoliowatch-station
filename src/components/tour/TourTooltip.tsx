@@ -13,6 +13,14 @@ export const TourTooltip = () => {
   const currentSteps = tourSteps[location.pathname] || [];
   const currentTourStep = currentSteps[currentStep];
 
+  console.log('Tour Debug:', {
+    isActive,
+    currentStep,
+    pathname: location.pathname,
+    currentSteps: currentSteps.length,
+    targetSelector: currentTourStep?.target
+  });
+
   const { refs, floatingStyles, middlewareData } = useFloating({
     placement: currentTourStep?.placement || "bottom",
     middleware: [offset(10), flip(), shift()],
@@ -21,6 +29,7 @@ export const TourTooltip = () => {
   useEffect(() => {
     if (isActive && currentTourStep) {
       const element = document.querySelector(currentTourStep.target) as HTMLElement;
+      console.log('Target element found:', Boolean(element), currentTourStep.target);
       setTargetElement(element);
       if (element) {
         element.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -28,7 +37,19 @@ export const TourTooltip = () => {
     }
   }, [isActive, currentStep, currentTourStep]);
 
-  if (!isActive || !currentTourStep || !targetElement) return null;
+  if (!isActive || !currentTourStep || !targetElement) {
+    console.log('Tour not rendering because:', { 
+      isActive, 
+      hasCurrentStep: Boolean(currentTourStep),
+      hasTargetElement: Boolean(targetElement)
+    });
+    return null;
+  }
+
+  const handleNext = () => {
+    console.log('Handling next step:', currentStep, 'of', currentSteps.length - 1);
+    nextStep();
+  };
 
   return (
     <div
@@ -64,7 +85,7 @@ export const TourTooltip = () => {
           )}
           <Button
             size="sm"
-            onClick={nextStep}
+            onClick={handleNext}
           >
             {currentStep === currentSteps.length - 1 ? "Finish" : "Next"}
           </Button>

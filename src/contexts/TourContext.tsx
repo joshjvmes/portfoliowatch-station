@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type TourStep = {
   target: string;
@@ -80,6 +80,7 @@ export const TourProvider = ({ children }: { children: React.ReactNode }) => {
   const [isActive, setIsActive] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Reset tour when route changes
@@ -88,20 +89,35 @@ export const TourProvider = ({ children }: { children: React.ReactNode }) => {
   }, [location.pathname]);
 
   const startTour = () => {
+    console.log('Starting tour');
     setIsActive(true);
     setCurrentStep(0);
   };
 
   const endTour = () => {
+    console.log('Ending tour');
     setIsActive(false);
     setCurrentStep(0);
   };
 
   const nextStep = () => {
-    const maxSteps = tourSteps[location.pathname]?.length || 0;
-    if (currentStep < maxSteps - 1) {
+    const currentPathSteps = tourSteps[location.pathname];
+    console.log('Next step:', { currentStep, maxSteps: currentPathSteps?.length });
+    
+    if (!currentPathSteps) return;
+
+    if (currentStep < currentPathSteps.length - 1) {
       setCurrentStep(prev => prev + 1);
+    } else if (location.pathname === '/dashboard') {
+      // If we're on dashboard and finished its steps, go to deposit
+      navigate('/deposit');
+      setCurrentStep(0);
+    } else if (location.pathname === '/deposit') {
+      // If we're on deposit and finished its steps, go to withdrawal
+      navigate('/withdrawal');
+      setCurrentStep(0);
     } else {
+      // If we're on the last step of withdrawal or any other page
       endTour();
     }
   };
