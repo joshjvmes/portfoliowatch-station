@@ -4,6 +4,7 @@ import TradingChart from "@/components/dashboard/TradingChart";
 import MarginBalance from "@/components/dashboard/MarginBalance";
 import CrossMargin from "@/components/dashboard/CrossMargin";
 import AssetAllocation from "@/components/dashboard/AssetAllocation";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Mock data for the candlestick chart
 const mockTradingData = [
@@ -16,20 +17,34 @@ const mockTradingData = [
 ];
 
 const Dashboard = () => {
+  const isMobile = useIsMobile();
+
   return (
     <DashboardLayout>
       <div className="flex justify-end mb-4">
         <VIPIndicator level={3} />
       </div>
       
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         <TradingChart data={mockTradingData} />
-        <MarginBalance />
         
-        <div className="grid grid-cols-[1fr_400px] gap-6">
-          <CrossMargin />
-          <AssetAllocation />
-        </div>
+        {isMobile ? (
+          // Mobile view - Stacked layout with simplified components
+          <div className="space-y-4">
+            <MarginBalance />
+            <CrossMargin />
+            <AssetAllocation />
+          </div>
+        ) : (
+          // Desktop view - Grid layout with full components
+          <>
+            <MarginBalance />
+            <div className="grid grid-cols-[1fr_400px] gap-6">
+              <CrossMargin />
+              <AssetAllocation />
+            </div>
+          </>
+        )}
       </div>
     </DashboardLayout>
   );

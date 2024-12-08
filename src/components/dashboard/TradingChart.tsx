@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface TradingChartProps {
   data: any[];
@@ -12,15 +13,16 @@ const TradingChart = ({ data }: TradingChartProps) => {
   const [tradeAmount, setTradeAmount] = useState([50]);
   const [stopLoss, setStopLoss] = useState([10]);
   const [takeProfit, setTakeProfit] = useState([20]);
+  const isMobile = useIsMobile();
 
   return (
     <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <CardTitle className="text-xl text-white">Vault P&L</CardTitle>
-          <p className="text-4xl font-bold text-white mt-2">
+          <p className="text-2xl md:text-4xl font-bold text-white mt-2 break-words">
             $1,152,025.79
-            <span className="text-[#00E5BE] text-xl ml-3">
+            <span className="text-[#00E5BE] text-base md:text-xl ml-3">
               +$1,130,419.05 (47.80%)
             </span>
           </p>
@@ -30,7 +32,7 @@ const TradingChart = ({ data }: TradingChartProps) => {
         </Button>
       </CardHeader>
       <CardContent>
-        <div className="h-[400px] mt-4">
+        <div className="h-[300px] md:h-[400px] mt-4">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data}>
               <defs>
@@ -71,59 +73,61 @@ const TradingChart = ({ data }: TradingChartProps) => {
         </div>
 
         <div className="mt-8 space-y-6">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Button 
-              className="bg-[#00E5BE] hover:bg-[#00E5BE]/90 text-black font-bold py-6"
+              className="bg-[#00E5BE] hover:bg-[#00E5BE]/90 text-black font-bold py-4 md:py-6"
             >
               Buy / Long
             </Button>
             <Button 
-              className="bg-[#FF4D4D] hover:bg-[#FF4D4D]/90 text-white font-bold py-6"
+              className="bg-[#FF4D4D] hover:bg-[#FF4D4D]/90 text-white font-bold py-4 md:py-6"
             >
               Sell / Short
             </Button>
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm text-gray-400 mb-2 block">
-                Trade Amount: {tradeAmount}% of balance
-              </label>
-              <Slider
-                value={tradeAmount}
-                onValueChange={setTradeAmount}
-                max={100}
-                step={1}
-                className="[&>.relative>.absolute]:bg-[#00E5BE]"
-              />
-            </div>
+          {!isMobile && (
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-gray-400 mb-2 block">
+                  Trade Amount: {tradeAmount}% of balance
+                </label>
+                <Slider
+                  value={tradeAmount}
+                  onValueChange={setTradeAmount}
+                  max={100}
+                  step={1}
+                  className="[&>.relative>.absolute]:bg-[#00E5BE]"
+                />
+              </div>
 
-            <div>
-              <label className="text-sm text-gray-400 mb-2 block">
-                Stop Loss: {stopLoss}% below entry
-              </label>
-              <Slider
-                value={stopLoss}
-                onValueChange={setStopLoss}
-                max={50}
-                step={1}
-                className="[&>.relative>.absolute]:bg-[#FF4D4D]"
-              />
-            </div>
+              <div>
+                <label className="text-sm text-gray-400 mb-2 block">
+                  Stop Loss: {stopLoss}% below entry
+                </label>
+                <Slider
+                  value={stopLoss}
+                  onValueChange={setStopLoss}
+                  max={50}
+                  step={1}
+                  className="[&>.relative>.absolute]:bg-[#FF4D4D]"
+                />
+              </div>
 
-            <div>
-              <label className="text-sm text-gray-400 mb-2 block">
-                Take Profit: {takeProfit}% above entry
-              </label>
-              <Slider
-                value={takeProfit}
-                onValueChange={setTakeProfit}
-                max={100}
-                step={1}
-                className="[&>.relative>.absolute]:bg-[#00E5BE]"
-              />
+              <div>
+                <label className="text-sm text-gray-400 mb-2 block">
+                  Take Profit: {takeProfit}% above entry
+                </label>
+                <Slider
+                  value={takeProfit}
+                  onValueChange={setTakeProfit}
+                  max={100}
+                  step={1}
+                  className="[&>.relative>.absolute]:bg-[#00E5BE]"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </CardContent>
     </Card>
