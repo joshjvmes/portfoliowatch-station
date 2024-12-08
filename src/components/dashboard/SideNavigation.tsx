@@ -30,17 +30,20 @@ const SideNavigation = () => {
   const { showBalances, toggleBalances } = useBalanceVisibility();
 
   const handleLogout = async () => {
+    console.log("Logout initiated");
     try {
+      console.log("Calling supabase.auth.signOut()");
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error("Logout error:", error);
         toast.error("Error logging out");
         return;
       }
+      console.log("Logout successful, redirecting to login page");
       toast.success("Logged out successfully");
       navigate("/login");
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Unexpected error during logout:", error);
       toast.error("Error logging out");
     }
   };
