@@ -6,17 +6,17 @@ import { useState } from "react";
 const COLORS = ['#00E5BE', '#2563EB', '#FF6B6B', '#FFD93D', '#4834D4', '#686DE0'];
 
 const currencyData = [
-  { name: 'Bitcoin (BTC)', value: 45, amount: '₿ 1.245', usdValue: '$52,390' },
-  { name: 'Ethereum (ETH)', value: 30, amount: 'Ξ 15.721', usdValue: '$34,927' },
-  { name: 'USDT', value: 15, amount: '$ 17,500', usdValue: '$17,500' },
-  { name: 'SOL', value: 10, amount: 'SOL 89.32', usdValue: '$11,611' },
+  { name: 'Bitcoin (BTC)', value: 45, amount: '₿ 12.45', usdValue: '$518,411.60' },
+  { name: 'Ethereum (ETH)', value: 30, amount: 'Ξ 157.21', usdValue: '$345,607.74' },
+  { name: 'USDT', value: 15, amount: '$ 172,803.87', usdValue: '$172,803.87' },
+  { name: 'SOL', value: 10, amount: 'SOL 893.2', usdValue: '$115,202.58' },
 ];
 
 const assetClassData = [
-  { name: 'Cryptocurrencies', value: 55, usdValue: '$64,001' },
-  { name: 'Stablecoins', value: 25, usdValue: '$29,091' },
-  { name: 'DeFi Tokens', value: 12, usdValue: '$13,964' },
-  { name: 'NFTs', value: 8, usdValue: '$9,309' },
+  { name: 'Cryptocurrencies', value: 55, usdValue: '$633,614.18' },
+  { name: 'Stablecoins', value: 25, usdValue: '$288,006.45' },
+  { name: 'DeFi Tokens', value: 12, usdValue: '$138,243.09' },
+  { name: 'NFTs', value: 8, usdValue: '$92,162.07' },
 ];
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -41,7 +41,7 @@ const AssetBreakdown = () => {
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle className="text-xl text-white">Asset Breakdown</CardTitle>
-          <p className="text-sm text-gray-400 mt-1">Total Portfolio Value: $116,428</p>
+          <p className="text-sm text-gray-400 mt-1">Total Portfolio Value: $1,152,025.79</p>
         </div>
         <div className="flex gap-2">
           <Button 
