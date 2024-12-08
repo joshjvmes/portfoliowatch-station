@@ -2,17 +2,13 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
-  Wallet,
   History,
   CreditCard,
-  Gift,
   Bot,
-  Building2,
-  CircleDollarSign,
-  LogOut,
-  Settings,
   MessageCircle,
   ArrowDownLeft,
+  LogOut,
+  Settings,
 } from "lucide-react";
 
 const SideNavigation = () => {
@@ -24,14 +20,10 @@ const SideNavigation = () => {
 
   const navigationItems = [
     { name: "Dashboard", icon: LayoutDashboard, route: "/dashboard" },
-    { name: "Assets", icon: Wallet, route: "/assets" },
     { name: "History", icon: History, route: "/history" },
     { name: "Virtual Card", icon: CreditCard, route: "/virtual-card" },
     { name: "Messages", icon: MessageCircle, route: "/messages" },
-    { name: "Rewards", icon: Gift, route: "/rewards" },
     { name: "Trading Bots", icon: Bot, route: "/trading-bots" },
-    { name: "Portfolio Margin", icon: Building2, route: "/portfolio-margin" },
-    { name: "Deposit", icon: CircleDollarSign, route: "/deposit" },
     { name: "Withdrawal", icon: ArrowDownLeft, route: "/withdrawal" },
   ];
 
