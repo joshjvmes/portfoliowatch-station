@@ -14,6 +14,7 @@ import {
   Gift,
   ChevronDown,
   Bot,
+  Circle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -63,29 +64,35 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     <div className="min-h-screen bg-[#0B1221]">
       {/* Top Navigation */}
       <div className="border-b border-white/10 bg-[#0B1221]/50 backdrop-blur-xl">
-        <nav className="flex px-4 py-2 space-x-1">
-          {topNavigation.map((item) => {
-            const isActive = location.pathname === item.href;
-            return (
-              <Link key={item.name} to={item.href}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={`h-8 text-xs border border-white/10 rounded px-3 ${
-                    isActive
-                      ? "bg-[#1A2333] text-[#00E5BE]"
-                      : "text-gray-400 hover:text-white hover:bg-[#1A2333]"
-                  }`}
-                >
-                  <item.icon className="mr-2 h-4 w-4" />
-                  {item.name}
-                  {item.hasSubmenu && (
-                    <ChevronDown className="ml-1 h-3 w-3 opacity-50" />
-                  )}
-                </Button>
-              </Link>
-            );
-          })}
+        <nav className="flex items-center justify-between px-4 py-2">
+          <div className="flex space-x-1">
+            {topNavigation.map((item) => {
+              const isActive = location.pathname === item.href;
+              return (
+                <Link key={item.name} to={item.href}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`h-8 text-xs border border-white/10 rounded px-3 ${
+                      isActive
+                        ? "bg-[#1A2333] text-[#00E5BE]"
+                        : "text-gray-400 hover:text-white hover:bg-[#1A2333]"
+                    }`}
+                  >
+                    <item.icon className="mr-2 h-4 w-4" />
+                    {item.name}
+                    {item.hasSubmenu && (
+                      <ChevronDown className="ml-1 h-3 w-3 opacity-50" />
+                    )}
+                  </Button>
+                </Link>
+              );
+            })}
+          </div>
+          <div className="flex items-center space-x-2 text-sm">
+            <Circle className="h-3 w-3 text-green-500 fill-green-500 animate-pulse" />
+            <span className="text-gray-400">System Online</span>
+          </div>
         </nav>
       </div>
 
