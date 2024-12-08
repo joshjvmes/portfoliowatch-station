@@ -48,10 +48,10 @@ const Dashboard = () => {
             <div data-tour="margin-balance">
               <MarginBalance />
             </div>
-            <div data-tour="cross-margin">
+            <div data-tour="market-indicators">
               <CrossMargin />
             </div>
-            <div data-tour="asset-allocation">
+            <div data-tour="ai-agent">
               <AssetAllocation />
             </div>
           </div>
@@ -61,10 +61,10 @@ const Dashboard = () => {
               <MarginBalance />
             </div>
             <div className="grid grid-cols-[1fr_400px] gap-6">
-              <div data-tour="cross-margin">
+              <div data-tour="market-indicators">
                 <CrossMargin />
               </div>
-              <div data-tour="asset-allocation">
+              <div data-tour="ai-agent">
                 <AssetAllocation />
               </div>
             </div>
