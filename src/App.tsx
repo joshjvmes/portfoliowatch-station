@@ -16,6 +16,7 @@ import Orders from "./pages/Orders";
 import Rewards from "./pages/Rewards";
 import TradingBots from "./pages/TradingBots";
 import SystemStatus from "./pages/SystemStatus";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/rewards" element={<Rewards />} />
           <Route path="/trading-bots" element={<TradingBots />} />
           <Route path="/system-status" element={<SystemStatus />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
