@@ -26,9 +26,9 @@ const TradingSignals = () => {
       const rsi = new RSI(14);
       const bb = new BollingerBands(20, 2);
       const macd = new MACD({ 
-        fast: 12,    // Changed from 'shortPeriod'
-        slow: 26,    // Changed from 'longPeriod'
-        signal: 9    // Changed from 'signalPeriod'
+        short: 12,    // Changed from 'fast'
+        long: 26,     // Changed from 'slow'
+        signal: 9     // This was already correct
       });
       
       const newSignals: SignalData[] = [];
