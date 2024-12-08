@@ -48,10 +48,13 @@ const TopNavigation = () => {
             );
           })}
         </div>
-        <div className="flex items-center space-x-2 text-sm">
+        <Link 
+          to="/system-status"
+          className="flex items-center space-x-2 text-sm hover:text-white transition-colors"
+        >
           <Circle className="h-3 w-3 text-green-500 fill-green-500 animate-pulse" />
-          <span className="text-gray-400">System Online</span>
-        </div>
+          <span className="text-gray-400 hover:text-white">System Online</span>
+        </Link>
       </nav>
     </div>
   );

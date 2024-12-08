@@ -15,6 +15,7 @@ import PortfolioMargin from "./pages/PortfolioMargin";
 import Orders from "./pages/Orders";
 import Rewards from "./pages/Rewards";
 import TradingBots from "./pages/TradingBots";
+import SystemStatus from "./pages/SystemStatus";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/orders" element={<Orders />} />
           <Route path="/rewards" element={<Rewards />} />
           <Route path="/trading-bots" element={<TradingBots />} />
+          <Route path="/system-status" element={<SystemStatus />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
