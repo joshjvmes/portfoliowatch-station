@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Bolt } from "lucide-react";
 import { toast } from "sonner";
-import { AuthError, Session, AuthChangeEvent } from "@supabase/supabase-js";
+import { AuthError, Session } from "@supabase/supabase-js";
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -14,10 +14,14 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
     const initSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
+        console.log("Initial session check:", session);
+        
         if (error) {
           console.error("Session initialization error:", error);
-          // Clear any invalid session state
           await supabase.auth.signOut();
+          setSession(null);
+        } else if (!session) {
+          console.log("No active session found");
           setSession(null);
         } else {
           setSession(session);
@@ -25,6 +29,7 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
       } catch (error) {
         console.error("Session error:", error);
         toast.error("Authentication error. Please try logging in again.");
+        setSession(null);
       } finally {
         setLoading(false);
       }
@@ -33,23 +38,20 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
     initSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session) => {
-      console.log("Auth state changed:", event, session);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
+      console.log("Auth state changed:", event, currentSession);
       
-      switch (event) {
-        case 'SIGNED_OUT':
-          setSession(null);
-          break;
-        case 'SIGNED_IN':
-        case 'TOKEN_REFRESHED':
-        case 'USER_UPDATED':
-          setSession(session);
-          break;
-        default:
-          console.log("Unhandled auth event:", event);
+      if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+        setSession(null);
+        setLoading(false);
+      } else if (
+        event === 'SIGNED_IN' || 
+        event === 'TOKEN_REFRESHED' || 
+        event === 'USER_UPDATED'
+      ) {
+        setSession(currentSession);
+        setLoading(false);
       }
-      
-      setLoading(false);
     });
 
     return () => {
@@ -69,8 +71,7 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!session) {
-    // Clear any invalid session state before redirecting
-    supabase.auth.signOut();
+    console.log("No session, redirecting to login");
     return <Navigate to="/login" replace />;
   }
 
