@@ -55,22 +55,22 @@ export const TourTooltip = () => {
     <div
       ref={refs.setFloating}
       style={floatingStyles}
-      className="z-50 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 border border-gray-200 dark:border-gray-700 animate-fade-in"
+      className="z-50 w-80 bg-[#0B1221]/50 backdrop-blur-xl border border-white/10 rounded-lg shadow-[0_8px_32px_rgba(0,0,0,0.4)] p-4 animate-fade-in"
     >
       <div className="flex justify-between items-start mb-2">
-        <h3 className="font-semibold text-lg">{currentTourStep.title}</h3>
+        <h3 className="font-semibold text-lg text-white">{currentTourStep.title}</h3>
         <Button
           variant="ghost"
           size="icon"
-          className="h-6 w-6"
+          className="h-6 w-6 hover:bg-white/10"
           onClick={endTour}
         >
-          <X className="h-4 w-4" />
+          <X className="h-4 w-4 text-gray-400" />
         </Button>
       </div>
-      <p className="text-gray-600 dark:text-gray-300 mb-4">{currentTourStep.content}</p>
+      <p className="text-gray-300 mb-4">{currentTourStep.content}</p>
       <div className="flex justify-between items-center">
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-gray-400">
           Step {currentStep + 1} of {currentSteps.length}
         </div>
         <div className="flex gap-2">
@@ -78,6 +78,7 @@ export const TourTooltip = () => {
             <Button
               variant="outline"
               size="sm"
+              className="border-white/10 hover:bg-white/10 text-gray-300"
               onClick={previousStep}
             >
               Previous
@@ -85,6 +86,7 @@ export const TourTooltip = () => {
           )}
           <Button
             size="sm"
+            className="bg-[#2563EB] hover:bg-[#2563EB]/80 text-white"
             onClick={handleNext}
           >
             {currentStep === currentSteps.length - 1 ? "Finish" : "Next"}
