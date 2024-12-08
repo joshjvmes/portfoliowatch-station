@@ -3,6 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
@@ -20,6 +22,37 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+  const [session, setSession] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (loading) {
+    return null; // or a loading spinner
+  }
+
+  if (!session) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -30,17 +63,94 @@ const App = () => (
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/holdings" element={<Holdings />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/messages" element={<Messages />} />
-          <Route path="/withdrawal" element={<Withdrawal />} />
-          <Route path="/assets" element={<Assets />} />
-          <Route path="/portfolio-margin" element={<PortfolioMargin />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/rewards" element={<Rewards />} />
-          <Route path="/trading-bots" element={<TradingBots />} />
-          <Route path="/system-status" element={<SystemStatus />} />
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/holdings"
+            element={
+              <PrivateRoute>
+                <Holdings />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/history"
+            element={
+              <PrivateRoute>
+                <History />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/messages"
+            element={
+              <PrivateRoute>
+                <Messages />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/withdrawal"
+            element={
+              <PrivateRoute>
+                <Withdrawal />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/assets"
+            element={
+              <PrivateRoute>
+                <Assets />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/portfolio-margin"
+            element={
+              <PrivateRoute>
+                <PortfolioMargin />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <PrivateRoute>
+                <Orders />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/rewards"
+            element={
+              <PrivateRoute>
+                <Rewards />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/trading-bots"
+            element={
+              <PrivateRoute>
+                <TradingBots />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/system-status"
+            element={
+              <PrivateRoute>
+                <SystemStatus />
+              </PrivateRoute>
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
