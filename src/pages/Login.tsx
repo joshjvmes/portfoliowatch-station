@@ -46,9 +46,9 @@ const Login = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0B1221] via-[#0d1829] to-[#0B1221] p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0B1221] via-[#0d1829] to-[#0B1221] p-4 overflow-auto">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
-      <Card className="w-full max-w-[400px] bg-[#0B1221]/30 border border-white/10 backdrop-blur-xl shadow-[0_0_15px_rgba(0,229,190,0.1)] relative overflow-hidden rounded-2xl animate-[fold-out_0.6s_ease-out]">
+      <Card className="w-full max-w-[400px] min-h-0 bg-[#0B1221]/30 border border-white/10 backdrop-blur-xl shadow-[0_0_15px_rgba(0,229,190,0.1)] relative overflow-hidden rounded-2xl animate-[fold-out_0.6s_ease-out] mx-4 my-auto">
         <div className="absolute inset-0 bg-gradient-to-br from-[#2563EB]/5 via-transparent to-transparent pointer-events-none rounded-2xl" />
         <CardHeader className="relative pb-2">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-[#2563EB] bg-clip-text text-transparent mb-1">
