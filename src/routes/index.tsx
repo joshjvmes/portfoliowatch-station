@@ -17,6 +17,7 @@ import NotFound from "@/pages/NotFound";
 import Deposit from "@/pages/Deposit";
 import VirtualCard from "@/pages/VirtualCard";
 import Settings from "@/pages/Settings";
+import TradingSignals from "@/pages/TradingSignals";
 
 export const routes = [
   {
@@ -86,6 +87,10 @@ export const routes = [
   {
     path: "/settings",
     element: <PrivateRoute><Settings /></PrivateRoute>
+  },
+  {
+    path: "/trading-signals",
+    element: <PrivateRoute><TradingSignals /></PrivateRoute>
   },
   {
     path: "*",
