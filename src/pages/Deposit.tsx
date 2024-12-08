@@ -32,7 +32,6 @@ import {
   Shield,
   Eye,
   EyeOff,
-  Bank,
 } from "lucide-react";
 
 const DepositContent = () => {
@@ -111,7 +110,7 @@ const DepositContent = () => {
                 Wire
               </TabsTrigger>
               <TabsTrigger value="ach" className="data-[state=active]:bg-[#00E5BE] data-[state=active]:text-black">
-                <Bank className="mr-2 h-4 w-4" />
+                <CreditCard className="mr-2 h-4 w-4" />
                 ACH
               </TabsTrigger>
             </TabsList>
