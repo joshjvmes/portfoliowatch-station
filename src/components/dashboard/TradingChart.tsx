@@ -4,6 +4,8 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "rec
 import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useBalanceVisibility } from "@/contexts/BalanceVisibilityContext";
+import { Eye, EyeOff } from "lucide-react";
 
 interface TradingChartProps {
   data: any[];
@@ -14,17 +16,38 @@ const TradingChart = ({ data }: TradingChartProps) => {
   const [stopLoss, setStopLoss] = useState([10]);
   const [takeProfit, setTakeProfit] = useState([20]);
   const isMobile = useIsMobile();
+  const { showBalances, toggleBalances } = useBalanceVisibility();
+  const vaultBalance = "$1,152,025.79";
+  const vaultProfit = "+$1,130,419.05 (47.80%)";
+  const hiddenValue = "*****";
 
   return (
     <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
       <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <CardTitle className="text-xl text-white">Vault P&L</CardTitle>
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <CardTitle className="text-xl text-white">Vault P&L</CardTitle>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleBalances}
+              className="text-gray-400 hover:text-white hover:bg-[#1A2333]"
+            >
+              {showBalances ? (
+                <Eye className="h-5 w-5" />
+              ) : (
+                <EyeOff className="h-5 w-5" />
+              )}
+            </Button>
+          </div>
           <p className="text-2xl md:text-4xl font-bold text-white mt-2 break-words">
-            $1,152,025.79
+            {showBalances ? vaultBalance : hiddenValue}
             <span className="text-[#00E5BE] text-base md:text-xl ml-3">
-              +$1,130,419.05 (47.80%)
+              {showBalances ? vaultProfit : hiddenValue}
             </span>
+          </p>
+          <p className="text-gray-400 mt-1">
+            Available for withdrawal: {showBalances ? vaultBalance : hiddenValue}
           </p>
         </div>
         <Button variant="outline" className="text-gray-400 border-white/10">
