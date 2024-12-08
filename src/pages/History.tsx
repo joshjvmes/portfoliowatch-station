@@ -41,21 +41,20 @@ const History = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Header Section */}
         <div className="flex items-center justify-between">
-          <div>
+          <div className="space-y-1">
             <h2 className="text-2xl font-semibold text-white">Trading History</h2>
-            <p className="text-gray-400">View your recent trading activity</p>
+            <p className="text-muted-foreground">View your recent trading activity</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="relative w-64">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search transactions..."
-                className="pl-10 bg-[#1A2333] border-[#2A3441] text-white"
+                className="pl-10 bg-[#1A2333]/50 border-white/10 text-white placeholder:text-muted-foreground"
               />
             </div>
-            <select className="bg-[#1A2333] border border-[#2A3441] rounded-md px-4 py-2 text-white text-sm">
+            <select className="bg-[#1A2333]/50 border border-white/10 rounded-lg px-4 py-2 text-white text-sm">
               <option value="all">All Types</option>
               <option value="buy">Buy</option>
               <option value="sell">Sell</option>
@@ -63,26 +62,25 @@ const History = () => {
           </div>
         </div>
 
-        {/* Transactions Table */}
-        <Card className="bg-[#0B1221]/50 border-[#2A3441] backdrop-blur-xl">
+        <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
           <CardContent className="p-0">
             <Table>
-              <TableHeader className="bg-[#1A2333]">
-                <TableRow className="border-b border-[#2A3441] hover:bg-transparent">
-                  <TableHead className="text-gray-400">Validator</TableHead>
-                  <TableHead className="text-gray-400">Type</TableHead>
-                  <TableHead className="text-gray-400">Amount</TableHead>
-                  <TableHead className="text-gray-400">Price</TableHead>
-                  <TableHead className="text-gray-400">Total</TableHead>
-                  <TableHead className="text-gray-400">Date</TableHead>
-                  <TableHead className="text-gray-400">Status</TableHead>
+              <TableHeader>
+                <TableRow className="border-white/10 hover:bg-transparent">
+                  <TableHead className="text-muted-foreground">Validator</TableHead>
+                  <TableHead className="text-muted-foreground">Type</TableHead>
+                  <TableHead className="text-muted-foreground">Amount</TableHead>
+                  <TableHead className="text-muted-foreground">Price</TableHead>
+                  <TableHead className="text-muted-foreground">Total</TableHead>
+                  <TableHead className="text-muted-foreground">Date</TableHead>
+                  <TableHead className="text-muted-foreground">Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {mockTransactions.map((transaction) => (
                   <TableRow
                     key={transaction.id}
-                    className="border-b border-[#2A3441] hover:bg-[#1A2333]/50"
+                    className="border-white/10 hover:bg-white/5"
                   >
                     <TableCell className="font-medium text-white">
                       {transaction.validator}
@@ -105,10 +103,18 @@ const History = () => {
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-white">{transaction.amount}</TableCell>
-                    <TableCell className="text-white">{transaction.price}</TableCell>
-                    <TableCell className="text-white">{transaction.total}</TableCell>
-                    <TableCell className="text-gray-400">{transaction.date}</TableCell>
+                    <TableCell className="text-white font-medium">
+                      {transaction.amount}
+                    </TableCell>
+                    <TableCell className="text-white">
+                      {transaction.price}
+                    </TableCell>
+                    <TableCell className="text-white font-medium">
+                      {transaction.total}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {transaction.date}
+                    </TableCell>
                     <TableCell>
                       <span className="px-2 py-1 rounded text-xs bg-blue-500/20 text-blue-400">
                         {transaction.status}
