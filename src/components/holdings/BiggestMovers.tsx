@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Circle, Square, Diamond } from "lucide-react";
 
 const moversData = [
   {
-    icon: "/lovable-uploads/b5c4ca02-3959-4e56-9a16-9b4457a01398.png",
+    icon: <Circle className="h-8 w-8 text-orange-500" />,
     name: "Doland...",
     leverage: "20×",
     price: "$0.1237",
@@ -12,6 +12,7 @@ const moversData = [
     totalValue: "$2.45K",
   },
   {
+    icon: <Square className="h-8 w-8 text-purple-500" />,
     name: "LUCE",
     leverage: "20×",
     price: "$0.1603",
@@ -20,6 +21,7 @@ const moversData = [
     totalValue: "$853",
   },
   {
+    icon: <Diamond className="h-8 w-8 text-blue-500" />,
     name: "Turbo",
     leverage: "20×",
     price: "$0.011443",
@@ -52,11 +54,7 @@ const BiggestMovers = () => {
             <div key={index} className="flex items-center justify-between p-2 hover:bg-white/5 rounded-lg transition-colors">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-white/10 rounded-lg">
-                  {item.icon ? (
-                    <img src={item.icon} alt={item.name} className="h-8 w-8" />
-                  ) : (
-                    <div className="h-8 w-8 bg-indigo-500/20 rounded-lg" />
-                  )}
+                  {item.icon}
                 </div>
                 <div>
                   <div className="text-sm font-medium text-white">{item.name}</div>

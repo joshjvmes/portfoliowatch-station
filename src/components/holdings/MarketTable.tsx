@@ -1,5 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Bitcoin, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
+import { Circle, Square, Diamond, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface MarketData {
@@ -21,7 +21,7 @@ interface MarketData {
 const initialMarketData: MarketData[] = [
   {
     name: "Bitcoin",
-    icon: <Bitcoin className="h-6 w-6 text-orange-500" />,
+    icon: <Circle className="h-6 w-6 text-orange-500" />,
     leverage: "50×",
     price: "$99,960",
     change24h: "0.74%",
@@ -35,7 +35,7 @@ const initialMarketData: MarketData[] = [
   },
   {
     name: "Ethereum",
-    icon: <Bitcoin className="h-6 w-6 text-blue-500" />,
+    icon: <Square className="h-6 w-6 text-blue-500" />,
     leverage: "40×",
     price: "$2,341",
     change24h: "-1.23%",
