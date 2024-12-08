@@ -25,7 +25,8 @@ const TopNavigation = () => {
   const isMobile = useIsMobile();
   const [isViperMode, setIsViperMode] = useState(false);
 
-  const toggleViperMode = () => {
+  const toggleViperMode = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent the Link from navigating when clicking the viper mode toggle
     setIsViperMode(!isViperMode);
     document.documentElement.classList.toggle('viper-mode');
   };
@@ -54,8 +55,9 @@ const TopNavigation = () => {
             );
           })}
         </div>
-        <div 
-          className="flex items-center space-x-2 cursor-pointer group"
+        <Link 
+          to="/system-status"
+          className="flex items-center space-x-2 group"
           onClick={toggleViperMode}
         >
           <Terminal 
@@ -77,7 +79,7 @@ const TopNavigation = () => {
               System Online
             </span>
           )}
-        </div>
+        </Link>
       </nav>
     </div>
   );
