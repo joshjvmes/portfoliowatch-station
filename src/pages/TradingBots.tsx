@@ -6,6 +6,8 @@ import {
   ChartCandlestick,
   ArrowUpDown,
   DollarSign,
+  TrendingUp,
+  TrendingDown,
 } from "lucide-react";
 import HeroStats from "@/components/trading-bots/HeroStats";
 import NavigationTabs from "@/components/trading-bots/NavigationTabs";
@@ -21,6 +23,7 @@ const TradingBots = () => {
       icon: ChartCandlestick,
       description: "Buy low and sell high 24/7 automatically with just one click.",
       features: ["Volatile Markets", "Preset Ranges"],
+      category: "sideways",
     },
     {
       id: "futures-grid",
@@ -29,6 +32,7 @@ const TradingBots = () => {
       description:
         "Amplify your purchasing power with an advanced version of Grid Trading.",
       features: ["Short Orders", "USD-M / COIN-M"],
+      category: "sideways",
     },
     {
       id: "arbitrage-bot",
@@ -36,6 +40,7 @@ const TradingBots = () => {
       icon: DollarSign,
       description: "A delta neutral strategy to earn Funding Fee effortlessly.",
       features: ["Funding Rate Arbitrage", "Hedged Price Risk"],
+      category: "auto-invest",
     },
     {
       id: "rebalancing-bot",
@@ -44,16 +49,31 @@ const TradingBots = () => {
       description:
         "A long term position strategy supporting an investment portfolio.",
       features: ["Diversify risk", "Dynamic rebalance"],
+      category: "auto-invest",
     },
     {
-      id: "algo-order",
-      title: "Algo Order",
-      icon: ChartCandlestick,
+      id: "bull-algo",
+      title: "Bull Market Algo",
+      icon: TrendingUp,
       description:
-        "Enhance execution of large orders in smaller blocks with intelligent algo orders.",
-      features: ["TWAP and POV", "Reduce execution costs"],
+        "Optimize your trading strategy for upward trending markets.",
+      features: ["Long positions", "Momentum tracking"],
+      category: "bullish",
+    },
+    {
+      id: "bear-algo",
+      title: "Bear Market Algo",
+      icon: TrendingDown,
+      description:
+        "Protect and profit during market downturns with automated strategies.",
+      features: ["Short positions", "Downtrend detection"],
+      category: "bearish",
     },
   ];
+
+  const filteredBots = botTypes.filter(bot => 
+    activeTab === "all" ? true : bot.category === activeTab
+  );
 
   return (
     <DashboardLayout>
@@ -68,7 +88,7 @@ const TradingBots = () => {
 
         {/* Bot Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-          {botTypes.map((bot) => (
+          {filteredBots.map((bot) => (
             <BotCard key={bot.id} {...bot} />
           ))}
         </div>
