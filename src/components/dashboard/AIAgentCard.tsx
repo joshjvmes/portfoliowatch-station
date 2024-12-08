@@ -2,10 +2,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Bot, ArrowUpRight, Wallet, Activity } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useBalanceVisibility } from "@/contexts/BalanceVisibilityContext";
 
 const AIAgentCard = () => {
   const [balance, setBalance] = useState(17740000);
   const [spendingLimit, setSpendingLimit] = useState(1750000);
+  const { showBalances } = useBalanceVisibility();
   
   // Simulate balance updates
   useEffect(() => {
@@ -34,7 +36,11 @@ const AIAgentCard = () => {
               <Wallet className="h-5 w-5 text-gray-400" />
               <div>
                 <div className="text-sm text-gray-400">AGENT 01 WALLET</div>
-                <div className="text-white font-medium">{balance.toLocaleString(undefined, { maximumFractionDigits: 2 })} USDC</div>
+                <div className="text-white font-medium">
+                  {showBalances 
+                    ? balance.toLocaleString(undefined, { maximumFractionDigits: 2 })
+                    : "****"} USDC
+                </div>
               </div>
             </div>
             <ArrowUpRight className="h-5 w-5 text-gray-400" />
@@ -42,7 +48,9 @@ const AIAgentCard = () => {
 
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-400">Spending Limit</div>
-            <div className="text-white font-medium">{spendingLimit.toLocaleString()} USDC</div>
+            <div className="text-white font-medium">
+              {showBalances ? spendingLimit.toLocaleString() : "****"} USDC
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
