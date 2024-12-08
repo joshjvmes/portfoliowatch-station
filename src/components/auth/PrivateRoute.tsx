@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Bolt } from "lucide-react";
 import { toast } from "sonner";
-import { AuthError, Session } from "@supabase/supabase-js";
+import { AuthError, Session, AuthChangeEvent } from "@supabase/supabase-js";
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -33,12 +33,11 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
     initSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session) => {
       console.log("Auth state changed:", event, session);
       
       switch (event) {
         case 'SIGNED_OUT':
-        case 'USER_DELETED':
           setSession(null);
           break;
         case 'SIGNED_IN':
