@@ -2,8 +2,9 @@ import TopNavigation from "@/components/dashboard/TopNavigation";
 import SideNavigation from "@/components/dashboard/SideNavigation";
 import { BalanceVisibilityProvider } from "@/contexts/BalanceVisibilityContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
+import { useLocation } from "react-router-dom";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -12,6 +13,19 @@ interface DashboardLayoutProps {
 const DashboardLayoutContent = ({ children }: DashboardLayoutProps) => {
   const isMobile = useIsMobile();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [isPageTransitioning, setIsPageTransitioning] = useState(false);
+  const location = useLocation();
+
+  // Handle page transitions
+  useEffect(() => {
+    if (isMobile) {
+      setIsPageTransitioning(true);
+      const timer = setTimeout(() => {
+        setIsPageTransitioning(false);
+      }, 300); // Match this with the CSS animation duration
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname, isMobile]);
 
   return (
     <div className="min-h-screen bg-[#0B1221]">
@@ -45,8 +59,8 @@ const DashboardLayoutContent = ({ children }: DashboardLayoutProps) => {
             
             {/* Mobile Navigation Overlay */}
             {showMobileMenu && (
-              <div className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm">
-                <div className="fixed inset-y-0 right-0 w-64 bg-[#0B1221] border-l border-white/10">
+              <div className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm animate-fade-in">
+                <div className="fixed inset-y-0 right-0 w-64 bg-[#0B1221] border-l border-white/10 animate-slide-in-right">
                   <div className="p-4">
                     <SideNavigation />
                   </div>
@@ -58,7 +72,17 @@ const DashboardLayoutContent = ({ children }: DashboardLayoutProps) => {
           <SideNavigation />
         )}
         <div className="flex-1 overflow-auto">
-          <main className="p-4 md:p-6">{children}</main>
+          <main 
+            className={`p-4 md:p-6 ${
+              isMobile 
+                ? isPageTransitioning 
+                  ? 'animate-fade-out' 
+                  : 'animate-fade-in'
+                : ''
+            }`}
+          >
+            {children}
+          </main>
         </div>
       </div>
     </div>
