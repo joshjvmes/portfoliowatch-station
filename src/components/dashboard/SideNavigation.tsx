@@ -14,6 +14,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useBalanceVisibility } from "@/contexts/BalanceVisibilityContext";
+import { useEffect } from "react";
 
 const sideNavigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -29,6 +30,31 @@ const SideNavigation = () => {
   const navigate = useNavigate();
   const { showBalances, toggleBalances } = useBalanceVisibility();
 
+  // Check session on component mount
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error || !session) {
+        console.log("No valid session found, redirecting to login");
+        navigate("/login");
+      }
+    };
+
+    checkSession();
+
+    // Set up auth state change listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed:", event);
+      if (event === 'SIGNED_OUT' || !session) {
+        navigate("/login");
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [navigate]);
+
   const handleLogout = async () => {
     console.log("Logout initiated");
     try {
@@ -41,7 +67,7 @@ const SideNavigation = () => {
       }
       console.log("Logout successful, redirecting to login page");
       toast.success("Logged out successfully");
-      navigate("/login");
+      // Navigation will be handled by the auth state change listener
     } catch (error) {
       console.error("Unexpected error during logout:", error);
       toast.error("Error logging out");
