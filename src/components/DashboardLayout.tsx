@@ -15,12 +15,9 @@ import {
   ChevronDown,
   Bot,
   Circle,
-  Eye,
-  EyeOff,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useBalanceVisibility } from "@/contexts/BalanceVisibilityContext";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -29,7 +26,6 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { showBalances, toggleBalances } = useBalanceVisibility();
 
   const sideNavigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -104,20 +100,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         {/* Sidebar */}
         <div className="w-64 bg-[#0B1221]/50 border-r border-white/10 backdrop-blur-xl">
           <div className="h-full flex flex-col">
-            <div className="p-6 flex items-center justify-between">
+            <div className="p-6">
               <h1 className="text-2xl font-bold text-[#00E5BE]">$ROK Trading</h1>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleBalances}
-                className="text-gray-400 hover:text-white"
-              >
-                {showBalances ? (
-                  <Eye className="h-5 w-5" />
-                ) : (
-                  <EyeOff className="h-5 w-5" />
-                )}
-              </Button>
             </div>
             <nav className="flex-1 p-4 space-y-2">
               {sideNavigation.map((item) => {
