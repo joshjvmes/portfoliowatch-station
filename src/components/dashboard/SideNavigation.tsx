@@ -10,6 +10,7 @@ import {
   LogOut,
   Settings,
   ArrowUp,
+  LineChart
 } from "lucide-react";
 
 const SideNavigation = () => {
@@ -26,6 +27,7 @@ const SideNavigation = () => {
     { name: "Virtual Card", icon: CreditCard, route: "/virtual-card" },
     { name: "Messages", icon: MessageCircle, route: "/messages" },
     { name: "Trading Bots", icon: Bot, route: "/trading-bots" },
+    { name: "Trading Signals", icon: LineChart, route: "/trading-signals" },
     { name: "Withdrawal", icon: ArrowDownLeft, route: "/withdrawal" },
   ];
 

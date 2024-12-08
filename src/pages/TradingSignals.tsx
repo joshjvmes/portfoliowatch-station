@@ -4,71 +4,101 @@ import { RSI, BollingerBands, MACD } from "trading-signals";
 import { useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertTriangle } from "lucide-react";
 
 interface SignalData {
   timestamp: number;
   price: number;
-  rsi: number;
-  upperBand: number;
-  lowerBand: number;
-  macd: number;
-  signal: number;
+  rsi: number | null;
+  upperBand: number | null;
+  lowerBand: number | null;
+  macd: number | null;
+  signal: number | null;
 }
 
 const TradingSignals = () => {
   const [signals, setSignals] = useState<SignalData[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   
   useEffect(() => {
-    // Simulate price data for demonstration
-    const generateSignals = () => {
-      const rsi = new RSI(14);
-      const bb = new BollingerBands(20, 2);
-      const macd = new MACD({
-        fastPeriod: 12,
-        slowPeriod: 26,
-        signalPeriod: 9
-      });
-      
-      const newSignals: SignalData[] = [];
-      
-      for (let i = 0; i < 100; i++) {
-        const price = 40000 + Math.sin(i / 10) * 1000 + Math.random() * 500;
-        rsi.update(price);
-        bb.update(price);
-        macd.update(price);
-        
-        if (rsi.isStable && bb.isStable && macd.isStable) {
-          newSignals.push({
-            timestamp: Date.now() - (100 - i) * 3600000,
-            price,
-            rsi: rsi.getResult().toNumber(),
-            upperBand: bb.getResult().upper.toNumber(),
-            lowerBand: bb.getResult().lower.toNumber(),
-            macd: macd.getResult().macd?.toNumber() || 0,
-            signal: macd.getResult().signal?.toNumber() || 0,
+    try {
+      // Simulate price data for demonstration
+      const generateSignals = () => {
+        try {
+          const rsi = new RSI(14);
+          const bb = new BollingerBands(20, 2);
+          const macd = new MACD({ 
+            period: 12,
+            signalPeriod: 9
           });
+          
+          const newSignals: SignalData[] = [];
+          
+          for (let i = 0; i < 100; i++) {
+            const price = 40000 + Math.sin(i / 10) * 1000 + Math.random() * 500;
+            
+            try {
+              rsi.update(price);
+              bb.update(price);
+              macd.update(price);
+              
+              if (rsi.isStable && bb.isStable && macd.isStable) {
+                newSignals.push({
+                  timestamp: Date.now() - (100 - i) * 3600000,
+                  price,
+                  rsi: rsi.getResult().toNumber(),
+                  upperBand: bb.getResult().upper.toNumber(),
+                  lowerBand: bb.getResult().lower.toNumber(),
+                  macd: macd.getResult().macd?.toNumber() || null,
+                  signal: macd.getResult().signal?.toNumber() || null,
+                });
+              }
+            } catch (err) {
+              console.error("Error updating indicators:", err);
+              continue; // Skip this data point but continue processing others
+            }
+          }
+          
+          setSignals(newSignals);
+          setError(null);
+        } catch (err) {
+          console.error("Error generating signals:", err);
+          setError("Failed to generate trading signals. Please try again later.");
         }
-      }
-      
-      setSignals(newSignals);
-    };
+      };
 
-    generateSignals();
-    
-    // Update signals every 30 seconds
-    const interval = setInterval(() => {
       generateSignals();
-      toast({
-        title: "Signals Updated",
-        description: "Trading signals have been refreshed with latest data",
-      });
-    }, 30000);
+      
+      // Update signals every 30 seconds
+      const interval = setInterval(() => {
+        generateSignals();
+        toast({
+          title: "Signals Updated",
+          description: "Trading signals have been refreshed with latest data",
+        });
+      }, 30000);
 
-    return () => clearInterval(interval);
+      return () => clearInterval(interval);
 
+    } catch (err) {
+      console.error("Error in trading signals setup:", err);
+      setError("Failed to initialize trading signals. Please try again later.");
+    }
   }, [toast]);
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
