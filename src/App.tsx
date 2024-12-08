@@ -23,139 +23,152 @@ import NotFound from "./pages/NotFound";
 import Deposit from "./pages/Deposit";
 import VirtualCard from "./pages/VirtualCard";
 import Settings from "./pages/Settings";
+import React from 'react';
 
-const queryClient = new QueryClient();
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <BrowserRouter>
-        <TourProvider>
-          <Toaster />
-          <Sonner />
-          <TourTooltip />
-          <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route
-              path="/dashboard"
-              element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/holdings"
-              element={
-                <PrivateRoute>
-                  <Holdings />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/history"
-              element={
-                <PrivateRoute>
-                  <History />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/messages"
-              element={
-                <PrivateRoute>
-                  <Messages />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/deposit"
-              element={
-                <PrivateRoute>
-                  <Deposit />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/withdrawal"
-              element={
-                <PrivateRoute>
-                  <Withdrawal />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/assets"
-              element={
-                <PrivateRoute>
-                  <Assets />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/portfolio-margin"
-              element={
-                <PrivateRoute>
-                  <PortfolioMargin />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/orders"
-              element={
-                <PrivateRoute>
-                  <Orders />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/rewards"
-              element={
-                <PrivateRoute>
-                  <Rewards />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/trading-bots"
-              element={
-                <PrivateRoute>
-                  <TradingBots />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/system-status"
-              element={
-                <PrivateRoute>
-                  <SystemStatus />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/virtual-card"
-              element={
-                <PrivateRoute>
-                  <VirtualCard />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <PrivateRoute>
-                  <Settings />
-                </PrivateRoute>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </TourProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  return (
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <BrowserRouter>
+            <TourProvider>
+              <Toaster />
+              <Sonner />
+              <TourTooltip />
+              <Routes>
+                <Route path="/" element={<Navigate to="/login" replace />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <PrivateRoute>
+                      <Dashboard />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/holdings"
+                  element={
+                    <PrivateRoute>
+                      <Holdings />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/history"
+                  element={
+                    <PrivateRoute>
+                      <History />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/messages"
+                  element={
+                    <PrivateRoute>
+                      <Messages />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/deposit"
+                  element={
+                    <PrivateRoute>
+                      <Deposit />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/withdrawal"
+                  element={
+                    <PrivateRoute>
+                      <Withdrawal />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/assets"
+                  element={
+                    <PrivateRoute>
+                      <Assets />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/portfolio-margin"
+                  element={
+                    <PrivateRoute>
+                      <PortfolioMargin />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/orders"
+                  element={
+                    <PrivateRoute>
+                      <Orders />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/rewards"
+                  element={
+                    <PrivateRoute>
+                      <Rewards />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/trading-bots"
+                  element={
+                    <PrivateRoute>
+                      <TradingBots />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/system-status"
+                  element={
+                    <PrivateRoute>
+                      <SystemStatus />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/virtual-card"
+                  element={
+                    <PrivateRoute>
+                      <VirtualCard />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <PrivateRoute>
+                      <Settings />
+                    </PrivateRoute>
+                  }
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </TourProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
+  );
+};
 
 export default App;
