@@ -52,3 +52,44 @@
     scrollbar-width: none;
   }
 }
+
+/* Viper Mode Styles */
+.viper-mode {
+  --viper-black: #000000;
+  --viper-green: #00ff00;
+}
+
+.viper-mode body {
+  background-color: var(--viper-black);
+  color: var(--viper-green);
+}
+
+.viper-mode .bg-\[\#0B1221\] {
+  background-color: var(--viper-black);
+}
+
+.viper-mode .border-white\/10 {
+  border-color: var(--viper-green);
+  border-opacity: 0.2;
+}
+
+.viper-mode .bg-\[\#1A2333\] {
+  background-color: var(--viper-black);
+}
+
+.viper-mode .text-\[\#00E5BE\] {
+  color: var(--viper-green);
+}
+
+.viper-mode .text-gray-400 {
+  color: var(--viper-green);
+  opacity: 0.7;
+}
+
+.viper-mode .hover\:text-white:hover {
+  color: var(--viper-green);
+}
+
+.viper-mode .hover\:bg-\[\#1A2333\]:hover {
+  background-color: rgba(0, 255, 0, 0.1);
+}
