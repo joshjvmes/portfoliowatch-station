@@ -1,12 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Eye, ChevronRight } from "lucide-react";
+import { Eye, EyeOff, ChevronRight } from "lucide-react";
 import { useBalanceVisibility } from "@/contexts/BalanceVisibilityContext";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const MarginBalance = () => {
-  const { showBalances } = useBalanceVisibility();
+  const { showBalances, toggleBalances } = useBalanceVisibility();
   const hiddenValue = "*****";
   const [mode, setMode] = useState<"Cross" | "Isolated">("Cross");
   const [showAutoRepayMenu, setShowAutoRepayMenu] = useState(false);
@@ -33,7 +33,18 @@ const MarginBalance = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <h2 className="text-xl font-semibold text-white">Margin Balance</h2>
-              <Eye className="h-5 w-5 text-gray-400" />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleBalances}
+                className="text-gray-400 hover:text-white hover:bg-[#1A2333] -ml-2"
+              >
+                {showBalances ? (
+                  <Eye className="h-5 w-5" />
+                ) : (
+                  <EyeOff className="h-5 w-5" />
+                )}
+              </Button>
             </div>
             <div className="flex gap-2">
               <Button 
