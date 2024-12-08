@@ -52,3 +52,12 @@
     scrollbar-width: none;
   }
 }
+
+/* Black and white theme */
+.black-and-white {
+  filter: grayscale(100%);
+}
+
+.black-and-white * {
+  transition: filter 0.3s ease-in-out;
+}
