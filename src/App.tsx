@@ -21,6 +21,7 @@ import Rewards from "./pages/Rewards";
 import TradingBots from "./pages/TradingBots";
 import SystemStatus from "./pages/SystemStatus";
 import NotFound from "./pages/NotFound";
+import Deposit from "./pages/Deposit";
 
 const queryClient = new QueryClient();
 
@@ -96,6 +97,14 @@ const App = () => (
               element={
                 <PrivateRoute>
                   <Messages />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/deposit"
+              element={
+                <PrivateRoute>
+                  <Deposit />
                 </PrivateRoute>
               }
             />

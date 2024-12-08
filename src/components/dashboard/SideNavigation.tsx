@@ -10,6 +10,7 @@ import {
   Bot,
   Eye,
   EyeOff,
+  PlusCircle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -19,6 +20,7 @@ const sideNavigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Holdings", href: "/holdings", icon: Wallet },
   { name: "Trading Bots", href: "/trading-bots", icon: Bot },
+  { name: "Deposit", href: "/deposit", icon: PlusCircle },
   { name: "Withdrawal", href: "/withdrawal", icon: ArrowDownToLine },
   { name: "History", href: "/history", icon: History },
   { name: "Messages", href: "/messages", icon: MessageSquare },
