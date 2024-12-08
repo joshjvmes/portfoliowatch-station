@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/card";
 import { Wallet, ArrowRight, Shield, Eye, EyeOff } from "lucide-react";
 
-const Withdrawal = () => {
+const WithdrawalContent = () => {
   const [walletAddress, setWalletAddress] = useState("");
   const [currency, setCurrency] = useState("");
   const [amount, setAmount] = useState("");
@@ -38,41 +38,40 @@ const Withdrawal = () => {
   };
 
   return (
-    <DashboardLayout>
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Balance Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-xl text-gray-400">Available Balance</CardTitle>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={toggleBalances}
-                  className="text-gray-400 hover:text-white hover:bg-[#1A2333]"
-                >
-                  {showBalances ? (
-                    <Eye className="h-5 w-5" />
-                  ) : (
-                    <EyeOff className="h-5 w-5" />
-                  )}
-                </Button>
-              </div>
-              <p className="text-3xl font-bold text-[#00E5BE]">
-                {showBalances ? availableBalance : hiddenValue}
-              </p>
-            </CardHeader>
-          </Card>
-          <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
-            <CardHeader>
-              <CardTitle className="text-xl text-gray-400">24h Withdrawal Limit</CardTitle>
-              <p className="text-3xl font-bold text-white">$100,000.00</p>
-            </CardHeader>
-          </Card>
-        </div>
+    <div className="max-w-4xl mx-auto space-y-8">
+      {/* Balance Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-xl text-gray-400">Available Balance</CardTitle>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleBalances}
+                className="text-gray-400 hover:text-white hover:bg-[#1A2333]"
+              >
+                {showBalances ? (
+                  <Eye className="h-5 w-5" />
+                ) : (
+                  <EyeOff className="h-5 w-5" />
+                )}
+              </Button>
+            </div>
+            <p className="text-3xl font-bold text-[#00E5BE]">
+              {showBalances ? availableBalance : hiddenValue}
+            </p>
+          </CardHeader>
+        </Card>
+        <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
+          <CardHeader>
+            <CardTitle className="text-xl text-gray-400">24h Withdrawal Limit</CardTitle>
+            <p className="text-3xl font-bold text-white">$100,000.00</p>
+          </CardHeader>
+        </Card>
+      </div>
 
-        {/* Withdrawal Form */}
+      {/* Withdrawal Form */}
         <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
           <CardHeader>
             <CardTitle className="text-2xl text-[#00E5BE] flex items-center gap-2">
@@ -166,7 +165,14 @@ const Withdrawal = () => {
             </form>
           </CardContent>
         </Card>
-      </div>
+    </div>
+  );
+};
+
+const Withdrawal = () => {
+  return (
+    <DashboardLayout>
+      <WithdrawalContent />
     </DashboardLayout>
   );
 };
