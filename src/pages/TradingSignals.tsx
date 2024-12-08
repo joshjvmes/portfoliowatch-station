@@ -25,10 +25,10 @@ const TradingSignals = () => {
     const generateSignals = () => {
       const rsi = new RSI(14);
       const bb = new BollingerBands(20, 2);
-      const macd = new MACD({ 
-        short: 12,    // Changed from 'fast'
-        long: 26,     // Changed from 'slow'
-        signal: 9     // This was already correct
+      const macd = new MACD({
+        fastPeriod: 12,
+        slowPeriod: 26,
+        signalPeriod: 9
       });
       
       const newSignals: SignalData[] = [];
