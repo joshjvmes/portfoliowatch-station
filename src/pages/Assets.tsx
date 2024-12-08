@@ -14,7 +14,7 @@ const Assets = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-[#1A2333]/50 p-4 rounded-lg border border-white/10">
                 <p className="text-gray-400">Total Balance</p>
-                <p className="text-2xl font-bold text-white mt-1">$116,428</p>
+                <p className="text-2xl font-bold text-white mt-1">$1,152,025.79</p>
                 <p className="text-[#00E5BE] text-sm">+$12,493 (24h)</p>
               </div>
               <div className="bg-[#1A2333]/50 p-4 rounded-lg border border-white/10">
