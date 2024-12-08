@@ -1,11 +1,10 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import VaultHeader from "./chart/VaultHeader";
 import DateRangeSelector from "./chart/DateRangeSelector";
 import VaultChart from "./chart/VaultChart";
 import TradingControls from "./chart/TradingControls";
-import { subDays, subMonths, subQuarters } from "date-fns";
 
 interface TradingChartProps {
   data: any[];
@@ -29,35 +28,6 @@ const TradingChart = ({ data }: TradingChartProps) => {
     { label: 'All', value: 'all' },
   ];
 
-  const filteredData = useMemo(() => {
-    const now = new Date();
-    let cutoffDate;
-
-    switch (selectedRange) {
-      case '24h':
-        cutoffDate = subDays(now, 1);
-        break;
-      case '7d':
-        cutoffDate = subDays(now, 7);
-        break;
-      case '30d':
-        cutoffDate = subMonths(now, 1);
-        break;
-      case 'Q':
-        cutoffDate = subQuarters(now, 1);
-        break;
-      case 'all':
-        return data;
-      default:
-        cutoffDate = subDays(now, 7);
-    }
-
-    return data.filter(item => {
-      const itemDate = new Date(item.time);
-      return itemDate >= cutoffDate;
-    });
-  }, [selectedRange, data]);
-
   return (
     <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
       <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -73,7 +43,7 @@ const TradingChart = ({ data }: TradingChartProps) => {
         />
       </CardHeader>
       <CardContent>
-        <VaultChart data={filteredData} />
+        <VaultChart data={data} />
         {!isMobile && (
           <TradingControls
             tradeAmount={tradeAmount}
