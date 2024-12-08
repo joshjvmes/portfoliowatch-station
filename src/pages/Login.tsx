@@ -106,10 +106,6 @@ const Login = () => {
             }}
             providers={[]}
             redirectTo={`${window.location.origin}/dashboard`}
-            onError={(error) => {
-              console.error('Auth error:', error);
-              toast.error(error.message);
-            }}
             magicLink={false}
             showLinks={false}
             view="sign_in"
