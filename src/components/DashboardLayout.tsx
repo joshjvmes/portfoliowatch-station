@@ -3,7 +3,6 @@ import SideNavigation from "@/components/dashboard/SideNavigation";
 import { BalanceVisibilityProvider } from "@/contexts/BalanceVisibilityContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 
 interface DashboardLayoutProps {
@@ -23,14 +22,25 @@ const DashboardLayoutContent = ({ children }: DashboardLayoutProps) => {
             <Button
               variant="ghost"
               size="icon"
-              className="fixed bottom-4 right-4 z-50 bg-primary text-white rounded-full shadow-lg"
+              className="fixed bottom-4 right-4 z-50 bg-primary text-white rounded-full shadow-lg w-12 h-12 p-0 overflow-hidden"
               onClick={() => setShowMobileMenu(!showMobileMenu)}
             >
-              {showMobileMenu ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
+              <div className="relative w-6 h-6">
+                <span
+                  className={`absolute left-0 top-2 block h-0.5 w-6 bg-current transform transition-all duration-200 ${
+                    showMobileMenu
+                      ? "rotate-45 translate-y-0"
+                      : "translate-y-[-4px]"
+                  }`}
+                />
+                <span
+                  className={`absolute left-0 bottom-2 block h-0.5 w-6 bg-current transform transition-all duration-200 ${
+                    showMobileMenu
+                      ? "-rotate-45 translate-y-0"
+                      : "translate-y-[4px]"
+                  }`}
+                />
+              </div>
             </Button>
             
             {/* Mobile Navigation Overlay */}
