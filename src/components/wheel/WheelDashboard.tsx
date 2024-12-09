@@ -111,9 +111,10 @@ export const WheelDashboard = () => {
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  {quadrantData[selectedQuadrant].icon && 
-                    <quadrantData[selectedQuadrant].icon className="w-5 h-5" />
-                  }
+                  {selectedQuadrant && (() => {
+                    const Icon = quadrantData[selectedQuadrant].icon;
+                    return <Icon className="w-5 h-5" />;
+                  })()}
                   {quadrantData[selectedQuadrant].title}
                 </DialogTitle>
               </DialogHeader>
