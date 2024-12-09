@@ -1,5 +1,5 @@
 interface ExchangePrice {
-  exchange: string;
+  name: string;
   price: number;
 }
 
@@ -21,8 +21,8 @@ export const calculateArbitrageOpportunities = (prices: ExchangePrice[]) => {
       
       if (profitPercentage > 0.5) { // Only show opportunities with >0.5% profit
         opportunities.push({
-          buyExchange: price1 < price2 ? prices[i].exchange : prices[j].exchange,
-          sellExchange: price1 < price2 ? prices[j].exchange : prices[i].exchange,
+          buyExchange: price1 < price2 ? prices[i].name : prices[j].name,
+          sellExchange: price1 < price2 ? prices[j].name : prices[i].name,
           profitPercentage,
           buyPrice: Math.min(price1, price2),
           sellPrice: Math.max(price1, price2)

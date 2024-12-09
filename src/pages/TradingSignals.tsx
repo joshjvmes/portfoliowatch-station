@@ -27,7 +27,7 @@ const TradingSignals = () => {
   // Simulate different exchange prices with small variations
   const simulateExchangePrices = (basePrice: number) => {
     return EXCHANGES.map(exchange => ({
-      exchange: exchange.name,
+      name: exchange.name,
       price: basePrice * (1 + (Math.random() - 0.5) * 0.02) // +/- 1% variation
     }));
   };
