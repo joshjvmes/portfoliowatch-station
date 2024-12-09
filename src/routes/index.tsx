@@ -18,6 +18,7 @@ import Deposit from "@/pages/Deposit";
 import VirtualCard from "@/pages/VirtualCard";
 import Settings from "@/pages/Settings";
 import TradingSignals from "@/pages/TradingSignals";
+import Wheel from "@/pages/Wheel";
 
 export const routes = [
   {
@@ -35,6 +36,10 @@ export const routes = [
   {
     path: "/dashboard",
     element: <PrivateRoute><Dashboard /></PrivateRoute>
+  },
+  {
+    path: "/wheel",
+    element: <PrivateRoute><Wheel /></PrivateRoute>
   },
   {
     path: "/holdings",
