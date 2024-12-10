@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -13,12 +13,34 @@ import {
   LineChart,
   Wallet
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const SideNavigation = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isActiveRoute = (route: string) => {
     return location.pathname === route;
+  };
+
+  const handleLogout = async () => {
+    try {
+      // Disconnect Phantom wallet if connected
+      const provider = (window as any).solana;
+      if (provider?.isPhantom) {
+        await provider.disconnect();
+        localStorage.removeItem('phantomConnected');
+      }
+
+      // Sign out from Supabase
+      await supabase.auth.signOut();
+      toast.success('Logged out successfully');
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Error logging out');
+    }
   };
 
   const navigationItems = [
@@ -60,7 +82,10 @@ const SideNavigation = () => {
           <Settings className="h-5 w-5" />
           Settings
         </Link>
-        <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors">
+        <button 
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+        >
           <LogOut className="h-5 w-5" />
           Logout
         </button>
