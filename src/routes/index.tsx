@@ -5,6 +5,22 @@ import Register from "@/pages/Register";
 import Dashboard from "@/pages/Dashboard";
 import UserDashboard from "@/pages/UserDashboard";
 import Index from "@/pages/Index";
+import Wheel from "@/pages/Wheel";
+import Holdings from "@/pages/Holdings";
+import { History } from "@/pages/History";
+import Messages from "@/pages/Messages";
+import Deposit from "@/pages/Deposit";
+import Withdrawal from "@/pages/Withdrawal";
+import Assets from "@/pages/Assets";
+import PortfolioMargin from "@/pages/PortfolioMargin";
+import Orders from "@/pages/Orders";
+import Rewards from "@/pages/Rewards";
+import TradingBots from "@/pages/TradingBots";
+import SystemStatus from "@/pages/SystemStatus";
+import VirtualCard from "@/pages/VirtualCard";
+import Settings from "@/pages/Settings";
+import TradingSignals from "@/pages/TradingSignals";
+import NotFound from "@/pages/NotFound";
 
 export const routes = [
   {
