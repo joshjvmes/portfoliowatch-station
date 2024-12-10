@@ -14,7 +14,7 @@ export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
 const chains = [mainnet, polygon];
 
-const { publicClient } = configureChains(
+const { publicClient, webSocketPublicClient } = configureChains(
   chains,
   [w3mProvider({ projectId })]
 );
@@ -24,8 +24,10 @@ export const wagmiConfig = createConfig({
   connectors: w3mConnectors({ 
     projectId,
     chains,
+    version: 2,
   }),
   publicClient,
+  webSocketPublicClient,
 });
 
 export const ethereumClient = new EthereumClient(wagmiConfig, chains);
@@ -49,14 +51,8 @@ const WalletConnectButton = () => {
         return;
       }
 
-      if (!window.ethereum) {
-        console.log('No Ethereum provider detected');
-        toast.error('Please install MetaMask or another Web3 wallet');
-        return;
-      }
-
       // Create and dispatch the event
-      const event = new CustomEvent('w3m-open-modal');
+      const event = new CustomEvent('w3m-open-modal', { bubbles: true });
       window.dispatchEvent(event);
       console.log('Web3Modal event dispatched');
 
@@ -81,7 +77,6 @@ const WalletConnectButton = () => {
   );
 };
 
-// Separate the Web3Modal configuration
 const Web3ModalConfig = () => {
   return (
     <Web3Modal
@@ -91,6 +86,7 @@ const Web3ModalConfig = () => {
       themeVariables={{
         '--w3m-accent-color': '#00E5BE',
         '--w3m-background-color': '#0B1221',
+        '--w3m-z-index': '1000',
       }}
     />
   );
@@ -99,9 +95,7 @@ const Web3ModalConfig = () => {
 const WalletConnect = () => {
   return (
     <>
-      <WagmiConfig config={wagmiConfig}>
-        <WalletConnectButton />
-      </WagmiConfig>
+      <WalletConnectButton />
       <Web3ModalConfig />
     </>
   );
