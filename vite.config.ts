@@ -11,6 +11,13 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       'buffer': 'buffer/',
+      // Add Node.js built-in module polyfills
+      path: 'path-browserify',
+      os: 'os-browserify/browser',
+      fs: false,
+      net: false,
+      tls: false,
+      crypto: false,
     },
   },
   define: {
@@ -22,8 +29,13 @@ export default defineConfig({
       '@jup-ag/core',
       'buffer',
       'jsbi',
+      '@solana/spl-token',
+      '@solana/web3.js',
     ],
-    exclude: ['@jup-ag/common'],
+    exclude: [
+      '@jup-ag/common',
+      '@mercurial-finance/optimist',
+    ],
     esbuildOptions: {
       target: 'esnext',
     },
@@ -39,7 +51,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           jupiter: ['@jup-ag/core'],
-          solana: ['@solana/web3.js'],
+          solana: ['@solana/web3.js', '@solana/spl-token'],
         },
       },
     },
