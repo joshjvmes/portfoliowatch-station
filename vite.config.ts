@@ -15,10 +15,8 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      // Add specific resolutions for problematic packages
-      '@jup-ag/common': '@jup-ag/common/dist/lib/index.js',
     },
-    mainFields: ['browser', 'module', 'main', 'jsnext:main'],
+    mainFields: ['browser', 'module', 'main'],
   },
   define: {
     'process.env': {},
@@ -36,7 +34,6 @@ export default defineConfig(({ mode }) => ({
     },
     include: [
       '@jup-ag/core',
-      '@jup-ag/common',
       '@solana/web3.js',
       'buffer',
     ]
