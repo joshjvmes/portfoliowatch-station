@@ -4,6 +4,9 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
+  server: {
+    port: 8080
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -17,11 +20,10 @@ export default defineConfig({
   optimizeDeps: {
     include: [
       '@jup-ag/core',
-      '@jup-ag/common',
-      '@solana/web3.js',
       'buffer',
       'jsbi',
     ],
+    exclude: ['@jup-ag/common'],
     esbuildOptions: {
       target: 'esnext',
     },
@@ -29,15 +31,14 @@ export default defineConfig({
   build: {
     target: 'esnext',
     commonjsOptions: {
-      include: [
-        /node_modules/,
-        /\@jup-ag/,
-      ],
+      include: [/node_modules/],
+      transformMixedEsModules: true,
     },
     rollupOptions: {
+      external: ['@jup-ag/common'],
       output: {
         manualChunks: {
-          jupiter: ['@jup-ag/core', '@jup-ag/common'],
+          jupiter: ['@jup-ag/core'],
           solana: ['@solana/web3.js'],
         },
       },
