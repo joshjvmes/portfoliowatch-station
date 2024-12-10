@@ -1,5 +1,5 @@
 import { Token, CurrencyAmount, TradeType, Percent } from '@uniswap/sdk-core';
-import { AlphaRouter } from '@uniswap/smart-order-router';
+import { AlphaRouter, SwapType } from '@uniswap/smart-order-router';
 import { ethers } from 'ethers';
 
 // Common tokens
@@ -20,7 +20,7 @@ export const USDC = new Token(
 );
 
 // Initialize router with provider
-export const initializeRouter = (provider: ethers.providers.Provider) => {
+export const initializeRouter = (provider: ethers.providers.JsonRpcProvider) => {
   return new AlphaRouter({ chainId: 1, provider });
 };
 
@@ -39,6 +39,7 @@ export const getQuote = async (
         recipient: ethers.constants.AddressZero,
         slippageTolerance: new Percent(5, 100), // 5% slippage
         deadline: Math.floor(Date.now() / 1000 + 1800), // 30 minute deadline
+        type: SwapType.SWAP_ROUTER_02
       }
     );
 
