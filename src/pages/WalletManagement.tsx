@@ -31,12 +31,12 @@ const WalletManagementContent = () => {
       setTransactions([]);
     };
 
-    appKit.on('connect', handleConnect);
-    appKit.on('disconnect', handleDisconnect);
+    (appKit as any).on('connect', handleConnect);
+    (appKit as any).on('disconnect', handleDisconnect);
 
     return () => {
-      appKit.off('connect', handleConnect);
-      appKit.off('disconnect', handleDisconnect);
+      (appKit as any).off('connect', handleConnect);
+      (appKit as any).off('disconnect', handleDisconnect);
     };
   }, []);
 

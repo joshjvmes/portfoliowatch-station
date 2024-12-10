@@ -4,6 +4,7 @@ import { Wallet, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { AppKit } from '@reown/appkit';
 import { SolanaAdapter } from '@reown/appkit-adapter-solana';
+import type { AppKitNetwork } from '@reown/appkit-common';
 
 // Initialize AppKit with Solana adapter
 export const appKit = new AppKit({
@@ -12,8 +13,8 @@ export const appKit = new AppKit({
   adapters: [
     new SolanaAdapter()
   ],
-  networks: ['solana:devnet']
-});
+  networks: ['solana:devnet' as AppKitNetwork]
+}) as any; // Type assertion needed due to incomplete types in AppKit
 
 // Export configuration for Web3Modal
 export const projectId = '3bc71515e830445a56ca773f191fe27e';
