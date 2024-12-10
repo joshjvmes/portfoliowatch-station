@@ -20,7 +20,8 @@ export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ 
     projectId, 
-    chains 
+    chains,
+    version: 2 
   }),
   publicClient,
 });
@@ -30,7 +31,7 @@ export const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
 const WalletConnectButton = () => {
   const { address, isConnected } = useAccount();
-  const { connect } = useConnect();
+  const { connectAsync, connectors } = useConnect();
   const { disconnect } = useDisconnect();
   const [mounted, setMounted] = useState(false);
 
@@ -42,7 +43,13 @@ const WalletConnectButton = () => {
 
   const handleConnect = async () => {
     try {
-      await connect();
+      const connector = connectors[0]; // WalletConnect connector
+      if (!connector) {
+        toast.error('WalletConnect not available');
+        return;
+      }
+      
+      await connectAsync({ connector });
       toast.success('Wallet connected successfully!');
     } catch (error) {
       toast.error('Failed to connect wallet');
@@ -52,7 +59,7 @@ const WalletConnectButton = () => {
 
   const handleDisconnect = async () => {
     try {
-      await disconnect();
+      disconnect();
       toast.success('Wallet disconnected');
     } catch (error) {
       toast.error('Failed to disconnect wallet');
