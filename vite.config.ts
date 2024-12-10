@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => ({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+    mainFields: ['browser', 'module', 'main'],
   },
   define: {
     'process.env': {},
@@ -27,5 +28,10 @@ export default defineConfig(({ mode }) => ({
         global: 'globalThis'
       }
     }
+  },
+  build: {
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
   }
 }));

@@ -12,7 +12,7 @@ import {
 import { toast } from "sonner";
 import { ArrowDownUp } from "lucide-react";
 import { Jupiter } from "@jup-ag/core";
-import { Connection, PublicKey } from "@solana/web3.js";
+import { Connection, PublicKey, sendAndConfirmRawTransaction } from "@solana/web3.js";
 import { getProvider } from "@/utils/solana";
 import JSBI from 'jsbi';
 
@@ -151,7 +151,16 @@ const SwapInterface = () => {
         routeInfo: routes.routesInfos[0],
       });
 
-      const { signature } = await swapTransaction.execute();
+      // Get the connection from Jupiter instance
+      const connection = jupiter.connection();
+      
+      // Sign and send the transaction
+      const rawTransaction = swapTransaction.serialize();
+      const signature = await sendAndConfirmRawTransaction(
+        connection,
+        rawTransaction,
+        { commitment: 'confirmed' }
+      );
       
       toast.success('Swap executed successfully!');
       console.log('Swap transaction:', signature);
