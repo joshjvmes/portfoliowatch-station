@@ -21,7 +21,7 @@ export const appKit = new AppKit({
   networks: [{
     id: 'solana:devnet',
     name: 'Solana Devnet',
-    network: 'devnet'
+    type: 'devnet'
   }]
 }) as any; // Type assertion needed due to incomplete types in AppKit
 
