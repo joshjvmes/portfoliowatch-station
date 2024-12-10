@@ -39,8 +39,7 @@ export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ 
     projectId, 
-    chains,
-    version: 2 // Add version 2 to ensure latest Web3Modal functionality
+    chains
   }),
   publicClient,
 });
