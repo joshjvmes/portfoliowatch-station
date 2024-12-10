@@ -2,16 +2,15 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Power, ExternalLink } from "lucide-react";
-import { useWalletConnection } from "@/hooks/useWalletConnection";
-import { useNetwork } from 'wagmi';
 
-export const WalletInfo = () => {
-  const { address, chain, balance, handleDisconnect } = useWalletConnection();
-  const { chains } = useNetwork();
+interface WalletInfoProps {
+  address: string;
+  handleDisconnect: () => void;
+}
 
+export const WalletInfo = ({ address, handleDisconnect }: WalletInfoProps) => {
   const getExplorerLink = () => {
-    if (!address || !chain?.blockExplorers?.default?.url) return '#';
-    return `${chain.blockExplorers.default.url}/address/${address}`;
+    return `https://explorer.solana.com/address/${address}`;
   };
 
   return (
@@ -29,7 +28,7 @@ export const WalletInfo = () => {
                 href={getExplorerLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#00E5BE] hover:text-[#00E5BE]/80"
+                className="text-[#AB9FF2] hover:text-[#AB9FF2]/80"
               >
                 <ExternalLink className="h-4 w-4" />
               </a>
@@ -37,20 +36,9 @@ export const WalletInfo = () => {
           </div>
           <div>
             <p className="text-gray-400">Network</p>
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-[#00E5BE]/10 text-[#00E5BE] border-[#00E5BE]/20">
-                {chain?.name || 'Unknown Network'}
-              </Badge>
-              {chain?.id && (
-                <Badge variant="outline" className="bg-gray-500/10 text-gray-400 border-gray-500/20">
-                  Chain ID: {chain.id}
-                </Badge>
-              )}
-            </div>
-          </div>
-          <div>
-            <p className="text-gray-400">Balance</p>
-            <p>{balance?.formatted ? parseFloat(balance.formatted).toFixed(4) : '0'} {balance?.symbol}</p>
+            <Badge variant="outline" className="bg-[#AB9FF2]/10 text-[#AB9FF2] border-[#AB9FF2]/20">
+              Solana
+            </Badge>
           </div>
         </div>
         <Button

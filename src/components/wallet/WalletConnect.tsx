@@ -1,79 +1,86 @@
-import { configureChains, createConfig } from 'wagmi';
-import { mainnet, polygon, optimism, arbitrum, base, zora } from 'wagmi/chains';
-import { createWeb3Modal } from '@web3modal/wagmi';
-import { WagmiConfig } from 'wagmi';
+import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Wallet } from "lucide-react";
-import { useWalletConnection } from "@/hooks/useWalletConnection";
-import { WalletInfo } from "./WalletInfo";
 import { toast } from "sonner";
 import { NetworkStatus } from "./NetworkStatus";
-import { walletConnectProvider } from '@web3modal/wagmi';
+import { WalletInfo } from "./WalletInfo";
 
-declare global {
-  interface Window {
-    ethereum?: Record<string, unknown>;
-  }
-}
+const WalletConnect = () => {
+  const [isConnected, setIsConnected] = useState(false);
+  const [publicKey, setPublicKey] = useState<string | null>(null);
 
-export const projectId = '3bc71515e830445a56ca773f191fe27e';
+  useEffect(() => {
+    // Check if Phantom is installed
+    const checkPhantomWallet = async () => {
+      try {
+        const provider = (window as any).solana;
+        if (provider?.isPhantom) {
+          const response = await provider.connect();
+          setPublicKey(response.publicKey.toString());
+          setIsConnected(true);
+          toast.success('Wallet connected successfully');
+        }
+      } catch (error) {
+        console.error('Phantom connection error:', error);
+      }
+    };
 
-const chains = [mainnet, polygon, optimism, arbitrum, base, zora];
-
-const { publicClient, webSocketPublicClient } = configureChains(
-  chains,
-  [walletConnectProvider({ projectId })]
-);
-
-export const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors: [],
-  publicClient,
-  webSocketPublicClient,
-});
-
-// Initialize web3modal
-createWeb3Modal({
-  wagmiConfig,
-  projectId,
-  chains,
-  themeMode: 'dark',
-  themeVariables: {
-    accentColor: '#00E5BE',
-    backgroundColor: '#0B1221',
-    overlayBlur: '4px',
-  },
-});
-
-const WalletConnectButton = () => {
-  const { isConnected } = useWalletConnection();
+    // Check if there's an existing connection
+    if (localStorage.getItem('phantomConnected') === 'true') {
+      checkPhantomWallet();
+    }
+  }, []);
 
   const handleConnect = async () => {
     try {
-      if (typeof window !== 'undefined' && window.ethereum) {
-        const modal = document.querySelector('w3m-modal');
-        if (!modal) {
-          // If modal element doesn't exist, create and dispatch event
-          const event = new CustomEvent('w3m-open-modal');
-          window.dispatchEvent(event);
-        } else {
-          // If modal exists, show it directly
-          modal.setAttribute('open', '');
-        }
-      } else {
-        toast.error('Please install a Web3 wallet like MetaMask');
+      const provider = (window as any).solana;
+      
+      if (!provider) {
+        window.open('https://phantom.app/', '_blank');
+        toast.error('Please install Phantom Wallet');
+        return;
       }
+
+      if (!provider.isPhantom) {
+        toast.error('Please install Phantom Wallet');
+        return;
+      }
+
+      const response = await provider.connect();
+      setPublicKey(response.publicKey.toString());
+      setIsConnected(true);
+      localStorage.setItem('phantomConnected', 'true');
+      toast.success('Wallet connected successfully');
     } catch (error) {
       console.error('Connection error:', error);
       toast.error('Failed to connect wallet. Please try again.');
     }
   };
 
-  if (isConnected) {
+  const handleDisconnect = async () => {
+    try {
+      const provider = (window as any).solana;
+      if (provider) {
+        await provider.disconnect();
+        setIsConnected(false);
+        setPublicKey(null);
+        localStorage.removeItem('phantomConnected');
+        toast.success('Wallet disconnected');
+      }
+    } catch (error) {
+      console.error('Disconnection error:', error);
+      toast.error('Failed to disconnect wallet');
+    }
+  };
+
+  if (isConnected && publicKey) {
     return (
       <div className="space-y-4">
         <NetworkStatus />
-        <WalletInfo />
+        <WalletInfo 
+          address={publicKey}
+          handleDisconnect={handleDisconnect}
+        />
       </div>
     );
   }
@@ -81,19 +88,11 @@ const WalletConnectButton = () => {
   return (
     <Button
       onClick={handleConnect}
-      className="w-full flex items-center justify-center gap-2 bg-[#00E5BE] hover:bg-[#00E5BE]/90 text-black"
+      className="w-full flex items-center justify-center gap-2 bg-[#AB9FF2] hover:bg-[#AB9FF2]/90 text-black"
     >
       <Wallet className="h-4 w-4" />
-      Connect Wallet
+      Connect Phantom
     </Button>
-  );
-};
-
-const WalletConnect = () => {
-  return (
-    <WagmiConfig config={wagmiConfig}>
-      <WalletConnectButton />
-    </WagmiConfig>
   );
 };
 
