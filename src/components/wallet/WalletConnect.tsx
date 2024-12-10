@@ -10,10 +10,22 @@ import { useAccount, useDisconnect } from 'wagmi';
 import { useWallet, WalletProvider } from '@solana/wallet-adapter-react';
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
+import '@solana/wallet-adapter-react-ui/styles.css';
 
 // Polyfill Buffer for browser environment
 import { Buffer } from 'buffer';
 globalThis.Buffer = Buffer;
+
+// Add Phantom to Window type
+declare global {
+  interface Window {
+    phantom?: {
+      solana?: {
+        isPhantom?: boolean;
+      };
+    };
+  }
+}
 
 export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
