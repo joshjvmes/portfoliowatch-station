@@ -1,7 +1,6 @@
 import { configureChains, createConfig } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, base, zora } from 'wagmi/chains';
-import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
-import { Web3Modal } from '@web3modal/react';
+import { createWeb3Modal } from '@web3modal/wagmi';
 import { WagmiConfig } from 'wagmi';
 import { Button } from "@/components/ui/button";
 import { Wallet } from "lucide-react";
@@ -9,8 +8,8 @@ import { useWalletConnection } from "@/hooks/useWalletConnection";
 import { WalletInfo } from "./WalletInfo";
 import { toast } from "sonner";
 import { NetworkStatus } from "./NetworkStatus";
+import { w3mConnectors, w3mProvider } from '@web3modal/wagmi';
 
-// Add ethereum property to the window object type
 declare global {
   interface Window {
     ethereum?: any;
@@ -36,7 +35,18 @@ export const wagmiConfig = createConfig({
   webSocketPublicClient,
 });
 
-export const ethereumClient = new EthereumClient(wagmiConfig, chains);
+// Initialize web3modal
+createWeb3Modal({
+  wagmiConfig,
+  projectId,
+  chains,
+  themeMode: 'dark',
+  themeVariables: {
+    '--w3m-accent-color': '#00E5BE',
+    '--w3m-background-color': '#0B1221',
+    '--w3m-z-index': '1000',
+  },
+});
 
 const WalletConnectButton = () => {
   const { isConnected } = useWalletConnection();
@@ -82,27 +92,11 @@ const WalletConnectButton = () => {
   );
 };
 
-const Web3ModalConfig = () => {
-  return (
-    <Web3Modal
-      projectId={projectId}
-      ethereumClient={ethereumClient}
-      themeMode="dark"
-      themeVariables={{
-        '--w3m-accent-color': '#00E5BE',
-        '--w3m-background-color': '#0B1221',
-        '--w3m-z-index': '1000',
-      }}
-    />
-  );
-};
-
 const WalletConnect = () => {
   return (
-    <>
+    <WagmiConfig config={wagmiConfig}>
       <WalletConnectButton />
-      <Web3ModalConfig />
-    </>
+    </WagmiConfig>
   );
 };
 
