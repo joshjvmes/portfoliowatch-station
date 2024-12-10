@@ -96,6 +96,36 @@ export type Database = {
         }
         Relationships: []
       }
+      trading_settings: {
+        Row: {
+          created_at: string
+          default_token_in: string | null
+          default_token_out: string | null
+          dex_name: string
+          id: string
+          slippage_tolerance: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          default_token_in?: string | null
+          default_token_out?: string | null
+          dex_name: string
+          id?: string
+          slippage_tolerance?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          default_token_in?: string | null
+          default_token_out?: string | null
+          dex_name?: string
+          id?: string
+          slippage_tolerance?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       Users: {
         Row: {
           created_at: string
