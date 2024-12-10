@@ -1,3 +1,4 @@
+import { Connection, PublicKey } from "@solana/web3.js";
 import { toast } from "sonner";
 
 export const NETWORK_URLS = {
@@ -22,11 +23,8 @@ export const getProvider = () => {
 };
 
 export const createConnection = (network: NetworkType) => {
-  const provider = getProvider();
-  if (!provider) return null;
-  
   try {
-    return new provider.Connection(NETWORK_URLS[network], 'confirmed');
+    return new Connection(NETWORK_URLS[network], 'confirmed');
   } catch (error) {
     console.error('Failed to create Solana connection:', error);
     return null;
@@ -50,10 +48,10 @@ export const fetchWalletData = async (address: string, network: NetworkType) => 
       throw new Error('Failed to create Solana connection');
     }
 
-    // Create PublicKey instance with error handling
+    // Create PublicKey instance
     let publicKey;
     try {
-      publicKey = new provider.PublicKey(address);
+      publicKey = new PublicKey(address);
     } catch (error) {
       throw new Error('Invalid wallet address');
     }
@@ -66,7 +64,7 @@ export const fetchWalletData = async (address: string, network: NetworkType) => 
     try {
       tokenAccounts = await connection.getParsedTokenAccountsByOwner(
         publicKey,
-        { programId: new provider.PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA') }
+        { programId: new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA') }
       );
     } catch (error) {
       console.error('Error fetching token accounts:', error);
