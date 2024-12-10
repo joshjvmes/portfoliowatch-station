@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Power, ExternalLink, Copy, RefreshCw, Send, QrCode } from "lucide-react";
+import { Power, ExternalLink, Copy, RefreshCw, Send } from "lucide-react";
 import { toast } from "sonner";
+import { TokenBalances } from './TokenBalances';
+import { RecentTransactions } from './RecentTransactions';
+import { NetworkType, NETWORK_URLS, getProvider, createConnection, getExplorerLink } from '@/utils/solana';
 
 interface WalletInfoProps {
   address: string;
@@ -29,38 +32,28 @@ export const WalletInfo = ({ address, handleDisconnect }: WalletInfoProps) => {
   const [tokens, setTokens] = useState<TokenBalance[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [network, setNetwork] = useState<'mainnet-beta' | 'devnet'>('mainnet-beta');
-
-  const NETWORK_URLS = {
-    'mainnet-beta': 'https://api.mainnet-beta.solana.com',
-    'devnet': 'https://api.devnet.solana.com'
-  };
-
-  const getExplorerLink = () => {
-    const baseUrl = network === 'devnet' ? 'https://explorer.solana.com/?cluster=devnet' : 'https://explorer.solana.com';
-    return `${baseUrl}/address/${address}`;
-  };
+  const [network, setNetwork] = useState<NetworkType>('mainnet-beta');
 
   const fetchBalanceAndTokens = async () => {
     try {
       setIsLoading(true);
-      const provider = (window as any).solana;
-      
-      if (!provider) {
-        throw new Error('Phantom wallet not found');
+      const provider = getProvider();
+      if (!provider) return;
+
+      const connection = createConnection(network);
+      if (!connection) {
+        toast.error('Failed to create Solana connection');
+        return;
       }
 
-      // Create connection
-      const connection = new (window as any).solana.Connection(NETWORK_URLS[network]);
-      
       // Fetch SOL balance
-      const balance = await connection.getBalance(new (window as any).solana.PublicKey(address));
-      setBalance(balance / 1e9); // Convert lamports to SOL
+      const balance = await connection.getBalance(new provider.PublicKey(address));
+      setBalance(balance / 1e9);
 
       // Fetch token accounts
       const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
-        new (window as any).solana.PublicKey(address),
-        { programId: new (window as any).solana.PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA') }
+        new provider.PublicKey(address),
+        { programId: new provider.PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA') }
       );
 
       const tokenBalances = tokenAccounts.value.map((account: any) => ({
@@ -74,22 +67,22 @@ export const WalletInfo = ({ address, handleDisconnect }: WalletInfoProps) => {
 
       // Fetch recent transactions
       const signatures = await connection.getSignaturesForAddress(
-        new (window as any).solana.PublicKey(address),
+        new provider.PublicKey(address),
         { limit: 5 }
       );
 
       const txs = signatures.map((sig: any) => ({
         signature: sig.signature,
         timestamp: sig.blockTime,
-        type: 'transfer', // You would need to parse the transaction to get the actual type
-        amount: 0 // You would need to parse the transaction to get the actual amount
+        type: 'transfer',
+        amount: 0
       }));
 
       setTransactions(txs);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching wallet data:', error);
-      toast.error('Failed to fetch wallet data. Please check your network connection and try again.');
+      toast.error(error.message || 'Failed to fetch wallet data');
     } finally {
       setIsLoading(false);
     }
@@ -108,26 +101,10 @@ export const WalletInfo = ({ address, handleDisconnect }: WalletInfoProps) => {
     }
   };
 
-  const toggleNetwork = async () => {
+  const toggleNetwork = () => {
     const newNetwork = network === 'mainnet-beta' ? 'devnet' : 'mainnet-beta';
     setNetwork(newNetwork);
     toast.success(`Switched to ${newNetwork}`);
-  };
-
-  const sendSol = async () => {
-    try {
-      const provider = (window as any).solana;
-      if (!provider) {
-        throw new Error('Phantom wallet not found');
-      }
-
-      // This is just a placeholder - you would need to implement a proper UI for entering
-      // the recipient address and amount
-      toast.error('Send SOL feature coming soon!');
-    } catch (error) {
-      console.error('Error sending SOL:', error);
-      toast.error('Failed to send SOL');
-    }
   };
 
   return (
@@ -166,7 +143,7 @@ export const WalletInfo = ({ address, handleDisconnect }: WalletInfoProps) => {
                 <Copy className="h-4 w-4" />
               </button>
               <a
-                href={getExplorerLink()}
+                href={getExplorerLink(address, network)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#AB9FF2] hover:text-[#AB9FF2]/80"
@@ -190,45 +167,17 @@ export const WalletInfo = ({ address, handleDisconnect }: WalletInfoProps) => {
           </p>
         </div>
 
-        {tokens.length > 0 && (
-          <div className="space-y-2">
-            <p className="text-gray-400">Token Balances</p>
-            <div className="space-y-2">
-              {tokens.map((token, index) => (
-                <div key={index} className="flex justify-between items-center">
-                  <span className="font-mono text-sm">{token.mint.slice(0, 4)}...{token.mint.slice(-4)}</span>
-                  <span>{token.amount}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {transactions.length > 0 && (
-          <div className="space-y-2">
-            <p className="text-gray-400">Recent Transactions</p>
-            <div className="space-y-2">
-              {transactions.map((tx, index) => (
-                <div key={index} className="flex justify-between items-center text-sm">
-                  <a
-                    href={`${getExplorerLink()}/tx/${tx.signature}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-mono hover:text-[#AB9FF2]"
-                  >
-                    {tx.signature.slice(0, 8)}...{tx.signature.slice(-8)}
-                  </a>
-                  <span>{new Date(tx.timestamp * 1000).toLocaleDateString()}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <TokenBalances tokens={tokens} />
+        <RecentTransactions 
+          transactions={transactions}
+          network={network}
+          address={address}
+        />
 
         <div className="flex gap-2">
           <Button
             variant="outline"
-            onClick={sendSol}
+            onClick={() => toast.error('Send SOL feature coming soon!')}
             className="flex-1 gap-2"
           >
             <Send className="h-4 w-4" />
