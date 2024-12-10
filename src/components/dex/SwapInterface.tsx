@@ -15,6 +15,8 @@ import { getProvider } from "@/utils/solana";
 import { TokenInput } from "./TokenInput";
 import { DEX_OPTIONS, TOKENS } from "@/utils/tokens";
 import { initJupiter, getQuote, executeSwap } from "@/utils/jupiter";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation } from '@tanstack/react-query';
 
 const SwapInterface = () => {
   const [selectedDex, setSelectedDex] = useState('jupiter');
@@ -27,7 +29,59 @@ const SwapInterface = () => {
   const [jupiter, setJupiter] = useState<Jupiter | null>(null);
   const [bestRoute, setBestRoute] = useState<any>(null);
 
-  // Initialize Jupiter
+  // Fetch user's trading settings
+  const { data: tradingSettings } = useQuery({
+    queryKey: ['tradingSettings'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data, error } = await supabase
+        .from('trading_settings')
+        .select('*')
+        .single();
+
+      if (error) {
+        console.error('Error fetching trading settings:', error);
+        return null;
+      }
+
+      return data;
+    }
+  });
+
+  // Save trading settings mutation
+  const saveTradingSettings = useMutation({
+    mutationFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const settings = {
+        user_id: user.id,
+        dex_name: selectedDex,
+        default_token_in: fromToken,
+        default_token_out: toToken,
+      };
+
+      const { data, error } = await supabase
+        .from('trading_settings')
+        .upsert(settings)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast.success('Trading settings saved');
+    },
+    onError: (error) => {
+      console.error('Error saving trading settings:', error);
+      toast.error('Failed to save trading settings');
+    }
+  });
+
+  // Initialize Jupiter and load user settings
   useEffect(() => {
     const setup = async () => {
       try {
@@ -35,14 +89,25 @@ const SwapInterface = () => {
           const jupiterInstance = await initJupiter();
           setJupiter(jupiterInstance);
         }
+
+        // Load user settings if available
+        if (tradingSettings) {
+          setSelectedDex(tradingSettings.dex_name);
+          if (tradingSettings.default_token_in) {
+            setFromToken(tradingSettings.default_token_in);
+          }
+          if (tradingSettings.default_token_out) {
+            setToToken(tradingSettings.default_token_out);
+          }
+        }
       } catch (error) {
-        console.error('Error initializing Jupiter:', error);
-        toast.error('Failed to initialize Jupiter');
+        console.error('Error initializing:', error);
+        toast.error('Failed to initialize');
       }
     };
 
     setup();
-  }, [selectedDex]);
+  }, [selectedDex, tradingSettings]);
 
   // Swap token positions
   const handleSwapTokens = () => {
@@ -108,6 +173,9 @@ const SwapInterface = () => {
       
       toast.success('Swap executed successfully!');
       console.log('Swap transaction:', signature);
+      
+      // Save user preferences
+      saveTradingSettings.mutate();
       
       // Reset form
       setFromAmount('');
