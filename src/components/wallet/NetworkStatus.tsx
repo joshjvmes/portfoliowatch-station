@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertTriangle, CheckCircle2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import { mainnet } from 'wagmi/chains';
 
 export const NetworkStatus = () => {
   const { chain } = useNetwork();
@@ -48,7 +49,7 @@ export const NetworkStatus = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => switchNetwork?.(1)} // Switch to Ethereum mainnet
+                onClick={() => switchNetwork?.(mainnet.id)} // Using mainnet.id instead of hardcoded number
                 disabled={isLoading}
                 className="gap-2"
               >
