@@ -5,41 +5,54 @@ import { toast } from "sonner";
 import { AppKit } from '@reown/appkit';
 import { SolanaAdapter } from '@reown/appkit-adapter-solana';
 
-// Initialize AppKit with Solana adapter
-export const appKit = new AppKit({
+// Initialize AppKit with minimal configuration
+const appKit = new AppKit({
   projectId: '3bc71515e830445a56ca773f191fe27e',
   metadata: {
-    name: 'Your App Name',
-    description: 'Your app description',
-    url: 'https://your-app.com',
-    icons: ['https://your-app.com/icon.png']
+    name: 'Solana Wallet Demo',
+    description: 'Simple Solana wallet integration',
+    url: window.location.origin,
+    icons: [`${window.location.origin}/favicon.ico`]
   },
-  adapters: [
-    new SolanaAdapter()
-  ],
-  networks: [
-    {
-      id: 'solana:devnet',
-      name: 'Solana Devnet',
-      type: 'solana',
-      rpcUrl: 'https://api.devnet.solana.com',
-      token: 'SOL'
-    }
-  ]
-}) as any; // Type assertion needed due to incomplete types in AppKit
-
-// Export configuration for Web3Modal
-export const projectId = '3bc71515e830445a56ca773f191fe27e';
+  adapters: [new SolanaAdapter()],
+  networks: [{
+    id: 'solana:devnet',
+    name: 'Solana Devnet',
+    rpcUrl: 'https://api.devnet.solana.com'
+  }]
+}) as any;
 
 const WalletConnectButton = () => {
   const [address, setAddress] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    let mounted = true;
 
-    // Set up event listeners
+    const initializeWallet = async () => {
+      try {
+        await appKit.initialize();
+        if (mounted) {
+          setIsInitialized(true);
+          console.log('Wallet initialized successfully');
+        }
+      } catch (error) {
+        console.error('Wallet initialization error:', error);
+        toast.error('Failed to initialize wallet connection');
+      }
+    };
+
+    initializeWallet();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isInitialized) return;
+
     const handleConnect = (data: any) => {
       console.log('Wallet connected:', data);
       setAddress(data.address);
@@ -56,22 +69,15 @@ const WalletConnectButton = () => {
 
     const handleError = (error: Error) => {
       console.error('Wallet error:', error);
-      toast.error('Wallet error: ' + error.message);
+      toast.error(`Wallet error: ${error.message}`);
     };
 
-    // Initialize AppKit and add event listeners
-    appKit.initialize().then(() => {
-      appKit.subscribeEvents({
-        connect: handleConnect,
-        disconnect: handleDisconnect,
-        error: handleError
-      });
-    }).catch(error => {
-      console.error('Failed to initialize wallet:', error);
-      toast.error('Failed to initialize wallet');
+    appKit.subscribeEvents({
+      connect: handleConnect,
+      disconnect: handleDisconnect,
+      error: handleError
     });
 
-    // Cleanup listeners on unmount
     return () => {
       appKit.unsubscribeEvents({
         connect: handleConnect,
@@ -79,16 +85,14 @@ const WalletConnectButton = () => {
         error: handleError
       });
     };
-  }, []);
-
-  if (!mounted) return null;
+  }, [isInitialized]);
 
   const handleConnect = async () => {
     try {
       await appKit.connect();
     } catch (error) {
       console.error('Connection error:', error);
-      toast.error('Failed to connect wallet. Please try again.');
+      toast.error('Failed to connect wallet');
     }
   };
 
@@ -100,6 +104,15 @@ const WalletConnectButton = () => {
       toast.error('Failed to disconnect wallet');
     }
   };
+
+  if (!isInitialized) {
+    return (
+      <Button disabled className="flex items-center gap-2">
+        <Wallet className="h-4 w-4" />
+        Initializing...
+      </Button>
+    );
+  }
 
   return (
     <div>
