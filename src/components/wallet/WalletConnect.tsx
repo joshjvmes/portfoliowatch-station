@@ -64,18 +64,19 @@ const WalletConnectButton = () => {
 
   const handleConnect = async () => {
     try {
-      // Check if Phantom is available
-      const isPhantomAvailable = window?.phantom?.solana?.isPhantom;
+      // Create a hidden button for Web3Modal
+      const modalButton = document.createElement('w3m-button');
+      modalButton.style.display = 'none';
+      document.body.appendChild(modalButton);
       
-      if (isPhantomAvailable) {
-        // Open Phantom wallet modal
-        const { solana } = window.phantom;
-        await solana.connect();
-        toast.success('Phantom wallet connected');
-      } else {
-        // If Phantom is not available, open Web3Modal
-        document.getElementById('w3m-button')?.click();
-      }
+      // Trigger click on the hidden button
+      modalButton.click();
+      
+      // Remove the button after clicking
+      setTimeout(() => {
+        document.body.removeChild(modalButton);
+      }, 100);
+      
     } catch (error) {
       console.error('Connection error:', error);
       toast.error('Failed to connect wallet. Please try again.');
