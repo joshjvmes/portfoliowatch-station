@@ -2,34 +2,25 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Wallet, LogOut } from "lucide-react";
 import { toast } from "sonner";
-import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-import { mainnet, polygon } from 'wagmi/chains';
-import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
+import { w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 import { Web3Modal } from '@web3modal/react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { configureChains, createConfig } from 'wagmi';
+import { mainnet, polygon } from 'wagmi/chains';
 
 // Configure chains & providers
 const projectId = '3bc71515e830445a56ca773f191fe27e';
 
-const { publicClient, chains } = configureChains(
+const { chains } = configureChains(
   [mainnet, polygon],
   [w3mProvider({ projectId })]
 );
 
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors: w3mConnectors({ 
-    projectId, 
-    chains 
-  }),
-  publicClient,
-});
-
-const ethereumClient = new EthereumClient(wagmiConfig, chains);
-
 const WalletConnectButton = () => {
   const { address, isConnected } = useAccount();
-  const { connect } = useConnect();
+  const { connect } = useConnect({
+    connector: w3mConnectors({ projectId, chains })[0]
+  });
   const { disconnect } = useDisconnect();
   const [mounted, setMounted] = useState(false);
 
@@ -92,9 +83,7 @@ const WalletConnectButton = () => {
 const WalletConnect = () => {
   return (
     <>
-      <WagmiConfig config={wagmiConfig}>
-        <WalletConnectButton />
-      </WagmiConfig>
+      <WalletConnectButton />
       <Web3Modal
         projectId={projectId}
         ethereumClient={ethereumClient}
