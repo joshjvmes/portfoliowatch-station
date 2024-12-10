@@ -1,15 +1,18 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import './index.css';
-import { Buffer } from 'buffer';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import "./index.css";
 
-// Polyfill Buffer for the browser
-window.Buffer = Buffer;
-globalThis.Buffer = Buffer;
+// Create root element if it doesn't exist
+const rootElement = document.getElementById("root") || (() => {
+  const element = document.createElement("div");
+  element.id = "root";
+  document.body.appendChild(element);
+  return element;
+})();
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
+  </React.StrictMode>
 );
