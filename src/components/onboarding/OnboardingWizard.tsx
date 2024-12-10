@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChevronRight, ChevronLeft } from "lucide-react";
@@ -22,13 +23,19 @@ const steps = [
   },
 ];
 
-const OnboardingWizard = ({ onComplete }: { onComplete: (userType: string) => void }) => {
+const OnboardingWizard = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedType, setSelectedType] = useState<string>("");
+  const navigate = useNavigate();
 
   const handleNext = () => {
     if (currentStep === steps.length - 1) {
-      onComplete(selectedType);
+      // If admin, go to login, if trader go to register
+      if (selectedType === "admin") {
+        navigate("/login");
+      } else {
+        navigate("/register");
+      }
     } else {
       setCurrentStep(currentStep + 1);
     }
