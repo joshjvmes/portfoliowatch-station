@@ -26,6 +26,7 @@ export default defineConfig(({ mode }) => ({
     include: [
       '@solana/web3.js',
       '@solana/spl-token',
+      '@jup-ag/common',
       'buffer',
     ],
     exclude: [
@@ -49,6 +50,7 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           solana: ['@solana/web3.js', '@solana/spl-token'],
+          jupiter: ['@jup-ag/common'],
         },
       },
     },
