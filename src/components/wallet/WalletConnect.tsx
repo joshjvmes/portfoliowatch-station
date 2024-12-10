@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Wallet } from "lucide-react";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
 import { WalletInfo } from "./WalletInfo";
+import { toast } from "sonner";
 
 export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
@@ -40,15 +41,27 @@ const WalletConnectButton = () => {
   const handleConnect = async () => {
     try {
       console.log('Attempting to open Web3Modal');
-      // Check for Ethereum provider without TypeScript errors
-      if (typeof window !== 'undefined' && window.ethereum) {
-        console.log('Ethereum provider detected');
+      
+      if (typeof window === 'undefined') {
+        console.error('Window object not available');
+        toast.error('Browser environment not detected');
+        return;
       }
-      // Dispatch the event to open the modal
-      const event = new Event('w3m-open-modal');
+
+      if (!window.ethereum) {
+        console.log('No Ethereum provider detected');
+        toast.error('Please install MetaMask or another Web3 wallet');
+        return;
+      }
+
+      // Create and dispatch the event
+      const event = new CustomEvent('w3m-open-modal');
       window.dispatchEvent(event);
+      console.log('Web3Modal event dispatched');
+
     } catch (error) {
       console.error('Connection error:', error);
+      toast.error('Failed to connect wallet. Please try again.');
     }
   };
 
@@ -85,10 +98,10 @@ const Web3ModalConfig = () => {
 const WalletConnect = () => {
   return (
     <>
-      <Web3ModalConfig />
       <WagmiConfig config={wagmiConfig}>
         <WalletConnectButton />
       </WagmiConfig>
+      <Web3ModalConfig />
     </>
   );
 };
