@@ -6,7 +6,7 @@ import { Power, ExternalLink, Copy, RefreshCw, Send } from "lucide-react";
 import { toast } from "sonner";
 import { TokenBalances } from './TokenBalances';
 import { RecentTransactions } from './RecentTransactions';
-import { NetworkType, NETWORK_URLS, getProvider, createConnection, getExplorerLink } from '@/utils/solana';
+import { NetworkType, getExplorerLink, fetchWalletData } from '@/utils/solana';
 
 interface WalletInfoProps {
   address: string;
@@ -34,62 +34,26 @@ export const WalletInfo = ({ address, handleDisconnect }: WalletInfoProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [network, setNetwork] = useState<NetworkType>('mainnet-beta');
 
-  const fetchBalanceAndTokens = async () => {
+  const fetchData = async () => {
     try {
       setIsLoading(true);
-      const provider = getProvider();
-      if (!provider) return;
-
-      const connection = createConnection(network);
-      if (!connection) {
-        toast.error('Failed to create Solana connection');
-        return;
-      }
-
-      // Fetch SOL balance
-      const balance = await connection.getBalance(new provider.PublicKey(address));
-      setBalance(balance / 1e9);
-
-      // Fetch token accounts
-      const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
-        new provider.PublicKey(address),
-        { programId: new provider.PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA') }
-      );
-
-      const tokenBalances = tokenAccounts.value.map((account: any) => ({
-        mint: account.account.data.parsed.info.mint,
-        amount: account.account.data.parsed.info.tokenAmount.uiAmount,
-        decimals: account.account.data.parsed.info.tokenAmount.decimals,
-        symbol: account.account.data.parsed.info.symbol
-      }));
-
-      setTokens(tokenBalances);
-
-      // Fetch recent transactions
-      const signatures = await connection.getSignaturesForAddress(
-        new provider.PublicKey(address),
-        { limit: 5 }
-      );
-
-      const txs = signatures.map((sig: any) => ({
-        signature: sig.signature,
-        timestamp: sig.blockTime,
-        type: 'transfer',
-        amount: 0
-      }));
-
-      setTransactions(txs);
-
+      const data = await fetchWalletData(address, network);
+      setBalance(data.balance);
+      setTokens(data.tokens);
+      setTransactions(data.transactions);
     } catch (error: any) {
       console.error('Error fetching wallet data:', error);
       toast.error(error.message || 'Failed to fetch wallet data');
+      setBalance(null);
+      setTokens([]);
+      setTransactions([]);
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchBalanceAndTokens();
+    fetchData();
   }, [address, network]);
 
   const copyAddress = async () => {
@@ -123,7 +87,7 @@ export const WalletInfo = ({ address, handleDisconnect }: WalletInfoProps) => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={fetchBalanceAndTokens}
+            onClick={fetchData}
             disabled={isLoading}
           >
             <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -155,7 +119,7 @@ export const WalletInfo = ({ address, handleDisconnect }: WalletInfoProps) => {
           <div>
             <p className="text-gray-400">Network</p>
             <Badge variant="outline" className="bg-[#AB9FF2]/10 text-[#AB9FF2] border-[#AB9FF2]/20">
-              Solana
+              {network === 'mainnet-beta' ? 'Mainnet' : 'Devnet'}
             </Badge>
           </div>
         </div>
