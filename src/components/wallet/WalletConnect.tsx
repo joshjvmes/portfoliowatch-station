@@ -13,8 +13,15 @@ interface WalletConnectData {
   accounts: string[];
 }
 
+// Define proper types for AppKit
+interface ExtendedAppKit extends AppKit {
+  on(event: string, callback: (data: any) => void): void;
+  removeAllListeners(): void;
+  request(params: { method: string }): Promise<void>;
+}
+
 const WalletConnectButton = () => {
-  const [appKit, setAppKit] = useState<AppKit | null>(null);
+  const [appKit, setAppKit] = useState<ExtendedAppKit | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -24,7 +31,10 @@ const WalletConnectButton = () => {
       try {
         console.log('Initializing AppKit...');
         const solanaAdapter = new SolanaAdapter({
-          endpoint: 'https://api.devnet.solana.com'
+          // Use the correct configuration format
+          config: {
+            rpcUrl: 'https://api.devnet.solana.com'
+          }
         });
 
         const kit = new AppKit({
@@ -36,7 +46,7 @@ const WalletConnectButton = () => {
             url: window.location.origin,
             icons: ['https://your-icon-url.com/icon.png']
           }
-        });
+        }) as ExtendedAppKit;
 
         console.log('AppKit initialized successfully');
         setAppKit(kit);
