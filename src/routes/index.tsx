@@ -7,7 +7,7 @@ import UserDashboard from "@/pages/UserDashboard";
 import Index from "@/pages/Index";
 import Wheel from "@/pages/Wheel";
 import Holdings from "@/pages/Holdings";
-import { History } from "@/pages/History";
+import History from "@/pages/History";
 import Messages from "@/pages/Messages";
 import Deposit from "@/pages/Deposit";
 import Withdrawal from "@/pages/Withdrawal";
