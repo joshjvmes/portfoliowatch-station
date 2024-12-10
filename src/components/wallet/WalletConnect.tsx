@@ -9,6 +9,7 @@ import { useWalletConnection } from "@/hooks/useWalletConnection";
 import { WalletInfo } from "./WalletInfo";
 import { toast } from "sonner";
 
+// Make sure to use a valid project ID from WalletConnect Cloud
 export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
 const chains = [mainnet, polygon];
