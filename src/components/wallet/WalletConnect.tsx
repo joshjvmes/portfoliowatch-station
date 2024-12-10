@@ -6,7 +6,7 @@ import { configureChains, createConfig } from 'wagmi';
 import { mainnet, polygon } from 'wagmi/chains';
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 import { Web3Modal } from '@web3modal/react';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useAccount, useDisconnect, useBalance, useNetwork } from 'wagmi';
 import { WalletProvider } from '@solana/wallet-adapter-react';
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
@@ -17,7 +17,6 @@ import '@solana/wallet-adapter-react-ui/styles.css';
 import { Buffer } from 'buffer';
 globalThis.Buffer = Buffer;
 
-// Add Phantom to Window type
 declare global {
   interface Window {
     phantom?: {
@@ -46,12 +45,14 @@ export const wagmiConfig = createConfig({
 });
 
 export const ethereumClient = new EthereumClient(wagmiConfig, chains);
-
-// Initialize Phantom wallet adapter
 const phantomWallet = new PhantomWalletAdapter();
 
 const WalletConnectButton = () => {
   const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const { data: balance } = useBalance({
+    address: address,
+  });
   const { disconnect } = useDisconnect();
   const { connected: isPhantomConnected, disconnect: disconnectPhantom } = useWallet();
   const [mounted, setMounted] = useState(false);
@@ -64,18 +65,11 @@ const WalletConnectButton = () => {
 
   const handleConnect = async () => {
     try {
-      // Check if Phantom is available
-      const isPhantomAvailable = window?.phantom?.solana?.isPhantom;
-      
-      if (isPhantomAvailable) {
-        // Open Phantom wallet modal
-        const { solana } = window.phantom;
-        await solana.connect();
-        toast.success('Phantom wallet connected');
-      } else {
-        // If Phantom is not available, open Web3Modal
-        document.getElementById('w3m-button')?.click();
-      }
+      // Create and click a hidden Web3Modal button
+      const w3mButton = document.createElement('w3m-button');
+      document.body.appendChild(w3mButton);
+      w3mButton.click();
+      document.body.removeChild(w3mButton);
     } catch (error) {
       console.error('Connection error:', error);
       toast.error('Failed to connect wallet. Please try again.');
@@ -100,26 +94,43 @@ const WalletConnectButton = () => {
   const isAnyWalletConnected = isConnected || isPhantomConnected;
 
   return (
-    <div>
+    <div className="space-y-4">
       {isAnyWalletConnected ? (
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-400">
-            {address?.slice(0, 6)}...{address?.slice(-4)}
-          </span>
+        <div className="space-y-4">
+          <div className="p-6 rounded-lg bg-[#0B1221]/50 border border-white/10 backdrop-blur-xl">
+            <h3 className="text-lg font-semibold mb-4">Wallet Information</h3>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-400">Address</span>
+                <span className="font-mono">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
+              </div>
+              {chain && (
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Network</span>
+                  <span className="text-[#00E5BE]">{chain.name}</span>
+                </div>
+              )}
+              {balance && (
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Balance</span>
+                  <span>{parseFloat(balance.formatted).toFixed(4)} {balance.symbol}</span>
+                </div>
+              )}
+            </div>
+          </div>
           <Button
             variant="destructive"
-            size="sm"
             onClick={handleDisconnect}
-            className="flex items-center gap-2"
+            className="w-full flex items-center justify-center gap-2"
           >
             <LogOut className="h-4 w-4" />
-            Disconnect
+            Disconnect Wallet
           </Button>
         </div>
       ) : (
         <Button
           onClick={handleConnect}
-          className="flex items-center gap-2 bg-[#00E5BE] hover:bg-[#00E5BE]/90 text-black"
+          className="w-full flex items-center justify-center gap-2 bg-[#00E5BE] hover:bg-[#00E5BE]/90 text-black"
         >
           <Wallet className="h-4 w-4" />
           Connect Wallet
