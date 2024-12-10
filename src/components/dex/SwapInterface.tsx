@@ -14,6 +14,7 @@ import { ArrowDownUp } from "lucide-react";
 import { Jupiter } from "@jup-ag/core";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { getProvider } from "@/utils/solana";
+import JSBI from 'jsbi';
 
 const DEX_OPTIONS = [
   { id: 'jupiter', name: 'Jupiter' },
@@ -47,7 +48,6 @@ const SwapInterface = () => {
         const jupiterInstance = await Jupiter.load({
           connection,
           cluster: 'mainnet-beta',
-          userPublicKey: null, // Will be set during swap
         });
         setJupiter(jupiterInstance);
       } catch (error) {
@@ -83,7 +83,7 @@ const SwapInterface = () => {
       try {
         const inputMint = new PublicKey(fromToken);
         const outputMint = new PublicKey(toToken);
-        const amount = Number(fromAmount) * (10 ** 9); // Assuming SOL decimals
+        const amount = JSBI.BigInt(Number(fromAmount) * 1e9); // Convert to JSBI
 
         const routes = await jupiter.computeRoutes({
           inputMint,
@@ -94,7 +94,8 @@ const SwapInterface = () => {
 
         if (routes.routesInfos.length > 0) {
           const bestRoute = routes.routesInfos[0];
-          setToAmount(bestRoute.outAmount / (10 ** 9));
+          const outAmount = JSBI.toNumber(bestRoute.outAmount) / 1e9;
+          setToAmount(outAmount.toString());
           setPriceImpact(bestRoute.priceImpactPct.toFixed(2));
         } else {
           toast.error('No routes found for this swap');
@@ -130,18 +131,11 @@ const SwapInterface = () => {
         return;
       }
 
-      // Update Jupiter with connected wallet
-      const newJupiter = await Jupiter.load({
-        connection: new Connection('https://api.mainnet-beta.solana.com'),
-        cluster: 'mainnet-beta',
-        userPublicKey: new PublicKey(provider.publicKey.toString()),
-      });
-
       const inputMint = new PublicKey(fromToken);
       const outputMint = new PublicKey(toToken);
-      const amount = Number(fromAmount) * (10 ** 9);
+      const amount = JSBI.BigInt(Number(fromAmount) * 1e9);
 
-      const routes = await newJupiter.computeRoutes({
+      const routes = await jupiter.computeRoutes({
         inputMint,
         outputMint,
         amount,
@@ -153,14 +147,14 @@ const SwapInterface = () => {
         return;
       }
 
-      const { transactions } = await newJupiter.exchange({
+      const { swapTransaction } = await jupiter.exchange({
         routeInfo: routes.routesInfos[0],
       });
 
-      const { txid } = await transactions.execute();
+      const { signature } = await swapTransaction.execute();
       
       toast.success('Swap executed successfully!');
-      console.log('Swap transaction:', txid);
+      console.log('Swap transaction:', signature);
       
       // Reset form
       setFromAmount('');
