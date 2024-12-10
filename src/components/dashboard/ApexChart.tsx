@@ -1,9 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import dynamic from "react-dom";
+import { useEffect, useState } from "react";
 import { ApexOptions } from "apexcharts";
-
-// Dynamically import ApexCharts to avoid SSR issues
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+import ReactApexChart from "react-apexcharts";
 
 interface ApexChartProps {
   title?: string;
@@ -12,6 +10,12 @@ interface ApexChartProps {
 }
 
 const ApexChart = ({ title = "Trading Activity", data, categories }: ApexChartProps) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const options: ApexOptions = {
     chart: {
       type: "area",
@@ -86,6 +90,8 @@ const ApexChart = ({ title = "Trading Activity", data, categories }: ApexChartPr
     },
   ];
 
+  if (!mounted) return null;
+
   return (
     <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
       <CardHeader>
@@ -93,7 +99,7 @@ const ApexChart = ({ title = "Trading Activity", data, categories }: ApexChartPr
       </CardHeader>
       <CardContent>
         <div className="h-[300px] w-full">
-          <Chart
+          <ReactApexChart
             options={options}
             series={series}
             type="area"
