@@ -10,6 +10,13 @@ import { WalletInfo } from "./WalletInfo";
 import { toast } from "sonner";
 import { NetworkStatus } from "./NetworkStatus";
 
+// Add ethereum property to the window object type
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
+
 export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
 const chains = [mainnet, polygon, optimism, arbitrum, base, zora];
