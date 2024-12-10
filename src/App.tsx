@@ -1,6 +1,7 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { BalanceVisibilityProvider } from "@/contexts/BalanceVisibilityContext";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Pages
 import Index from "@/pages/Index";
@@ -25,32 +26,34 @@ import NotFound from "@/pages/NotFound";
 
 const App = () => {
   return (
-    <BalanceVisibilityProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/assets" element={<Assets />} />
-          <Route path="/trading-signals" element={<TradingSignals />} />
-          <Route path="/holdings" element={<Holdings />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/messages" element={<Messages />} />
-          <Route path="/deposit" element={<Deposit />} />
-          <Route path="/withdrawal" element={<Withdrawal />} />
-          <Route path="/virtual-card" element={<VirtualCard />} />
-          <Route path="/wallet" element={<WalletManagement />} />
-          <Route path="/portfolio-margin" element={<PortfolioMargin />} />
-          <Route path="/trading-bots" element={<TradingBots />} />
-          <Route path="/wheel" element={<Wheel />} />
-          <Route path="/rewards" element={<Rewards />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/system-status" element={<SystemStatus />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <Toaster />
-      </Router>
-    </BalanceVisibilityProvider>
+    <ErrorBoundary>
+      <BalanceVisibilityProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/assets" element={<Assets />} />
+            <Route path="/trading-signals" element={<TradingSignals />} />
+            <Route path="/holdings" element={<Holdings />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/messages" element={<Messages />} />
+            <Route path="/deposit" element={<Deposit />} />
+            <Route path="/withdrawal" element={<Withdrawal />} />
+            <Route path="/virtual-card" element={<VirtualCard />} />
+            <Route path="/wallet" element={<WalletManagement />} />
+            <Route path="/portfolio-margin" element={<PortfolioMargin />} />
+            <Route path="/trading-bots" element={<TradingBots />} />
+            <Route path="/wheel" element={<Wheel />} />
+            <Route path="/rewards" element={<Rewards />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/system-status" element={<SystemStatus />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <Toaster />
+        </Router>
+      </BalanceVisibilityProvider>
+    </ErrorBoundary>
   );
 };
 

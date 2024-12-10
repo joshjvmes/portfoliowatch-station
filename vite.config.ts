@@ -31,7 +31,6 @@ export default defineConfig(({ mode }) => ({
       '@solana/web3.js',
     ],
     exclude: [
-      '@jup-ag/common',
       '@mercurial-finance/optimist',
     ],
     esbuildOptions: {
@@ -46,7 +45,6 @@ export default defineConfig(({ mode }) => ({
     },
     rollupOptions: {
       external: [
-        '@jup-ag/common',
         '@mercurial-finance/optimist',
       ],
       output: {
@@ -56,5 +54,7 @@ export default defineConfig(({ mode }) => ({
         },
       },
     },
+    chunkSizeWarningLimit: 2000,
+    sourcemap: true,
   },
 }));
