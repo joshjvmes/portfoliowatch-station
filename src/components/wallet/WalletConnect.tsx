@@ -20,12 +20,12 @@ const WalletConnectButton = () => {
       try {
         console.log('Initializing AppKit...');
         const solanaAdapter = new SolanaAdapter({
-          cluster: 'devnet'
+          network: 'devnet'
         });
 
         const kit = new AppKit({
           adapters: [solanaAdapter],
-          networks: ['solana:devnet'],
+          networks: ['solana'],
           metadata: {
             name: 'My DApp',
             description: 'My decentralized application',
@@ -38,21 +38,21 @@ const WalletConnectButton = () => {
         setAppKit(kit);
 
         // Set up event listeners
-        kit.events.on('connect', (data: any) => {
+        kit.on('connect', (data: any) => {
           console.log('Wallet connected:', data);
           setIsConnected(true);
           setWalletAddress(data.accounts[0]);
           toast.success('Wallet connected successfully');
         });
 
-        kit.events.on('disconnect', () => {
+        kit.on('disconnect', () => {
           console.log('Wallet disconnected');
           setIsConnected(false);
           setWalletAddress(null);
           toast.success('Wallet disconnected');
         });
 
-        kit.events.on('error', (error: Error) => {
+        kit.on('error', (error: Error) => {
           console.error('Wallet error:', error);
           toast.error(error.message || 'Failed to connect wallet');
         });
@@ -68,7 +68,7 @@ const WalletConnectButton = () => {
 
     return () => {
       if (appKit) {
-        appKit.events.removeAllListeners();
+        appKit.removeAllListeners();
       }
     };
   }, []);
@@ -79,7 +79,7 @@ const WalletConnectButton = () => {
       if (!appKit) {
         throw new Error('AppKit not initialized');
       }
-      await appKit.connect();
+      await appKit.request({ method: 'connect' });
     } catch (error) {
       console.error('Connection error:', error);
       toast.error('Failed to connect wallet');
@@ -92,7 +92,7 @@ const WalletConnectButton = () => {
       if (!appKit) {
         throw new Error('AppKit not initialized');
       }
-      await appKit.disconnect();
+      await appKit.request({ method: 'disconnect' });
     } catch (error) {
       console.error('Disconnection error:', error);
       toast.error('Failed to disconnect wallet');
