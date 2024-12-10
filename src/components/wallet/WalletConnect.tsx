@@ -13,14 +13,28 @@ export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
 const { publicClient, chains } = configureChains(
   [mainnet, polygon],
-  [w3mProvider({ projectId })]
+  [w3mProvider({ 
+    projectId,
+    // Add WebSocket configuration
+    wsRetry: {
+      delay: 1000,
+      maxAttempts: 5
+    }
+  })]
 );
 
 export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ 
     projectId, 
-    chains 
+    chains,
+    // Add metadata for better origin handling
+    metadata: {
+      name: 'Web3Modal',
+      description: 'Web3Modal Example',
+      url: window.location.origin,
+      icons: ['https://avatars.githubusercontent.com/u/37784886']
+    }
   }),
   publicClient,
 });
@@ -48,11 +62,14 @@ const WalletConnectButton = () => {
         return;
       }
       
-      await connectAsync({ connector });
+      await connectAsync({ 
+        connector,
+        chainId: chains[0].id // Connect to the first chain by default
+      });
       toast.success('Wallet connected successfully!');
     } catch (error) {
-      toast.error('Failed to connect wallet');
       console.error('Connection error:', error);
+      toast.error('Failed to connect wallet. Please try again.');
     }
   };
 
@@ -61,8 +78,8 @@ const WalletConnectButton = () => {
       disconnect();
       toast.success('Wallet disconnected');
     } catch (error) {
-      toast.error('Failed to disconnect wallet');
       console.error('Disconnection error:', error);
+      toast.error('Failed to disconnect wallet');
     }
   };
 
