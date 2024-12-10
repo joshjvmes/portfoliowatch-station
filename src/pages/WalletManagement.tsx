@@ -6,7 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import DashboardLayout from "@/components/DashboardLayout";
 import WalletConnect from "@/components/wallet/WalletConnect";
 import { Badge } from "@/components/ui/badge";
-import { appKit } from '@/components/wallet/WalletConnect';
+import { appKit } from '@/lib/wallet';
 
 const WalletManagementContent = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -32,7 +32,7 @@ const WalletManagementContent = () => {
     };
 
     // Initialize AppKit and add event listeners
-    appKit.init().then(() => {
+    appKit.initialize().then(() => {
       appKit.subscribeEvents({
         connect: handleConnect,
         disconnect: handleDisconnect
