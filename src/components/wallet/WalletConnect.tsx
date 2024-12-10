@@ -11,6 +11,10 @@ import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
+// Polyfill Buffer for browser environment
+import { Buffer } from 'buffer';
+globalThis.Buffer = Buffer;
+
 export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
 const { publicClient, chains } = configureChains(
@@ -63,7 +67,7 @@ const WalletConnectButton = () => {
 
   const handleConnect = () => {
     try {
-      const connector = connectors[0]; // Use the first available connector to trigger Web3Modal
+      const connector = connectors[0];
       if (!connector) {
         toast.error('No wallet connectors available');
         return;

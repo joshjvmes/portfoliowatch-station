@@ -59,6 +59,7 @@
     "@web3modal/react": "^2.7.1",
     "apexcharts": "^4.1.0",
     "bl": "^6.0.12",
+    "buffer": "^6.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
