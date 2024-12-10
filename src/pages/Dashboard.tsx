@@ -4,6 +4,7 @@ import TradingChart from "@/components/dashboard/TradingChart";
 import MarginBalance from "@/components/dashboard/MarginBalance";
 import CrossMargin from "@/components/dashboard/CrossMargin";
 import AssetAllocation from "@/components/dashboard/AssetAllocation";
+import WalletConnect from "@/components/wallet/WalletConnect";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTour } from "@/contexts/TourContext";
 import { Button } from "@/components/ui/button";
@@ -26,7 +27,10 @@ const Dashboard = () => {
   return (
     <DashboardLayout>
       <div className="flex justify-between items-center mb-4">
-        <VIPIndicator level={3} />
+        <div className="flex items-center gap-4">
+          <VIPIndicator level={3} />
+          <WalletConnect />
+        </div>
         <Button
           variant="outline"
           size="sm"
