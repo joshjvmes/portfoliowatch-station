@@ -9,14 +9,14 @@ import { Web3Modal } from '@web3modal/react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 
 // Configure chains & providers
-const projectId = '3bc71515e830445a56ca773f191fe27e';
+export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
 const { publicClient, chains } = configureChains(
   [mainnet, polygon],
   [w3mProvider({ projectId })]
 );
 
-const wagmiConfig = createConfig({
+export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ 
     projectId, 
@@ -26,7 +26,7 @@ const wagmiConfig = createConfig({
 });
 
 // Create ethereum client
-const ethereumClient = new EthereumClient(wagmiConfig, chains);
+export const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
 const WalletConnectButton = () => {
   const { address, isConnected } = useAccount();
@@ -93,9 +93,7 @@ const WalletConnectButton = () => {
 const WalletConnect = () => {
   return (
     <>
-      <WagmiConfig config={wagmiConfig}>
-        <WalletConnectButton />
-      </WagmiConfig>
+      <WalletConnectButton />
       <Web3Modal
         projectId={projectId}
         ethereumClient={ethereumClient}
