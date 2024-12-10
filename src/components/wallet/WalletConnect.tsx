@@ -1,32 +1,23 @@
 import { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import { Wallet, LogOut } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from 'sonner';
 import { configureChains, createConfig } from 'wagmi';
-import { mainnet, polygon } from 'wagmi/chains';
+import { mainnet, polygon, optimism, arbitrum } from 'wagmi/chains';
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 import { Web3Modal, useWeb3Modal } from '@web3modal/react';
 import { useAccount, useDisconnect } from 'wagmi';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
 
 // Polyfill Buffer for browser environment
 import { Buffer } from 'buffer';
-globalThis.Buffer = Buffer;
+if (typeof window !== 'undefined') {
+  window.Buffer = Buffer;
+}
 
-export const projectId = '3bc71515e830445a56ca773f191fe27e';
+const projectId = 'YOUR_PROJECT_ID';
 
-const { publicClient, chains } = configureChains(
-  [mainnet, polygon],
-  [w3mProvider({ projectId })]
-);
+const chains = [mainnet, polygon, optimism, arbitrum];
 
-const metadata = {
-  name: 'Web3Modal',
-  description: 'Web3Modal Example',
-  url: 'https://web3modal.com',
-  icons: ['https://avatars.githubusercontent.com/u/37784886']
-};
+const { publicClient } = configureChains(chains, [w3mProvider({ projectId })]);
 
 export const wagmiConfig = createConfig({
   autoConnect: true,
@@ -39,14 +30,11 @@ export const wagmiConfig = createConfig({
 
 export const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
-// Initialize Phantom wallet adapter
-const phantomWallet = new PhantomWalletAdapter();
-
 const WalletConnectButton = () => {
   const { address, isConnected } = useAccount();
   const { open } = useWeb3Modal();
   const { disconnect } = useDisconnect();
-  const { connected: isPhantomConnected, connect: connectPhantom, disconnect: disconnectPhantom } = useWallet();
+  const { connected: isPhantomConnected, connect: connectPhantom, disconnect: disconnectPhantom, publicKey } = useWallet();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -87,57 +75,38 @@ const WalletConnectButton = () => {
       toast.success('Wallet disconnected');
     } catch (error) {
       console.error('Disconnection error:', error);
-      toast.error('Failed to disconnect wallet');
+      toast.error('Failed to disconnect wallet. Please try again.');
     }
   };
 
   const isAnyWalletConnected = isConnected || isPhantomConnected;
+  const displayAddress = isConnected ? address : (publicKey?.toBase58() || '');
 
   return (
     <div>
       {isAnyWalletConnected ? (
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-400">
-            {address?.slice(0, 6)}...{address?.slice(-4)}
+            {displayAddress?.slice(0, 6)}...{displayAddress?.slice(-4)}
           </span>
-          <Button
-            variant="destructive"
-            size="sm"
+          <button
             onClick={handleDisconnect}
-            className="flex items-center gap-2"
+            className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600"
           >
-            <LogOut className="h-4 w-4" />
             Disconnect
-          </Button>
+          </button>
         </div>
       ) : (
-        <Button
+        <button
           onClick={handleConnect}
-          className="flex items-center gap-2 bg-[#00E5BE] hover:bg-[#00E5BE]/90 text-black"
+          className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600"
         >
-          <Wallet className="h-4 w-4" />
           Connect Wallet
-        </Button>
+        </button>
       )}
+      <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
     </div>
   );
 };
 
-const WalletConnect = () => {
-  return (
-    <>
-      <WalletConnectButton />
-      <Web3Modal
-        projectId={projectId}
-        ethereumClient={ethereumClient}
-        themeMode="dark"
-        themeVariables={{
-          '--w3m-accent-color': '#00E5BE',
-          '--w3m-background-color': '#0B1221',
-        }}
-      />
-    </>
-  );
-};
-
-export default WalletConnect;
+export default WalletConnectButton;
