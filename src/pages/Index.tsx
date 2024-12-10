@@ -7,11 +7,7 @@ const Index = () => {
   const navigate = useNavigate();
   const [showLogin, setShowLogin] = useState(false);
 
-  const handleOnboardingComplete = (userType: string) => {
-    navigate("/login");
-  };
-
-  return <OnboardingWizard onComplete={handleOnboardingComplete} />;
+  return <OnboardingWizard />;
 };
 
 export default Index;
