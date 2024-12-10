@@ -11,6 +11,9 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { ArrowDownUp } from "lucide-react";
+import { Jupiter } from "@jup-ag/core";
+import { Connection, PublicKey } from "@solana/web3.js";
+import { getProvider } from "@/utils/solana";
 
 const DEX_OPTIONS = [
   { id: 'jupiter', name: 'Jupiter' },
@@ -34,6 +37,29 @@ const SwapInterface = () => {
   const [toAmount, setToAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [priceImpact, setPriceImpact] = useState<string | null>(null);
+  const [jupiter, setJupiter] = useState<Jupiter | null>(null);
+
+  // Initialize Jupiter
+  useEffect(() => {
+    const initJupiter = async () => {
+      try {
+        const connection = new Connection('https://api.mainnet-beta.solana.com');
+        const jupiterInstance = await Jupiter.load({
+          connection,
+          cluster: 'mainnet-beta',
+          userPublicKey: null, // Will be set during swap
+        });
+        setJupiter(jupiterInstance);
+      } catch (error) {
+        console.error('Error initializing Jupiter:', error);
+        toast.error('Failed to initialize Jupiter');
+      }
+    };
+
+    if (selectedDex === 'jupiter') {
+      initJupiter();
+    }
+  }, [selectedDex]);
 
   // Swap token positions
   const handleSwapTokens = () => {
@@ -48,25 +74,41 @@ const SwapInterface = () => {
   // Fetch price quote when amount or tokens change
   useEffect(() => {
     const fetchQuote = async () => {
-      if (!fromAmount || Number(fromAmount) <= 0) {
+      if (!fromAmount || Number(fromAmount) <= 0 || !jupiter) {
         setToAmount('');
         setPriceImpact(null);
         return;
       }
 
       try {
-        // Price fetching will be implemented in the next step
-        // This is a placeholder for now
-        setToAmount('0.0');
-        setPriceImpact('0.00');
+        const inputMint = new PublicKey(fromToken);
+        const outputMint = new PublicKey(toToken);
+        const amount = Number(fromAmount) * (10 ** 9); // Assuming SOL decimals
+
+        const routes = await jupiter.computeRoutes({
+          inputMint,
+          outputMint,
+          amount,
+          slippageBps: 50, // 0.5% slippage
+        });
+
+        if (routes.routesInfos.length > 0) {
+          const bestRoute = routes.routesInfos[0];
+          setToAmount(bestRoute.outAmount / (10 ** 9));
+          setPriceImpact(bestRoute.priceImpactPct.toFixed(2));
+        } else {
+          toast.error('No routes found for this swap');
+        }
       } catch (error) {
         console.error('Error fetching quote:', error);
         toast.error('Failed to fetch price quote');
       }
     };
 
-    fetchQuote();
-  }, [fromToken, toToken, fromAmount, selectedDex]);
+    if (selectedDex === 'jupiter') {
+      fetchQuote();
+    }
+  }, [fromToken, toToken, fromAmount, selectedDex, jupiter]);
 
   const handleSwap = async () => {
     try {
@@ -77,8 +119,53 @@ const SwapInterface = () => {
         return;
       }
 
-      // Swap implementation will be added in the next step
-      toast.info('Swap functionality coming soon!');
+      const provider = getProvider();
+      if (!provider) {
+        toast.error('Please connect your wallet');
+        return;
+      }
+
+      if (!jupiter) {
+        toast.error('Jupiter not initialized');
+        return;
+      }
+
+      // Update Jupiter with connected wallet
+      const newJupiter = await Jupiter.load({
+        connection: new Connection('https://api.mainnet-beta.solana.com'),
+        cluster: 'mainnet-beta',
+        userPublicKey: new PublicKey(provider.publicKey.toString()),
+      });
+
+      const inputMint = new PublicKey(fromToken);
+      const outputMint = new PublicKey(toToken);
+      const amount = Number(fromAmount) * (10 ** 9);
+
+      const routes = await newJupiter.computeRoutes({
+        inputMint,
+        outputMint,
+        amount,
+        slippageBps: 50,
+      });
+
+      if (routes.routesInfos.length === 0) {
+        toast.error('No routes found for this swap');
+        return;
+      }
+
+      const { transactions } = await newJupiter.exchange({
+        routeInfo: routes.routesInfos[0],
+      });
+
+      const { txid } = await transactions.execute();
+      
+      toast.success('Swap executed successfully!');
+      console.log('Swap transaction:', txid);
+      
+      // Reset form
+      setFromAmount('');
+      setToAmount('');
+      setPriceImpact(null);
     } catch (error) {
       console.error('Swap error:', error);
       toast.error('Failed to execute swap');
