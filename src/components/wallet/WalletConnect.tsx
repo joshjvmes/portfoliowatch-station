@@ -31,10 +31,7 @@ const WalletConnectButton = () => {
       try {
         console.log('Initializing AppKit...');
         const solanaAdapter = new SolanaAdapter({
-          // Use the correct configuration format
-          config: {
-            rpcUrl: 'https://api.devnet.solana.com'
-          }
+          rpcUrl: 'https://api.devnet.solana.com'
         });
 
         const kit = new AppKit({
