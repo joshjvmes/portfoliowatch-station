@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Bolt } from "lucide-react";
 import { toast } from "sonner";
-import { AuthError, Session } from "@supabase/supabase-js";
+import { AuthError, Session, AuthChangeEvent } from "@supabase/supabase-js";
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -18,7 +18,6 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
         
         if (error) {
           console.error("Session initialization error:", error);
-          toast.error("Session expired. Please login again.");
           await supabase.auth.signOut();
           setSession(null);
         } else if (!session) {
@@ -30,7 +29,6 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
       } catch (error) {
         console.error("Session error:", error);
         toast.error("Authentication error. Please try logging in again.");
-        await supabase.auth.signOut();
         setSession(null);
       } finally {
         setLoading(false);
@@ -40,22 +38,20 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
     initSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
       console.log("Auth state changed:", event, currentSession);
       
-      if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
-        if (!currentSession) {
-          setSession(null);
-          setLoading(false);
-          return;
-        }
-      }
-      
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+      if (event === 'SIGNED_OUT') {
+        setSession(null);
+        setLoading(false);
+      } else if (
+        event === 'SIGNED_IN' || 
+        event === 'TOKEN_REFRESHED' || 
+        event === 'USER_UPDATED'
+      ) {
         setSession(currentSession);
+        setLoading(false);
       }
-      
-      setLoading(false);
     });
 
     return () => {
