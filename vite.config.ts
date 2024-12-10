@@ -45,7 +45,10 @@ export default defineConfig(({ mode }) => ({
       transformMixedEsModules: true,
     },
     rollupOptions: {
-      external: ['@jup-ag/common'],
+      external: [
+        '@jup-ag/common',
+        '@mercurial-finance/optimist',
+      ],
       output: {
         manualChunks: {
           jupiter: ['@jup-ag/core'],
