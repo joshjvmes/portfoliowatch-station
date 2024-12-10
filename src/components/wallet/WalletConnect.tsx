@@ -9,11 +9,20 @@ import type { AppKitNetwork } from '@reown/appkit-common';
 // Initialize AppKit with Solana adapter
 export const appKit = new AppKit({
   projectId: '3bc71515e830445a56ca773f191fe27e',
-  name: 'Your App Name',
+  metadata: {
+    name: 'Your App Name',
+    description: 'Your app description',
+    url: 'https://your-app.com',
+    icons: ['https://your-app.com/icon.png']
+  },
   adapters: [
     new SolanaAdapter()
   ],
-  networks: ['solana:devnet' as AppKitNetwork]
+  networks: [{
+    id: 'solana:devnet',
+    name: 'Solana Devnet',
+    network: 'devnet'
+  }]
 }) as any; // Type assertion needed due to incomplete types in AppKit
 
 // Export configuration for Web3Modal
@@ -47,15 +56,22 @@ const WalletConnectButton = () => {
       toast.error('Wallet error: ' + error.message);
     };
 
-    appKit.on('connect', handleConnect);
-    appKit.on('disconnect', handleDisconnect);
-    appKit.on('error', handleError);
+    // Initialize AppKit and add event listeners
+    appKit.init().then(() => {
+      appKit.subscribeEvents({
+        connect: handleConnect,
+        disconnect: handleDisconnect,
+        error: handleError
+      });
+    });
 
     // Cleanup listeners on unmount
     return () => {
-      appKit.off('connect', handleConnect);
-      appKit.off('disconnect', handleDisconnect);
-      appKit.off('error', handleError);
+      appKit.unsubscribeEvents({
+        connect: handleConnect,
+        disconnect: handleDisconnect,
+        error: handleError
+      });
     };
   }, []);
 
@@ -63,10 +79,7 @@ const WalletConnectButton = () => {
 
   const handleConnect = async () => {
     try {
-      await appKit.request({
-        method: 'connect',
-        params: []
-      });
+      await appKit.connect();
     } catch (error) {
       console.error('Connection error:', error);
       toast.error('Failed to connect wallet. Please try again.');
@@ -75,10 +88,7 @@ const WalletConnectButton = () => {
 
   const handleDisconnect = async () => {
     try {
-      await appKit.request({
-        method: 'disconnect',
-        params: []
-      });
+      await appKit.disconnect();
     } catch (error) {
       console.error('Disconnection error:', error);
       toast.error('Failed to disconnect wallet');

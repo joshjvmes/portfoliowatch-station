@@ -31,12 +31,19 @@ const WalletManagementContent = () => {
       setTransactions([]);
     };
 
-    (appKit as any).on('connect', handleConnect);
-    (appKit as any).on('disconnect', handleDisconnect);
+    // Initialize AppKit and add event listeners
+    appKit.init().then(() => {
+      appKit.subscribeEvents({
+        connect: handleConnect,
+        disconnect: handleDisconnect
+      });
+    });
 
     return () => {
-      (appKit as any).off('connect', handleConnect);
-      (appKit as any).off('disconnect', handleDisconnect);
+      appKit.unsubscribeEvents({
+        connect: handleConnect,
+        disconnect: handleDisconnect
+      });
     };
   }, []);
 
