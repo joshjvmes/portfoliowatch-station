@@ -1,11 +1,18 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Power } from "lucide-react";
+import { Power, ExternalLink } from "lucide-react";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
+import { useNetwork } from 'wagmi';
 
 export const WalletInfo = () => {
   const { address, chain, balance, handleDisconnect } = useWalletConnection();
+  const { chains } = useNetwork();
+
+  const getExplorerLink = () => {
+    if (!address || !chain?.blockExplorers?.default?.url) return '#';
+    return `${chain.blockExplorers.default.url}/address/${address}`;
+  };
 
   return (
     <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
@@ -16,7 +23,17 @@ export const WalletInfo = () => {
         <div className="flex flex-col md:flex-row justify-between gap-4">
           <div>
             <p className="text-gray-400">Connected Address</p>
-            <p className="font-mono">{address?.slice(0, 6)}...{address?.slice(-4)}</p>
+            <div className="flex items-center gap-2">
+              <p className="font-mono">{address?.slice(0, 6)}...{address?.slice(-4)}</p>
+              <a
+                href={getExplorerLink()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#00E5BE] hover:text-[#00E5BE]/80"
+              >
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            </div>
           </div>
           <div>
             <p className="text-gray-400">Network</p>
@@ -24,6 +41,11 @@ export const WalletInfo = () => {
               <Badge variant="outline" className="bg-[#00E5BE]/10 text-[#00E5BE] border-[#00E5BE]/20">
                 {chain?.name || 'Unknown Network'}
               </Badge>
+              {chain?.id && (
+                <Badge variant="outline" className="bg-gray-500/10 text-gray-400 border-gray-500/20">
+                  Chain ID: {chain.id}
+                </Badge>
+              )}
             </div>
           </div>
           <div>

@@ -1,5 +1,5 @@
 import { configureChains, createConfig } from 'wagmi';
-import { mainnet, polygon } from 'wagmi/chains';
+import { mainnet, polygon, optimism, arbitrum, base, zora } from 'wagmi/chains';
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 import { Web3Modal } from '@web3modal/react';
 import { WagmiConfig } from 'wagmi';
@@ -8,11 +8,11 @@ import { Wallet } from "lucide-react";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
 import { WalletInfo } from "./WalletInfo";
 import { toast } from "sonner";
+import { NetworkStatus } from "./NetworkStatus";
 
-// Make sure to use a valid project ID from WalletConnect Cloud
 export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
-const chains = [mainnet, polygon];
+const chains = [mainnet, polygon, optimism, arbitrum, base, zora];
 
 const { publicClient, webSocketPublicClient } = configureChains(
   chains,
@@ -31,12 +31,6 @@ export const wagmiConfig = createConfig({
 
 export const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
-declare global {
-  interface Window {
-    ethereum?: any;
-  }
-}
-
 const WalletConnectButton = () => {
   const { isConnected } = useWalletConnection();
 
@@ -50,7 +44,6 @@ const WalletConnectButton = () => {
         return;
       }
 
-      // Create and dispatch the event
       const event = new CustomEvent('w3m-open-modal', { bubbles: true });
       window.dispatchEvent(event);
       console.log('Web3Modal event dispatched');
@@ -62,7 +55,12 @@ const WalletConnectButton = () => {
   };
 
   if (isConnected) {
-    return <WalletInfo />;
+    return (
+      <div className="space-y-4">
+        <NetworkStatus />
+        <WalletInfo />
+      </div>
+    );
   }
 
   return (
