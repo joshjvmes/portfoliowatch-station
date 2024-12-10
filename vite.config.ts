@@ -16,7 +16,8 @@ export default defineConfig(({ mode }) => ({
     alias: {
       '@': path.resolve(__dirname, './src'),
       buffer: 'buffer/',
-    }
+    },
+    dedupe: ['@jup-ag/common', '@jup-ag/core'],
   },
   define: {
     'process.env': {},
@@ -27,6 +28,7 @@ export default defineConfig(({ mode }) => ({
       '@solana/web3.js',
       '@solana/spl-token',
       '@jup-ag/common',
+      '@jup-ag/core',
       'buffer',
     ],
     exclude: [
@@ -34,6 +36,10 @@ export default defineConfig(({ mode }) => ({
     ],
     esbuildOptions: {
       target: 'esnext',
+      platform: 'browser',
+      supported: {
+        'bigint': true
+      },
     },
   },
   build: {
@@ -42,6 +48,7 @@ export default defineConfig(({ mode }) => ({
     commonjsOptions: {
       include: [/node_modules/],
       transformMixedEsModules: true,
+      requireReturnsDefault: 'auto',
     },
     rollupOptions: {
       external: [
@@ -50,7 +57,7 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           solana: ['@solana/web3.js', '@solana/spl-token'],
-          jupiter: ['@jup-ag/common'],
+          jupiter: ['@jup-ag/common', '@jup-ag/core'],
         },
       },
     },
