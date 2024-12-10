@@ -39,7 +39,8 @@ export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ 
     projectId, 
-    chains
+    chains,
+    version: 2 // Add version 2 to ensure latest Web3Modal functionality
   }),
   publicClient,
 });
@@ -65,11 +66,15 @@ const WalletConnectButton = () => {
 
   const handleConnect = async () => {
     try {
-      // Create and click a hidden Web3Modal button
-      const w3mButton = document.createElement('w3m-button');
-      document.body.appendChild(w3mButton);
-      w3mButton.click();
-      document.body.removeChild(w3mButton);
+      // Create Web3Modal custom element if it doesn't exist
+      if (!document.querySelector('w3m-modal')) {
+        const modal = document.createElement('w3m-modal');
+        document.body.appendChild(modal);
+      }
+
+      // Dispatch custom event to open modal
+      const openModal = new CustomEvent('w3m-open-modal');
+      window.dispatchEvent(openModal);
     } catch (error) {
       console.error('Connection error:', error);
       toast.error('Failed to connect wallet. Please try again.');
