@@ -9,6 +9,10 @@ import { Buffer } from 'buffer';
 // Polyfill Buffer for browser environment
 globalThis.Buffer = Buffer;
 
+interface WalletConnectData {
+  accounts: string[];
+}
+
 const WalletConnectButton = () => {
   const [appKit, setAppKit] = useState<AppKit | null>(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -20,12 +24,12 @@ const WalletConnectButton = () => {
       try {
         console.log('Initializing AppKit...');
         const solanaAdapter = new SolanaAdapter({
-          network: 'devnet'
+          rpcUrl: 'https://api.devnet.solana.com'
         });
 
         const kit = new AppKit({
           adapters: [solanaAdapter],
-          networks: ['solana'],
+          networks: ['solana'] as const,
           metadata: {
             name: 'My DApp',
             description: 'My decentralized application',
@@ -38,21 +42,21 @@ const WalletConnectButton = () => {
         setAppKit(kit);
 
         // Set up event listeners
-        kit.on('connect', (data: any) => {
+        (kit as any).on('connect', (data: WalletConnectData) => {
           console.log('Wallet connected:', data);
           setIsConnected(true);
           setWalletAddress(data.accounts[0]);
           toast.success('Wallet connected successfully');
         });
 
-        kit.on('disconnect', () => {
+        (kit as any).on('disconnect', () => {
           console.log('Wallet disconnected');
           setIsConnected(false);
           setWalletAddress(null);
           toast.success('Wallet disconnected');
         });
 
-        kit.on('error', (error: Error) => {
+        (kit as any).on('error', (error: Error) => {
           console.error('Wallet error:', error);
           toast.error(error.message || 'Failed to connect wallet');
         });
@@ -68,7 +72,7 @@ const WalletConnectButton = () => {
 
     return () => {
       if (appKit) {
-        appKit.removeAllListeners();
+        (appKit as any).removeAllListeners();
       }
     };
   }, []);
@@ -79,7 +83,7 @@ const WalletConnectButton = () => {
       if (!appKit) {
         throw new Error('AppKit not initialized');
       }
-      await appKit.request({ method: 'connect' });
+      await (appKit as any).request({ method: 'connect' });
     } catch (error) {
       console.error('Connection error:', error);
       toast.error('Failed to connect wallet');
@@ -92,7 +96,7 @@ const WalletConnectButton = () => {
       if (!appKit) {
         throw new Error('AppKit not initialized');
       }
-      await appKit.request({ method: 'disconnect' });
+      await (appKit as any).request({ method: 'disconnect' });
     } catch (error) {
       console.error('Disconnection error:', error);
       toast.error('Failed to disconnect wallet');
