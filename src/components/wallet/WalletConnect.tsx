@@ -1,21 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import { Wallet, LogOut } from "lucide-react";
-import { toast } from "sonner";
 import { configureChains, createConfig } from 'wagmi';
 import { mainnet, polygon } from 'wagmi/chains';
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 import { Web3Modal } from '@web3modal/react';
-import { useAccount, useDisconnect, useBalance, useNetwork } from 'wagmi';
-import { WalletProvider } from '@solana/wallet-adapter-react';
-import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
-import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { useWallet } from '@solana/wallet-adapter-react';
-import '@solana/wallet-adapter-react-ui/styles.css';
-
-// Polyfill Buffer for browser environment
-import { Buffer } from 'buffer';
-globalThis.Buffer = Buffer;
+import { WagmiConfig } from 'wagmi';
+import { Button } from "@/components/ui/button";
+import { Wallet } from "lucide-react";
+import { useWalletConnection } from "@/hooks/useWalletConnection";
+import { WalletInfo } from "./WalletInfo";
 
 // Make sure to use a valid project ID from WalletConnect Cloud
 export const projectId = '3bc71515e830445a56ca773f191fe27e';
@@ -37,105 +28,31 @@ export const wagmiConfig = createConfig({
 });
 
 export const ethereumClient = new EthereumClient(wagmiConfig, chains);
-const phantomWallet = new PhantomWalletAdapter();
 
 const WalletConnectButton = () => {
-  const { address, isConnected } = useAccount();
-  const { chain } = useNetwork();
-  const { data: balance } = useBalance({
-    address: address,
-  });
-  const { disconnect } = useDisconnect();
-  const { connected: isPhantomConnected, disconnect: disconnectPhantom } = useWallet();
-  const [mounted, setMounted] = useState(false);
+  const { isConnected } = useWalletConnection();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-
-  const handleConnect = async () => {
+  const handleConnect = () => {
     try {
-      // Trigger Web3Modal
-      const modal = document.querySelector('w3m-modal');
-      if (!modal) {
-        const newModal = document.createElement('w3m-modal');
-        document.body.appendChild(newModal);
-      }
-      
-      // Dispatch the open event
       window.dispatchEvent(new Event('w3m-open-modal'));
-      
-      // Log for debugging
       console.log('Attempting to open Web3Modal');
     } catch (error) {
       console.error('Connection error:', error);
-      toast.error('Failed to connect wallet. Please try again.');
     }
   };
 
-  const handleDisconnect = () => {
-    try {
-      if (isConnected) {
-        disconnect();
-      }
-      if (isPhantomConnected) {
-        disconnectPhantom();
-      }
-      toast.success('Wallet disconnected');
-    } catch (error) {
-      console.error('Disconnection error:', error);
-      toast.error('Failed to disconnect wallet');
-    }
-  };
-
-  const isAnyWalletConnected = isConnected || isPhantomConnected;
+  if (isConnected) {
+    return <WalletInfo />;
+  }
 
   return (
-    <div className="space-y-4">
-      {isAnyWalletConnected ? (
-        <div className="space-y-4">
-          <div className="p-6 rounded-lg bg-[#0B1221]/50 border border-white/10 backdrop-blur-xl">
-            <h3 className="text-lg font-semibold mb-4">Wallet Information</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-400">Address</span>
-                <span className="font-mono">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
-              </div>
-              {chain && (
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Network</span>
-                  <span className="text-[#00E5BE]">{chain.name}</span>
-                </div>
-              )}
-              {balance && (
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Balance</span>
-                  <span>{parseFloat(balance.formatted).toFixed(4)} {balance.symbol}</span>
-                </div>
-              )}
-            </div>
-          </div>
-          <Button
-            variant="destructive"
-            onClick={handleDisconnect}
-            className="w-full flex items-center justify-center gap-2"
-          >
-            <LogOut className="h-4 w-4" />
-            Disconnect Wallet
-          </Button>
-        </div>
-      ) : (
-        <Button
-          onClick={handleConnect}
-          className="w-full flex items-center justify-center gap-2 bg-[#00E5BE] hover:bg-[#00E5BE]/90 text-black"
-        >
-          <Wallet className="h-4 w-4" />
-          Connect Wallet
-        </Button>
-      )}
-    </div>
+    <Button
+      onClick={handleConnect}
+      className="w-full flex items-center justify-center gap-2 bg-[#00E5BE] hover:bg-[#00E5BE]/90 text-black"
+    >
+      <Wallet className="h-4 w-4" />
+      Connect Wallet
+    </Button>
   );
 };
 
@@ -151,11 +68,7 @@ const WalletConnect = () => {
           '--w3m-background-color': '#0B1221',
         }}
       />
-      <WalletProvider wallets={[phantomWallet]} autoConnect>
-        <WalletModalProvider>
-          <WalletConnectButton />
-        </WalletModalProvider>
-      </WalletProvider>
+      <WalletConnectButton />
     </>
   );
 };
