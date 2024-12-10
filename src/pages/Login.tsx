@@ -10,7 +10,6 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check current auth status
     const checkSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
@@ -19,7 +18,19 @@ const Login = () => {
           return;
         }
         if (session) {
-          navigate("/dashboard");
+          // Check user role
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('user_type')
+            .eq('id', session.user.id)
+            .single();
+
+          // Redirect based on user role
+          if (profileData?.user_type === 'admin') {
+            navigate("/admin");
+          } else {
+            navigate("/dashboard");
+          }
         }
       } catch (error) {
         console.error("Session check error:", error);
@@ -28,18 +39,28 @@ const Login = () => {
 
     checkSession();
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
-        navigate("/dashboard");
+        // Check user role
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('user_type')
+          .eq('id', session.user.id)
+          .single();
+
+        // Redirect based on user role
+        if (profileData?.user_type === 'admin') {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
       } else if (event === 'SIGNED_OUT') {
         navigate("/login");
       }
     });
 
-    // Cleanup subscription on unmount
     return () => {
       subscription.unsubscribe();
     };

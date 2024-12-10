@@ -3,14 +3,14 @@ import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Bolt } from "lucide-react";
 import { toast } from "sonner";
-import { AuthError, Session, AuthChangeEvent } from "@supabase/supabase-js";
+import { AuthError, Session } from "@supabase/supabase-js";
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check current session
     const initSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
@@ -25,6 +25,19 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
           setSession(null);
         } else {
           setSession(session);
+          // Fetch user role from profiles table
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('user_type')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profileError) {
+            console.error("Error fetching user role:", profileError);
+          } else {
+            console.log("User role:", profileData?.user_type);
+            setUserRole(profileData?.user_type);
+          }
         }
       } catch (error) {
         console.error("Session error:", error);
@@ -37,12 +50,12 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
 
     initSession();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
       console.log("Auth state changed:", event, currentSession);
       
       if (event === 'SIGNED_OUT') {
         setSession(null);
+        setUserRole(null);
         setLoading(false);
       } else if (
         event === 'SIGNED_IN' || 
@@ -50,6 +63,14 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
         event === 'USER_UPDATED'
       ) {
         setSession(currentSession);
+        if (currentSession) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('user_type')
+            .eq('id', currentSession.user.id)
+            .single();
+          setUserRole(profileData?.user_type || null);
+        }
         setLoading(false);
       }
     });
@@ -73,6 +94,18 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   if (!session) {
     console.log("No session, redirecting to login");
     return <Navigate to="/login" replace />;
+  }
+
+  // Redirect admins to admin dashboard
+  if (userRole === 'admin' && window.location.pathname === '/dashboard') {
+    console.log("Admin user detected, redirecting to admin dashboard");
+    return <Navigate to="/admin" replace />;
+  }
+
+  // Redirect non-admins to regular dashboard
+  if (userRole === 'user' && window.location.pathname === '/admin') {
+    console.log("Non-admin user detected, redirecting to regular dashboard");
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <>{children}</>;
