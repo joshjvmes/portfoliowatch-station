@@ -22,12 +22,17 @@ export const wagmiConfig = createConfig({
   connectors: w3mConnectors({ 
     projectId,
     chains,
-    version: 2, // Add version specification
   }),
   publicClient,
 });
 
 export const ethereumClient = new EthereumClient(wagmiConfig, chains);
+
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
 
 const WalletConnectButton = () => {
   const { isConnected } = useWalletConnection();
@@ -35,8 +40,8 @@ const WalletConnectButton = () => {
   const handleConnect = async () => {
     try {
       console.log('Attempting to open Web3Modal');
-      // Use a more direct method to open the modal
-      if (window.ethereum) {
+      // Check for Ethereum provider without TypeScript errors
+      if (typeof window !== 'undefined' && window.ethereum) {
         console.log('Ethereum provider detected');
       }
       // Dispatch the event to open the modal
