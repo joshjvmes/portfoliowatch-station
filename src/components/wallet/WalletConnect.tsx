@@ -13,7 +13,7 @@ if (typeof window !== 'undefined') {
   window.Buffer = Buffer;
 }
 
-export const projectId = 'YOUR_PROJECT_ID';
+const projectId = 'YOUR_PROJECT_ID';
 
 const chains = [mainnet, polygon, optimism, arbitrum];
 
@@ -23,7 +23,8 @@ export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ 
     projectId, 
-    chains
+    chains,
+    version: '2', // Specify version to avoid URL object issues
   }),
   publicClient,
 });
@@ -45,27 +46,25 @@ const WalletConnectButton = () => {
 
   const handleConnect = async () => {
     try {
-      // Try to connect with Web3Modal first
-      await open();
-      
-      // If Web3Modal connection fails, try Phantom
       if (!isConnected) {
+        await open();
+      }
+      if (!isPhantomConnected) {
         try {
           await connectPhantom();
         } catch (error) {
           console.error('Phantom connection error:', error);
-          toast.error('Failed to connect Phantom wallet. Please try again.');
+          toast.error('Failed to connect Phantom wallet');
         }
       }
     } catch (error) {
       console.error('Connection error:', error);
-      toast.error('Failed to connect wallet. Please try again.');
+      toast.error('Failed to connect wallet');
     }
   };
 
   const handleDisconnect = () => {
     try {
-      // Disconnect from both if connected
       if (isConnected) {
         disconnect();
       }
@@ -75,7 +74,7 @@ const WalletConnectButton = () => {
       toast.success('Wallet disconnected');
     } catch (error) {
       console.error('Disconnection error:', error);
-      toast.error('Failed to disconnect wallet. Please try again.');
+      toast.error('Failed to disconnect wallet');
     }
   };
 
@@ -104,7 +103,8 @@ const WalletConnectButton = () => {
           Connect Wallet
         </button>
       )}
-      <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
+      {/* Render Web3Modal only once at the root level */}
+      {!isConnected && <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />}
     </div>
   );
 };
