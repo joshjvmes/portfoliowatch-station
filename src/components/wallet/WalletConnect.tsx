@@ -8,19 +8,11 @@ import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 
-// Configure chains & providers
 export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
 const { publicClient, chains } = configureChains(
   [mainnet, polygon],
-  [w3mProvider({ 
-    projectId,
-    // Add WebSocket configuration
-    wsRetry: {
-      delay: 1000,
-      maxAttempts: 5
-    }
-  })]
+  [w3mProvider({ projectId })]
 );
 
 export const wagmiConfig = createConfig({
@@ -28,23 +20,16 @@ export const wagmiConfig = createConfig({
   connectors: w3mConnectors({ 
     projectId, 
     chains,
-    // Add metadata for better origin handling
-    metadata: {
-      name: 'Web3Modal',
-      description: 'Web3Modal Example',
-      url: window.location.origin,
-      icons: ['https://avatars.githubusercontent.com/u/37784886']
-    }
+    version: '2' // Explicitly set WalletConnect version
   }),
   publicClient,
 });
 
-// Create ethereum client
 export const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
 const WalletConnectButton = () => {
   const { address, isConnected } = useAccount();
-  const { connectAsync, connectors } = useConnect();
+  const { connect, connectors } = useConnect();
   const { disconnect } = useDisconnect();
   const [mounted, setMounted] = useState(false);
 
@@ -56,24 +41,21 @@ const WalletConnectButton = () => {
 
   const handleConnect = async () => {
     try {
-      const connector = connectors[0]; // WalletConnect connector
+      const connector = connectors.find((x) => x.id === 'walletConnect');
       if (!connector) {
         toast.error('WalletConnect not available');
         return;
       }
       
-      await connectAsync({ 
-        connector,
-        chainId: chains[0].id // Connect to the first chain by default
-      });
-      toast.success('Wallet connected successfully!');
+      connect({ connector });
+      toast.success('Connecting wallet...');
     } catch (error) {
       console.error('Connection error:', error);
       toast.error('Failed to connect wallet. Please try again.');
     }
   };
 
-  const handleDisconnect = async () => {
+  const handleDisconnect = () => {
     try {
       disconnect();
       toast.success('Wallet disconnected');
