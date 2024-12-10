@@ -13,7 +13,7 @@ if (typeof window !== 'undefined') {
   window.Buffer = Buffer;
 }
 
-const projectId = 'YOUR_PROJECT_ID';
+export const projectId = 'YOUR_PROJECT_ID';
 
 const chains = [mainnet, polygon, optimism, arbitrum];
 
