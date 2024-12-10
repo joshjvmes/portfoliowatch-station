@@ -24,7 +24,12 @@ export const getProvider = () => {
 
 export const createConnection = (network: NetworkType) => {
   try {
-    return new Connection(NETWORK_URLS[network], 'confirmed');
+    const connection = new Connection(NETWORK_URLS[network], {
+      commitment: 'confirmed',
+      confirmTransactionInitialTimeout: 60000,
+      disableRetryOnRateLimit: false,
+    });
+    return connection;
   } catch (error) {
     console.error('Failed to create Solana connection:', error);
     return null;
@@ -56,8 +61,17 @@ export const fetchWalletData = async (address: string, network: NetworkType) => 
       throw new Error('Invalid wallet address');
     }
 
-    // Fetch SOL balance
-    const balance = await connection.getBalance(publicKey);
+    // Fetch SOL balance with retry
+    let balance;
+    try {
+      balance = await connection.getBalance(publicKey);
+    } catch (error: any) {
+      console.error('Error fetching balance:', error);
+      if (error.message?.includes('403')) {
+        throw new Error('Network connection error. Please try switching networks or try again later.');
+      }
+      throw new Error('Failed to fetch balance');
+    }
 
     // Fetch token accounts with retry
     let tokenAccounts;
