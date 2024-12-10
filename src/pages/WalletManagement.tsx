@@ -2,7 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Wallet } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import WalletConnect from "@/components/wallet/WalletConnect";
-import SwapInterface from "@/components/dex/SwapInterface";
 
 const WalletManagementContent = () => {
   return (
@@ -19,8 +18,6 @@ const WalletManagementContent = () => {
           <WalletConnect />
         </CardContent>
       </Card>
-
-      <SwapInterface />
     </div>
   );
 };
