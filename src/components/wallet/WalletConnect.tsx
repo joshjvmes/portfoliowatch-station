@@ -2,103 +2,103 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Wallet, LogOut } from "lucide-react";
 import { toast } from "sonner";
-import { appKit } from '@/lib/wallet';
+import { configureChains, createConfig } from 'wagmi';
+import { mainnet, polygon } from 'wagmi/chains';
+import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
+import { Web3Modal, useWeb3Modal } from '@web3modal/react';
+import { useAccount, useDisconnect } from 'wagmi';
+import { useWallet, WalletProvider } from '@solana/wallet-adapter-react';
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
+import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
+import '@solana/wallet-adapter-react-ui/styles.css';
+
+// Polyfill Buffer for browser environment
+import { Buffer } from 'buffer';
+globalThis.Buffer = Buffer;
+
+// Add Phantom to Window type
+declare global {
+  interface Window {
+    phantom?: {
+      solana?: {
+        isPhantom?: boolean;
+      };
+    };
+  }
+}
+
+export const projectId = '3bc71515e830445a56ca773f191fe27e';
+
+const { publicClient, chains } = configureChains(
+  [mainnet, polygon],
+  [w3mProvider({ projectId })]
+);
+
+export const wagmiConfig = createConfig({
+  autoConnect: true,
+  connectors: w3mConnectors({ 
+    projectId, 
+    chains
+  }),
+  publicClient,
+});
+
+export const ethereumClient = new EthereumClient(wagmiConfig, chains);
+
+// Initialize Phantom wallet adapter
+const phantomWallet = new PhantomWalletAdapter();
 
 const WalletConnectButton = () => {
-  const [address, setAddress] = useState<string | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const { address, isConnected } = useAccount();
+  const { open } = useWeb3Modal();
+  const { disconnect } = useDisconnect();
+  const { connected: isPhantomConnected, connect: connectPhantom, disconnect: disconnectPhantom } = useWallet();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
-
-    const initializeWallet = async () => {
-      try {
-        await appKit.initialize();
-        if (mounted) {
-          setIsInitialized(true);
-          console.log('Wallet initialized successfully');
-        }
-      } catch (error) {
-        console.error('Wallet initialization error:', error);
-        toast.error('Failed to initialize wallet connection');
-      }
-    };
-
-    initializeWallet();
-
-    return () => {
-      mounted = false;
-    };
+    setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (!isInitialized) return;
-
-    const handleConnect = (data: any) => {
-      console.log('Wallet connected:', data);
-      setAddress(data.address);
-      setIsConnected(true);
-      toast.success('Wallet connected successfully');
-    };
-
-    const handleDisconnect = () => {
-      console.log('Wallet disconnected');
-      setAddress(null);
-      setIsConnected(false);
-      toast.success('Wallet disconnected');
-    };
-
-    const handleError = (error: Error) => {
-      console.error('Wallet error:', error);
-      toast.error(`Wallet error: ${error.message}`);
-    };
-
-    appKit.subscribeEvents({
-      connect: handleConnect,
-      disconnect: handleDisconnect,
-      error: handleError
-    });
-
-    return () => {
-      appKit.unsubscribeEvents({
-        connect: handleConnect,
-        disconnect: handleDisconnect,
-        error: handleError
-      });
-    };
-  }, [isInitialized]);
+  if (!mounted) return null;
 
   const handleConnect = async () => {
     try {
-      await appKit.connect();
+      // Check if Phantom is available
+      const isPhantomAvailable = window.phantom?.solana?.isPhantom;
+      
+      if (isPhantomAvailable) {
+        await connectPhantom();
+        toast.success('Phantom wallet connected');
+      } else {
+        // If Phantom is not available, try Web3Modal
+        await open();
+      }
     } catch (error) {
       console.error('Connection error:', error);
-      toast.error('Failed to connect wallet');
+      toast.error('Failed to connect wallet. Please try again.');
     }
   };
 
-  const handleDisconnect = async () => {
+  const handleDisconnect = () => {
     try {
-      await appKit.disconnect();
+      if (isConnected) {
+        disconnect();
+      }
+      if (isPhantomConnected) {
+        disconnectPhantom();
+      }
+      toast.success('Wallet disconnected');
     } catch (error) {
       console.error('Disconnection error:', error);
       toast.error('Failed to disconnect wallet');
     }
   };
 
-  if (!isInitialized) {
-    return (
-      <Button disabled className="flex items-center gap-2">
-        <Wallet className="h-4 w-4" />
-        Initializing...
-      </Button>
-    );
-  }
+  const isAnyWalletConnected = isConnected || isPhantomConnected;
 
   return (
     <div>
-      {isConnected ? (
+      {isAnyWalletConnected ? (
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-400">
             {address?.slice(0, 6)}...{address?.slice(-4)}
@@ -127,7 +127,22 @@ const WalletConnectButton = () => {
 };
 
 const WalletConnect = () => {
-  return <WalletConnectButton />;
+  return (
+    <WalletProvider wallets={[phantomWallet]} autoConnect>
+      <WalletModalProvider>
+        <WalletConnectButton />
+        <Web3Modal
+          projectId={projectId}
+          ethereumClient={ethereumClient}
+          themeMode="dark"
+          themeVariables={{
+            '--w3m-accent-color': '#00E5BE',
+            '--w3m-background-color': '#0B1221',
+          }}
+        />
+      </WalletModalProvider>
+    </WalletProvider>
+  );
 };
 
 export default WalletConnect;
