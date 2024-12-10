@@ -17,17 +17,6 @@ import '@solana/wallet-adapter-react-ui/styles.css';
 import { Buffer } from 'buffer';
 globalThis.Buffer = Buffer;
 
-declare global {
-  interface Window {
-    phantom?: {
-      solana?: {
-        isPhantom?: boolean;
-        connect(): Promise<{ publicKey: string }>;
-      };
-    };
-  }
-}
-
 export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
 const { publicClient, chains } = configureChains(
@@ -39,7 +28,7 @@ export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ 
     projectId, 
-    chains
+    chains,
   }),
   publicClient,
 });
@@ -65,15 +54,18 @@ const WalletConnectButton = () => {
 
   const handleConnect = async () => {
     try {
-      // Create Web3Modal custom element if it doesn't exist
-      if (!document.querySelector('w3m-modal')) {
-        const modal = document.createElement('w3m-modal');
-        document.body.appendChild(modal);
+      // Trigger Web3Modal
+      const modal = document.querySelector('w3m-modal');
+      if (!modal) {
+        const newModal = document.createElement('w3m-modal');
+        document.body.appendChild(newModal);
       }
-
-      // Dispatch custom event to open modal
-      const openModal = new CustomEvent('w3m-open-modal');
-      window.dispatchEvent(openModal);
+      
+      // Dispatch the open event
+      window.dispatchEvent(new Event('w3m-open-modal'));
+      
+      // Log for debugging
+      console.log('Attempting to open Web3Modal');
     } catch (error) {
       console.error('Connection error:', error);
       toast.error('Failed to connect wallet. Please try again.');
@@ -146,20 +138,22 @@ const WalletConnectButton = () => {
 
 const WalletConnect = () => {
   return (
-    <WalletProvider wallets={[phantomWallet]} autoConnect>
-      <WalletModalProvider>
-        <WalletConnectButton />
-        <Web3Modal
-          projectId={projectId}
-          ethereumClient={ethereumClient}
-          themeMode="dark"
-          themeVariables={{
-            '--w3m-accent-color': '#00E5BE',
-            '--w3m-background-color': '#0B1221',
-          }}
-        />
-      </WalletModalProvider>
-    </WalletProvider>
+    <>
+      <WalletProvider wallets={[phantomWallet]} autoConnect>
+        <WalletModalProvider>
+          <WalletConnectButton />
+        </WalletModalProvider>
+      </WalletProvider>
+      <Web3Modal
+        projectId={projectId}
+        ethereumClient={ethereumClient}
+        themeMode="dark"
+        themeVariables={{
+          '--w3m-accent-color': '#00E5BE',
+          '--w3m-background-color': '#0B1221',
+        }}
+      />
+    </>
   );
 };
 
