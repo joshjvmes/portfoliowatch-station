@@ -20,9 +20,11 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
           console.error("Session initialization error:", error);
           await supabase.auth.signOut();
           setSession(null);
+          setLoading(false);
         } else if (!session) {
           console.log("No active session found");
           setSession(null);
+          setLoading(false);
         } else {
           setSession(session);
           // Fetch user role from profiles table
@@ -34,16 +36,17 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
 
           if (profileError) {
             console.error("Error fetching user role:", profileError);
+            setLoading(false);
           } else {
             console.log("User role:", profileData?.user_type);
             setUserRole(profileData?.user_type);
+            setLoading(false);
           }
         }
       } catch (error) {
         console.error("Session error:", error);
         toast.error("Authentication error. Please try logging in again.");
         setSession(null);
-      } finally {
         setLoading(false);
       }
     };
