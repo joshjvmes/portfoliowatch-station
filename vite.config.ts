@@ -16,6 +16,10 @@ export default defineConfig(({ mode }) => ({
     alias: {
       '@': path.resolve(__dirname, './src'),
       buffer: 'buffer/',
+      fs: 'browserify-fs',
+      path: 'path-browserify',
+      os: 'os-browserify/browser',
+      crypto: 'crypto-browserify',
     },
     dedupe: ['@jup-ag/common', '@jup-ag/core'],
   },
