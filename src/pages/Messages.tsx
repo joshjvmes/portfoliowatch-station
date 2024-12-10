@@ -12,7 +12,7 @@ const mockMessages = [
     preview: "Welcome to our platform! Here's how to get started...",
     date: "2024-03-15",
     unread: true,
-    type: "system",
+    type: "system" as const,
   },
   {
     id: 2,
@@ -21,7 +21,7 @@ const mockMessages = [
     preview: "Your recent transaction has been confirmed...",
     date: "2024-03-14",
     unread: false,
-    type: "transaction",
+    type: "transaction" as const,
   },
   {
     id: 3,
@@ -30,7 +30,7 @@ const mockMessages = [
     preview: "We've updated our security protocols...",
     date: "2024-03-13",
     unread: false,
-    type: "alert",
+    type: "alert" as const,
   },
 ];
 
