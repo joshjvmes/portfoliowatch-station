@@ -25,6 +25,7 @@ const wagmiConfig = createConfig({
   publicClient,
 });
 
+// Create ethereum client
 const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
 const WalletConnectButton = () => {
