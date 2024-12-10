@@ -9,12 +9,25 @@ import { Web3Modal } from '@web3modal/react';
 import { useAccount, useDisconnect } from 'wagmi';
 import { WalletProvider } from '@solana/wallet-adapter-react';
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
-import { WalletModalProvider, useWalletModal } from '@solana/wallet-adapter-react-ui';
+import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
+import { useWallet } from '@solana/wallet-adapter-react';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
 // Polyfill Buffer for browser environment
 import { Buffer } from 'buffer';
 globalThis.Buffer = Buffer;
+
+// Add Phantom to Window type
+declare global {
+  interface Window {
+    phantom?: {
+      solana?: {
+        isPhantom?: boolean;
+        connect(): Promise<{ publicKey: string }>;
+      };
+    };
+  }
+}
 
 export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
@@ -40,7 +53,7 @@ const phantomWallet = new PhantomWalletAdapter();
 const WalletConnectButton = () => {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
-  const { connected: isPhantomConnected, disconnect: disconnectPhantom } = useWalletModal();
+  const { connected: isPhantomConnected, disconnect: disconnectPhantom } = useWallet();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -52,7 +65,7 @@ const WalletConnectButton = () => {
   const handleConnect = async () => {
     try {
       // Check if Phantom is available
-      const isPhantomAvailable = window.phantom?.solana?.isPhantom;
+      const isPhantomAvailable = window?.phantom?.solana?.isPhantom;
       
       if (isPhantomAvailable) {
         // Open Phantom wallet modal
