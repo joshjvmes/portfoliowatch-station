@@ -8,14 +8,6 @@ import { Buffer } from 'buffer';
 window.Buffer = Buffer;
 globalThis.Buffer = Buffer;
 
-// Create root element if it doesn't exist
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-  const root = document.createElement('div');
-  root.id = 'root';
-  document.body.appendChild(root);
-}
-
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <App />

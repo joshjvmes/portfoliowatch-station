@@ -1,6 +1,6 @@
-import path from "path";
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import path from 'path';
 import { componentTagger } from "lovable-tagger";
 
 export default defineConfig(({ mode }) => ({
@@ -14,9 +14,9 @@ export default defineConfig(({ mode }) => ({
   ].filter(Boolean),
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': path.resolve(__dirname, './src'),
       buffer: 'buffer/',
-    },
+    }
   },
   define: {
     'process.env': {},
@@ -24,14 +24,14 @@ export default defineConfig(({ mode }) => ({
   },
   optimizeDeps: {
     include: [
-      '@solana/web3.js',
-      '@solana/spl-token',
-      '@project-serum/serum',
       '@jup-ag/core',
       'buffer',
       'jsbi',
+      '@solana/spl-token',
+      '@solana/web3.js',
     ],
     exclude: [
+      '@jup-ag/common',
       '@mercurial-finance/optimist',
     ],
     esbuildOptions: {
@@ -46,8 +46,15 @@ export default defineConfig(({ mode }) => ({
     },
     rollupOptions: {
       external: [
+        '@jup-ag/common',
         '@mercurial-finance/optimist',
       ],
+      output: {
+        manualChunks: {
+          jupiter: ['@jup-ag/core'],
+          solana: ['@solana/web3.js', '@solana/spl-token'],
+        },
+      },
     },
   },
 }));
