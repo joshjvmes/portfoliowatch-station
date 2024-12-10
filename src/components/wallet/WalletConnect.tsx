@@ -21,13 +21,6 @@ const { publicClient, chains } = configureChains(
   [w3mProvider({ projectId })]
 );
 
-const metadata = {
-  name: 'Web3Modal',
-  description: 'Web3Modal Example',
-  url: 'https://web3modal.com',
-  icons: ['https://avatars.githubusercontent.com/u/37784886']
-};
-
 export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ 
