@@ -8,8 +8,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import WalletConnect from "@/components/wallet/WalletConnect";
 import { Badge } from "@/components/ui/badge";
 import { WagmiConfig } from 'wagmi';
-import { wagmiConfig, ethereumClient, projectId } from '@/components/wallet/WalletConnect';
-import { Web3Modal } from '@web3modal/react';
+import { wagmiConfig, projectId } from '@/components/wallet/WalletConnect';
 
 const WalletManagementContent = () => {
   const { address, isConnected } = useAccount();
@@ -139,15 +138,6 @@ const WalletManagement = () => {
       <WagmiConfig config={wagmiConfig}>
         <WalletManagementContent />
       </WagmiConfig>
-      <Web3Modal
-        projectId={projectId}
-        ethereumClient={ethereumClient}
-        themeMode="dark"
-        themeVariables={{
-          '--w3m-accent-color': '#00E5BE',
-          '--w3m-background-color': '#0B1221',
-        }}
-      />
     </DashboardLayout>
   );
 };

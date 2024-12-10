@@ -8,11 +8,11 @@ import { useWalletConnection } from "@/hooks/useWalletConnection";
 import { WalletInfo } from "./WalletInfo";
 import { toast } from "sonner";
 import { NetworkStatus } from "./NetworkStatus";
-import { w3mConnectors, w3mProvider } from '@web3modal/wagmi';
+import { walletConnectProvider } from '@web3modal/wagmi';
 
 declare global {
   interface Window {
-    ethereum?: any;
+    ethereum?: Record<string, unknown>;
   }
 }
 
@@ -22,15 +22,12 @@ const chains = [mainnet, polygon, optimism, arbitrum, base, zora];
 
 const { publicClient, webSocketPublicClient } = configureChains(
   chains,
-  [w3mProvider({ projectId })]
+  [walletConnectProvider({ projectId })]
 );
 
 export const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors: w3mConnectors({ 
-    projectId,
-    chains,
-  }),
+  connectors: [],
   publicClient,
   webSocketPublicClient,
 });
