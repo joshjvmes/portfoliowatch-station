@@ -41,7 +41,7 @@ createWeb3Modal({
   themeVariables: {
     '--w3m-accent-color': '#00E5BE',
     '--w3m-background-color': '#0B1221',
-    '--w3m-z-index': '1000',
+    '--w3m-z-index': 1000, // Changed from string to number
   },
 });
 
