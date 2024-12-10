@@ -3,13 +3,9 @@ import PrivateRoute from "@/components/auth/PrivateRoute";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import Dashboard from "@/pages/Dashboard";
-import UserDashboard from "@/pages/UserDashboard";
-import Index from "@/pages/Index";
-import Wheel from "@/pages/Wheel";
 import Holdings from "@/pages/Holdings";
 import History from "@/pages/History";
 import Messages from "@/pages/Messages";
-import Deposit from "@/pages/Deposit";
 import Withdrawal from "@/pages/Withdrawal";
 import Assets from "@/pages/Assets";
 import PortfolioMargin from "@/pages/PortfolioMargin";
@@ -17,15 +13,17 @@ import Orders from "@/pages/Orders";
 import Rewards from "@/pages/Rewards";
 import TradingBots from "@/pages/TradingBots";
 import SystemStatus from "@/pages/SystemStatus";
+import NotFound from "@/pages/NotFound";
+import Deposit from "@/pages/Deposit";
 import VirtualCard from "@/pages/VirtualCard";
 import Settings from "@/pages/Settings";
 import TradingSignals from "@/pages/TradingSignals";
-import NotFound from "@/pages/NotFound";
+import Wheel from "@/pages/Wheel";
 
 export const routes = [
   {
     path: "/",
-    element: <Index />
+    element: <Navigate to="/login" replace />
   },
   {
     path: "/login",
@@ -36,12 +34,8 @@ export const routes = [
     element: <Register />
   },
   {
-    path: "/admin",
-    element: <PrivateRoute><Dashboard /></PrivateRoute>
-  },
-  {
     path: "/dashboard",
-    element: <PrivateRoute><UserDashboard /></PrivateRoute>
+    element: <PrivateRoute><Dashboard /></PrivateRoute>
   },
   {
     path: "/wheel",
