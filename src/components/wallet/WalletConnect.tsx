@@ -15,9 +15,16 @@ export const appKit = new AppKit({
     icons: ['https://your-app.com/icon.png']
   },
   adapters: [
-    new SolanaAdapter({
-      cluster: 'devnet'
-    })
+    new SolanaAdapter()
+  ],
+  networks: [
+    {
+      id: 'solana:devnet',
+      name: 'Solana Devnet',
+      type: 'solana',
+      rpcUrl: 'https://api.devnet.solana.com',
+      token: 'SOL'
+    }
   ]
 }) as any; // Type assertion needed due to incomplete types in AppKit
 
@@ -53,12 +60,15 @@ const WalletConnectButton = () => {
     };
 
     // Initialize AppKit and add event listeners
-    appKit.init().then(() => {
+    appKit.initialize().then(() => {
       appKit.subscribeEvents({
         connect: handleConnect,
         disconnect: handleDisconnect,
         error: handleError
       });
+    }).catch(error => {
+      console.error('Failed to initialize wallet:', error);
+      toast.error('Failed to initialize wallet');
     });
 
     // Cleanup listeners on unmount
