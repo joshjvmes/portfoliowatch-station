@@ -37,8 +37,7 @@ export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ 
     projectId, 
-    chains,
-    version: '2'  // Version is configured here in wagmiConfig
+    chains
   }),
   publicClient,
 });
