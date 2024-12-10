@@ -7,6 +7,9 @@ import { mainnet, polygon } from 'wagmi/chains';
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 import { Web3Modal } from '@web3modal/react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
 export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
@@ -15,13 +18,32 @@ const { publicClient, chains } = configureChains(
   [w3mProvider({ projectId })]
 );
 
+const metadata = {
+  name: 'Web3Modal',
+  description: 'Web3Modal Example',
+  url: 'https://web3modal.com',
+  icons: ['https://avatars.githubusercontent.com/u/37784886']
+};
+
 export const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors: w3mConnectors({ 
-    projectId, 
-    chains,
-    // Remove version property as it's not part of ModalConnectorsOpts
-  }),
+  connectors: [
+    ...w3mConnectors({ projectId, chains }),
+    new MetaMaskConnector({ chains }),
+    new CoinbaseWalletConnector({
+      chains,
+      options: {
+        appName: metadata.name,
+      },
+    }),
+    new WalletConnectConnector({
+      chains,
+      options: {
+        projectId,
+        metadata,
+      },
+    }),
+  ],
   publicClient,
 });
 
@@ -39,16 +61,15 @@ const WalletConnectButton = () => {
 
   if (!mounted) return null;
 
-  const handleConnect = async () => {
+  const handleConnect = () => {
     try {
-      const connector = connectors.find((x) => x.id === 'walletConnect');
+      const connector = connectors[0]; // Use the first available connector to trigger Web3Modal
       if (!connector) {
-        toast.error('WalletConnect not available');
+        toast.error('No wallet connectors available');
         return;
       }
       
       connect({ connector });
-      toast.success('Connecting wallet...');
     } catch (error) {
       console.error('Connection error:', error);
       toast.error('Failed to connect wallet. Please try again.');
