@@ -36,18 +36,19 @@ const WalletConnectButton = () => {
 
   const handleConnect = async () => {
     try {
-      console.log('Attempting to open Web3Modal');
-      
-      if (typeof window === 'undefined') {
-        console.error('Window object not available');
-        toast.error('Browser environment not detected');
-        return;
+      if (typeof window !== 'undefined' && window.ethereum) {
+        const modal = document.querySelector('w3m-modal');
+        if (!modal) {
+          // If modal element doesn't exist, create and dispatch event
+          const event = new CustomEvent('w3m-open-modal');
+          window.dispatchEvent(event);
+        } else {
+          // If modal exists, show it directly
+          modal.setAttribute('open', '');
+        }
+      } else {
+        toast.error('Please install a Web3 wallet like MetaMask');
       }
-
-      const event = new CustomEvent('w3m-open-modal', { bubbles: true });
-      window.dispatchEvent(event);
-      console.log('Web3Modal event dispatched');
-
     } catch (error) {
       console.error('Connection error:', error);
       toast.error('Failed to connect wallet. Please try again.');
