@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => ({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
-    mainFields: ['browser', 'module', 'main'],
+    mainFields: ['module', 'browser', 'main'],
   },
   define: {
     'process.env': {},
@@ -36,6 +36,7 @@ export default defineConfig(({ mode }) => ({
       '@jup-ag/core',
       '@solana/web3.js',
       'buffer',
+      '@jup-ag/common',
     ]
   },
   build: {
@@ -48,6 +49,12 @@ export default defineConfig(({ mode }) => ({
     },
     rollupOptions: {
       external: ['fsevents'],
+      output: {
+        manualChunks: {
+          jupiter: ['@jup-ag/core', '@jup-ag/common'],
+          solana: ['@solana/web3.js']
+        }
+      }
     }
   }
 }));
