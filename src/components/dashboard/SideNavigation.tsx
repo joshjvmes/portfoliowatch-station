@@ -10,7 +10,8 @@ import {
   LogOut,
   Settings,
   ArrowUp,
-  LineChart
+  LineChart,
+  Wallet
 } from "lucide-react";
 
 const SideNavigation = () => {
@@ -28,6 +29,7 @@ const SideNavigation = () => {
     { name: "Messages", icon: MessageCircle, route: "/messages" },
     { name: "Trading Bots", icon: Bot, route: "/trading-bots" },
     { name: "Trading Signals", icon: LineChart, route: "/trading-signals" },
+    { name: "Wallet", icon: Wallet, route: "/wallet" },
     { name: "Withdrawal", icon: ArrowDownLeft, route: "/withdrawal" },
   ];
 

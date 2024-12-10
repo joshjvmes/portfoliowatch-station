@@ -19,6 +19,7 @@ import VirtualCard from "@/pages/VirtualCard";
 import Settings from "@/pages/Settings";
 import TradingSignals from "@/pages/TradingSignals";
 import Wheel from "@/pages/Wheel";
+import WalletManagement from "@/pages/WalletManagement";
 
 export const routes = [
   {
@@ -96,6 +97,10 @@ export const routes = [
   {
     path: "/trading-signals",
     element: <PrivateRoute><TradingSignals /></PrivateRoute>
+  },
+  {
+    path: "/wallet",
+    element: <PrivateRoute><WalletManagement /></PrivateRoute>
   },
   {
     path: "*",
