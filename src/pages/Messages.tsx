@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import DashboardLayout from "@/components/DashboardLayout";
 import { MessageCircle, AlertCircle, Bell } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import MessageDetail from "@/components/messages/MessageDetail";
 
 const mockMessages = [
   {
@@ -33,6 +35,21 @@ const mockMessages = [
 ];
 
 const Messages = () => {
+  const navigate = useNavigate();
+  const { messageId } = useParams();
+  
+  const selectedMessage = messageId 
+    ? mockMessages.find(m => m.id === parseInt(messageId))
+    : null;
+
+  if (selectedMessage) {
+    return (
+      <DashboardLayout>
+        <MessageDetail message={selectedMessage} />
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
       <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
@@ -57,6 +74,7 @@ const Messages = () => {
             {mockMessages.map((message) => (
               <div
                 key={message.id}
+                onClick={() => navigate(`/messages/${message.id}`)}
                 className={`p-4 rounded-lg border transition-all duration-200 hover:bg-white/5 cursor-pointer
                   ${message.unread 
                     ? "bg-[#1A2333]/80 border-[#2563EB] shadow-lg shadow-blue-500/10" 
