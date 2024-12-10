@@ -16,7 +16,6 @@ import '@solana/wallet-adapter-react-ui/styles.css';
 import { Buffer } from 'buffer';
 globalThis.Buffer = Buffer;
 
-// Add Phantom to Window type
 declare global {
   interface Window {
     phantom?: {
@@ -38,15 +37,18 @@ export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ 
     projectId, 
-    chains
+    chains,
+    version: 2 // Add explicit version
   }),
   publicClient,
 });
 
 export const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
-// Initialize Phantom wallet adapter
-const phantomWallet = new PhantomWalletAdapter();
+// Initialize Phantom wallet adapter with explicit config
+const phantomWallet = new PhantomWalletAdapter({
+  network: 'mainnet-beta'
+});
 
 const WalletConnectButton = () => {
   const { address, isConnected } = useAccount();
@@ -57,35 +59,48 @@ const WalletConnectButton = () => {
 
   useEffect(() => {
     setMounted(true);
+    console.log('Wallet component mounted, checking available wallets...');
+    if (window.phantom?.solana) {
+      console.log('Phantom wallet is available');
+    } else {
+      console.log('Phantom wallet is not available');
+    }
   }, []);
 
   if (!mounted) return null;
 
   const handleConnect = async () => {
     try {
-      // Check if Phantom is available
+      console.log('Attempting to connect wallet...');
       const isPhantomAvailable = window.phantom?.solana?.isPhantom;
+      console.log('Phantom available:', isPhantomAvailable);
       
       if (isPhantomAvailable) {
+        console.log('Attempting to connect Phantom wallet...');
         await connectPhantom();
+        console.log('Phantom wallet connected successfully');
         toast.success('Phantom wallet connected');
       } else {
-        // If Phantom is not available, try Web3Modal
+        console.log('Attempting to open Web3Modal...');
         await open();
+        console.log('Web3Modal opened successfully');
       }
     } catch (error) {
-      console.error('Connection error:', error);
-      toast.error('Failed to connect wallet. Please try again.');
+      console.error('Detailed connection error:', error);
+      toast.error('Failed to connect wallet. Please make sure you have a wallet installed.');
     }
   };
 
   const handleDisconnect = () => {
     try {
+      console.log('Attempting to disconnect wallet...');
       if (isConnected) {
         disconnect();
+        console.log('Ethereum wallet disconnected');
       }
       if (isPhantomConnected) {
         disconnectPhantom();
+        console.log('Phantom wallet disconnected');
       }
       toast.success('Wallet disconnected');
     } catch (error) {
