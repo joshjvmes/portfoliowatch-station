@@ -6,7 +6,7 @@ import { AppKit } from '@reown/appkit';
 import { SolanaAdapter } from '@reown/appkit-adapter-solana';
 
 // Initialize AppKit with Solana adapter
-const appKit = new AppKit({
+export const appKit = new AppKit({
   projectId: '3bc71515e830445a56ca773f191fe27e',
   name: 'Your App Name',
   adapters: [
@@ -16,6 +16,9 @@ const appKit = new AppKit({
   ],
   networks: ['solana:devnet']
 });
+
+// Export configuration for Web3Modal
+export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
 const WalletConnectButton = () => {
   const [address, setAddress] = useState<string | null>(null);

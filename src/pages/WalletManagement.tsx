@@ -1,4 +1,3 @@
-import { useAccount, useNetwork, useBalance, useDisconnect } from 'wagmi';
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,38 +6,38 @@ import { useToast } from "@/components/ui/use-toast";
 import DashboardLayout from "@/components/DashboardLayout";
 import WalletConnect from "@/components/wallet/WalletConnect";
 import { Badge } from "@/components/ui/badge";
-import { WagmiConfig } from 'wagmi';
-import { wagmiConfig, ethereumClient, projectId } from '@/components/wallet/WalletConnect';
-import { Web3Modal } from '@web3modal/react';
+import { appKit } from '@/components/wallet/WalletConnect';
 
 const WalletManagementContent = () => {
-  const { address, isConnected } = useAccount();
-  const { chain } = useNetwork();
-  const { data: balance } = useBalance({
-    address: address,
-  });
-  const { disconnect } = useDisconnect();
+  const [isConnected, setIsConnected] = useState(false);
+  const [address, setAddress] = useState<string | null>(null);
   const { toast } = useToast();
   const [transactions, setTransactions] = useState<any[]>([]);
 
   useEffect(() => {
-    if (isConnected && address) {
+    const handleConnect = (data: any) => {
+      setIsConnected(true);
+      setAddress(data.address);
       // Here we would typically fetch transaction history
-      // For demo purposes, we're using mock data
       setTransactions([
-        { hash: '0x123...', type: 'Send', amount: '0.1 ETH', status: 'Completed' },
-        { hash: '0x456...', type: 'Receive', amount: '0.05 ETH', status: 'Completed' },
+        { hash: '0x123...', type: 'Send', amount: '0.1 SOL', status: 'Completed' },
+        { hash: '0x456...', type: 'Receive', amount: '0.05 SOL', status: 'Completed' },
       ]);
-    }
-  }, [isConnected, address]);
+    };
 
-  const handleDisconnect = () => {
-    disconnect();
-    toast({
-      title: "Wallet Disconnected",
-      description: "Your wallet has been disconnected successfully.",
-    });
-  };
+    const handleDisconnect = () => {
+      setIsConnected(false);
+      setAddress(null);
+      setTransactions([]);
+    };
+
+    appKit.on('connect', handleConnect);
+    appKit.on('disconnect', handleDisconnect);
+
+    return () => {
+      appKit.removeAllListeners();
+    };
+  }, []);
 
   if (!isConnected) {
     return (
@@ -76,24 +75,10 @@ const WalletManagementContent = () => {
               <p className="text-gray-400">Network</p>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="bg-[#00E5BE]/10 text-[#00E5BE] border-[#00E5BE]/20">
-                  {chain?.name || 'Unknown Network'}
+                  Solana Devnet
                 </Badge>
               </div>
             </div>
-            <div>
-              <p className="text-gray-400">Balance</p>
-              <p>{balance?.formatted || '0'} {balance?.symbol}</p>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              className="gap-2"
-              onClick={handleDisconnect}
-            >
-              <Power className="h-4 w-4" />
-              Disconnect
-            </Button>
           </div>
         </CardContent>
       </Card>
@@ -136,18 +121,7 @@ const WalletManagementContent = () => {
 const WalletManagement = () => {
   return (
     <DashboardLayout>
-      <WagmiConfig config={wagmiConfig}>
-        <WalletManagementContent />
-      </WagmiConfig>
-      <Web3Modal
-        projectId={projectId}
-        ethereumClient={ethereumClient}
-        themeMode="dark"
-        themeVariables={{
-          '--w3m-accent-color': '#00E5BE',
-          '--w3m-background-color': '#0B1221',
-        }}
-      />
+      <WalletManagementContent />
     </DashboardLayout>
   );
 };
