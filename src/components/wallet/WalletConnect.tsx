@@ -9,7 +9,7 @@ import { Web3Modal } from '@web3modal/react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 
 // Configure chains & providers
-const projectId = 'YOUR_PROJECT_ID'; // Replace with your WalletConnect Project ID
+const projectId = '3bc71515e830445a56ca773f191fe27e';
 
 const { publicClient, chains } = configureChains(
   [mainnet, polygon],
@@ -20,7 +20,6 @@ const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ 
     projectId, 
-    version: 2,
     chains 
   }),
   publicClient,
