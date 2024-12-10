@@ -24,13 +24,12 @@ const WalletConnectButton = () => {
       try {
         console.log('Initializing AppKit...');
         const solanaAdapter = new SolanaAdapter({
-          network: 'devnet',
-          rpcUrl: 'https://api.devnet.solana.com'
+          rpcEndpoint: 'https://api.devnet.solana.com'
         });
 
         const kit = new AppKit({
           adapters: [solanaAdapter],
-          networks: ['solana:devnet'] as ['solana:devnet'],
+          networks: ['solana:devnet'] as const,
           metadata: {
             name: 'My DApp',
             description: 'My decentralized application',
