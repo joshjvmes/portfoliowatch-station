@@ -4,7 +4,7 @@ import { Wallet, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { mainnet, polygon } from 'wagmi/chains';
-import { EthereumClient, w3mConnector, w3mProvider } from '@web3modal/ethereum';
+import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 import { Web3Modal } from '@web3modal/react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 
@@ -15,7 +15,7 @@ const projectId = 'YOUR_PROJECT_ID'; // Replace with your WalletConnect Project 
 const { publicClient } = configureChains(chains, [w3mProvider({ projectId })]);
 const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors: [w3mConnector({ projectId, chains })],
+  connectors: w3mConnectors({ projectId, chains }),
   publicClient,
 });
 
