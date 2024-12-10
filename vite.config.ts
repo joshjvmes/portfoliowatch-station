@@ -34,6 +34,10 @@ export default defineConfig(({ mode }) => ({
       '@jup-ag/common',
       '@jup-ag/core',
       'buffer',
+      'browserify-fs',
+      'path-browserify',
+      'os-browserify/browser',
+      'crypto-browserify',
     ],
     exclude: [
       '@mercurial-finance/optimist',
