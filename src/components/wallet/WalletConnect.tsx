@@ -16,26 +16,23 @@ globalThis.Buffer = Buffer;
 
 export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
-const chains = [mainnet, polygon];
-
-const { publicClient } = configureChains(
-  chains,
+const { publicClient, chains } = configureChains(
+  [mainnet, polygon],
   [w3mProvider({ projectId })]
 );
 
 const metadata = {
-  name: 'AI Trading Command Center',
-  description: 'Advanced AI-powered trading platform',
-  url: 'https://lovable.dev',
+  name: 'Web3Modal',
+  description: 'Web3Modal Example',
+  url: 'https://web3modal.com',
   icons: ['https://avatars.githubusercontent.com/u/37784886']
 };
 
 export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ 
-    projectId,
-    chains,
-    metadata
+    projectId, 
+    chains
   }),
   publicClient,
 });
@@ -60,7 +57,10 @@ const WalletConnectButton = () => {
 
   const handleConnect = async () => {
     try {
+      // Try to connect with Web3Modal first
       await open();
+      
+      // If Web3Modal connection fails, try Phantom
       if (!isConnected) {
         try {
           await connectPhantom();
@@ -77,6 +77,7 @@ const WalletConnectButton = () => {
 
   const handleDisconnect = () => {
     try {
+      // Disconnect from both if connected
       if (isConnected) {
         disconnect();
       }
