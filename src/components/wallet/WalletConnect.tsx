@@ -37,8 +37,7 @@ export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ 
     projectId, 
-    chains,
-    version: 2 // Add explicit version
+    chains
   }),
   publicClient,
 });
@@ -150,6 +149,7 @@ const WalletConnect = () => {
           projectId={projectId}
           ethereumClient={ethereumClient}
           themeMode="dark"
+          version="2" // Version is specified here instead
           themeVariables={{
             '--w3m-accent-color': '#00E5BE',
             '--w3m-background-color': '#0B1221',
