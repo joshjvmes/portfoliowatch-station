@@ -2,10 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Wallet } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import WalletConnect from "@/components/wallet/WalletConnect";
+import SwapInterface from "@/components/dex/SwapInterface";
 
 const WalletManagementContent = () => {
   return (
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="max-w-4xl mx-auto p-4 space-y-6">
       <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
         <CardHeader>
           <CardTitle>Connect Your Wallet</CardTitle>
@@ -18,6 +19,8 @@ const WalletManagementContent = () => {
           <WalletConnect />
         </CardContent>
       </Card>
+
+      <SwapInterface />
     </div>
   );
 };
