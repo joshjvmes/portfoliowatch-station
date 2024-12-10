@@ -24,11 +24,9 @@ export default defineConfig(({ mode }) => ({
   },
   optimizeDeps: {
     include: [
-      '@jup-ag/core',
-      'buffer',
-      'jsbi',
-      '@solana/spl-token',
       '@solana/web3.js',
+      '@solana/spl-token',
+      'buffer',
     ],
     exclude: [
       '@mercurial-finance/optimist',
@@ -39,6 +37,7 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     target: 'esnext',
+    sourcemap: true,
     commonjsOptions: {
       include: [/node_modules/],
       transformMixedEsModules: true,
@@ -49,12 +48,10 @@ export default defineConfig(({ mode }) => ({
       ],
       output: {
         manualChunks: {
-          jupiter: ['@jup-ag/core'],
           solana: ['@solana/web3.js', '@solana/spl-token'],
         },
       },
     },
     chunkSizeWarningLimit: 2000,
-    sourcemap: true,
   },
 }));
