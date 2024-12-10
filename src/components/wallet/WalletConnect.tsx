@@ -20,7 +20,7 @@ export const wagmiConfig = createConfig({
   connectors: w3mConnectors({ 
     projectId, 
     chains,
-    version: '2' // Explicitly set WalletConnect version
+    // Remove version property as it's not part of ModalConnectorsOpts
   }),
   publicClient,
 });
