@@ -39,9 +39,8 @@ createWeb3Modal({
   chains,
   themeMode: 'dark',
   themeVariables: {
-    // Using the correct theme variable names from Web3Modal
-    '--w3m-color-fg-1': '#00E5BE',
-    '--w3m-background-color-1': '#0B1221',
+    '--w3m-accent': '#00E5BE',
+    '--w3m-background': '#0B1221',
     '--w3m-z-index': 1000,
   },
 });
