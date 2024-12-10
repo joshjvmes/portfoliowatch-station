@@ -7,8 +7,6 @@ import { TourProvider } from "@/contexts/TourContext";
 import { TourTooltip } from "@/components/tour/TourTooltip";
 import { routes } from "@/routes";
 import * as React from 'react';
-import { WagmiConfig } from 'wagmi';
-import { wagmiConfig } from '@/components/wallet/WalletConnect';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,28 +20,26 @@ const queryClient = new QueryClient({
 const App = () => {
   return (
     <React.StrictMode>
-      <WagmiConfig config={wagmiConfig}>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <BrowserRouter>
-              <TourProvider>
-                <Toaster />
-                <Sonner />
-                <TourTooltip />
-                <Routes>
-                  {routes.map((route) => (
-                    <Route
-                      key={route.path}
-                      path={route.path}
-                      element={route.element}
-                    />
-                  ))}
-                </Routes>
-              </TourProvider>
-            </BrowserRouter>
-          </TooltipProvider>
-        </QueryClientProvider>
-      </WagmiConfig>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <BrowserRouter>
+            <TourProvider>
+              <Toaster />
+              <Sonner />
+              <TourTooltip />
+              <Routes>
+                {routes.map((route) => (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={route.element}
+                  />
+                ))}
+              </Routes>
+            </TourProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
     </React.StrictMode>
   );
 };

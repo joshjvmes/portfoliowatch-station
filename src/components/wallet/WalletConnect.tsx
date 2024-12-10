@@ -11,7 +11,7 @@ export const appKit = new AppKit({
   name: 'Your App Name',
   adapters: [
     new SolanaAdapter({
-      rpcUrl: 'https://api.devnet.solana.com'
+      network: 'devnet'
     })
   ],
   networks: ['solana:devnet']
@@ -29,28 +29,34 @@ const WalletConnectButton = () => {
     setMounted(true);
 
     // Set up event listeners
-    appKit.on('connect', (data: any) => {
+    const handleConnect = (data: any) => {
       console.log('Wallet connected:', data);
       setAddress(data.address);
       setIsConnected(true);
       toast.success('Wallet connected successfully');
-    });
+    };
 
-    appKit.on('disconnect', () => {
+    const handleDisconnect = () => {
       console.log('Wallet disconnected');
       setAddress(null);
       setIsConnected(false);
       toast.success('Wallet disconnected');
-    });
+    };
 
-    appKit.on('error', (error: Error) => {
+    const handleError = (error: Error) => {
       console.error('Wallet error:', error);
       toast.error('Wallet error: ' + error.message);
-    });
+    };
+
+    appKit.addEventListener('connect', handleConnect);
+    appKit.addEventListener('disconnect', handleDisconnect);
+    appKit.addEventListener('error', handleError);
 
     // Cleanup listeners on unmount
     return () => {
-      appKit.removeAllListeners();
+      appKit.removeEventListener('connect', handleConnect);
+      appKit.removeEventListener('disconnect', handleDisconnect);
+      appKit.removeEventListener('error', handleError);
     };
   }, []);
 
@@ -58,10 +64,7 @@ const WalletConnectButton = () => {
 
   const handleConnect = async () => {
     try {
-      await appKit.request({
-        method: 'connect',
-        params: []
-      });
+      await appKit.connect();
     } catch (error) {
       console.error('Connection error:', error);
       toast.error('Failed to connect wallet. Please try again.');
@@ -70,10 +73,7 @@ const WalletConnectButton = () => {
 
   const handleDisconnect = async () => {
     try {
-      await appKit.request({
-        method: 'disconnect',
-        params: []
-      });
+      await appKit.disconnect();
     } catch (error) {
       console.error('Disconnection error:', error);
       toast.error('Failed to disconnect wallet');
