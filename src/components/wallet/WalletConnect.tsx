@@ -45,7 +45,7 @@ export const wagmiConfig = createConfig({
 
 export const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
-// Initialize Phantom wallet adapter
+// Initialize Phantom wallet adapter with proper configuration
 const phantomWallet = new PhantomWalletAdapter();
 
 const WalletConnectButton = () => {
