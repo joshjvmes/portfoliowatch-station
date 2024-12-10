@@ -8,7 +8,6 @@ import { Wallet } from "lucide-react";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
 import { WalletInfo } from "./WalletInfo";
 
-// Make sure to use a valid project ID from WalletConnect Cloud
 export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
 const chains = [mainnet, polygon];
@@ -23,6 +22,7 @@ export const wagmiConfig = createConfig({
   connectors: w3mConnectors({ 
     projectId,
     chains,
+    version: 2, // Add version specification
   }),
   publicClient,
 });
@@ -32,10 +32,16 @@ export const ethereumClient = new EthereumClient(wagmiConfig, chains);
 const WalletConnectButton = () => {
   const { isConnected } = useWalletConnection();
 
-  const handleConnect = () => {
+  const handleConnect = async () => {
     try {
-      window.dispatchEvent(new Event('w3m-open-modal'));
       console.log('Attempting to open Web3Modal');
+      // Use a more direct method to open the modal
+      if (window.ethereum) {
+        console.log('Ethereum provider detected');
+      }
+      // Dispatch the event to open the modal
+      const event = new Event('w3m-open-modal');
+      window.dispatchEvent(event);
     } catch (error) {
       console.error('Connection error:', error);
     }
@@ -56,19 +62,28 @@ const WalletConnectButton = () => {
   );
 };
 
+// Separate the Web3Modal configuration
+const Web3ModalConfig = () => {
+  return (
+    <Web3Modal
+      projectId={projectId}
+      ethereumClient={ethereumClient}
+      themeMode="dark"
+      themeVariables={{
+        '--w3m-accent-color': '#00E5BE',
+        '--w3m-background-color': '#0B1221',
+      }}
+    />
+  );
+};
+
 const WalletConnect = () => {
   return (
     <>
-      <Web3Modal
-        projectId={projectId}
-        ethereumClient={ethereumClient}
-        themeMode="dark"
-        themeVariables={{
-          '--w3m-accent-color': '#00E5BE',
-          '--w3m-background-color': '#0B1221',
-        }}
-      />
-      <WalletConnectButton />
+      <Web3ModalConfig />
+      <WagmiConfig config={wagmiConfig}>
+        <WalletConnectButton />
+      </WagmiConfig>
     </>
   );
 };
