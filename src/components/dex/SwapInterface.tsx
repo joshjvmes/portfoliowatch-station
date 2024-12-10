@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -12,23 +11,10 @@ import {
 import { toast } from "sonner";
 import { ArrowDownUp } from "lucide-react";
 import { Jupiter } from "@jup-ag/core";
-import { Connection, PublicKey, sendAndConfirmRawTransaction } from "@solana/web3.js";
 import { getProvider } from "@/utils/solana";
-import JSBI from 'jsbi';
-
-const DEX_OPTIONS = [
-  { id: 'jupiter', name: 'Jupiter' },
-  { id: 'raydium', name: 'Raydium' },
-  { id: 'orca', name: 'Orca' },
-];
-
-// Common SPL tokens on Solana
-const TOKENS = [
-  { symbol: 'SOL', name: 'Solana', mint: 'So11111111111111111111111111111111111111112' },
-  { symbol: 'USDC', name: 'USD Coin', mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' },
-  { symbol: 'BONK', name: 'Bonk', mint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263' },
-  { symbol: 'RAY', name: 'Raydium', mint: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R' },
-];
+import { TokenInput } from "./TokenInput";
+import { DEX_OPTIONS, TOKENS } from "@/utils/tokens";
+import { initJupiter, getQuote, executeSwap } from "@/utils/jupiter";
 
 const SwapInterface = () => {
   const [selectedDex, setSelectedDex] = useState('jupiter');
@@ -39,26 +25,23 @@ const SwapInterface = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [priceImpact, setPriceImpact] = useState<string | null>(null);
   const [jupiter, setJupiter] = useState<Jupiter | null>(null);
+  const [bestRoute, setBestRoute] = useState<any>(null);
 
   // Initialize Jupiter
   useEffect(() => {
-    const initJupiter = async () => {
+    const setup = async () => {
       try {
-        const connection = new Connection('https://api.mainnet-beta.solana.com');
-        const jupiterInstance = await Jupiter.load({
-          connection,
-          cluster: 'mainnet-beta',
-        });
-        setJupiter(jupiterInstance);
+        if (selectedDex === 'jupiter') {
+          const jupiterInstance = await initJupiter();
+          setJupiter(jupiterInstance);
+        }
       } catch (error) {
         console.error('Error initializing Jupiter:', error);
         toast.error('Failed to initialize Jupiter');
       }
     };
 
-    if (selectedDex === 'jupiter') {
-      initJupiter();
-    }
+    setup();
   }, [selectedDex]);
 
   // Swap token positions
@@ -77,26 +60,16 @@ const SwapInterface = () => {
       if (!fromAmount || Number(fromAmount) <= 0 || !jupiter) {
         setToAmount('');
         setPriceImpact(null);
+        setBestRoute(null);
         return;
       }
 
       try {
-        const inputMint = new PublicKey(fromToken);
-        const outputMint = new PublicKey(toToken);
-        const amount = JSBI.BigInt(Number(fromAmount) * 1e9); // Convert to JSBI
-
-        const routes = await jupiter.computeRoutes({
-          inputMint,
-          outputMint,
-          amount,
-          slippageBps: 50, // 0.5% slippage
-        });
-
-        if (routes.routesInfos.length > 0) {
-          const bestRoute = routes.routesInfos[0];
-          const outAmount = JSBI.toNumber(bestRoute.outAmount) / 1e9;
-          setToAmount(outAmount.toString());
-          setPriceImpact(bestRoute.priceImpactPct.toFixed(2));
+        const quote = await getQuote(jupiter, fromToken, toToken, fromAmount);
+        if (quote) {
+          setToAmount(quote.outAmount);
+          setPriceImpact(quote.priceImpact);
+          setBestRoute(quote.bestRoute);
         } else {
           toast.error('No routes found for this swap');
         }
@@ -126,41 +99,12 @@ const SwapInterface = () => {
         return;
       }
 
-      if (!jupiter) {
-        toast.error('Jupiter not initialized');
+      if (!jupiter || !bestRoute) {
+        toast.error('Swap route not available');
         return;
       }
 
-      const inputMint = new PublicKey(fromToken);
-      const outputMint = new PublicKey(toToken);
-      const amount = JSBI.BigInt(Number(fromAmount) * 1e9);
-
-      const routes = await jupiter.computeRoutes({
-        inputMint,
-        outputMint,
-        amount,
-        slippageBps: 50,
-      });
-
-      if (routes.routesInfos.length === 0) {
-        toast.error('No routes found for this swap');
-        return;
-      }
-
-      const { swapTransaction } = await jupiter.exchange({
-        routeInfo: routes.routesInfos[0],
-      });
-
-      // Get the connection from Jupiter instance
-      const connection = jupiter.connection();
-      
-      // Sign and send the transaction
-      const rawTransaction = swapTransaction.serialize();
-      const signature = await sendAndConfirmRawTransaction(
-        connection,
-        rawTransaction,
-        { commitment: 'confirmed' }
-      );
+      const signature = await executeSwap(jupiter, bestRoute);
       
       toast.success('Swap executed successfully!');
       console.log('Swap transaction:', signature);
@@ -169,6 +113,7 @@ const SwapInterface = () => {
       setFromAmount('');
       setToAmount('');
       setPriceImpact(null);
+      setBestRoute(null);
     } catch (error) {
       console.error('Swap error:', error);
       toast.error('Failed to execute swap');
@@ -182,10 +127,7 @@ const SwapInterface = () => {
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Token Swap</span>
-          <Select
-            value={selectedDex}
-            onValueChange={setSelectedDex}
-          >
+          <Select value={selectedDex} onValueChange={setSelectedDex}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select DEX" />
             </SelectTrigger>
@@ -200,29 +142,13 @@ const SwapInterface = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <div className="flex justify-between">
-            <label className="text-sm text-gray-400">From</label>
-            <Select value={fromToken} onValueChange={setFromToken}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="Select token" />
-              </SelectTrigger>
-              <SelectContent>
-                {TOKENS.map((token) => (
-                  <SelectItem key={token.mint} value={token.mint}>
-                    {token.symbol}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <Input
-            type="number"
-            placeholder="0.0"
-            value={fromAmount}
-            onChange={(e) => setFromAmount(e.target.value)}
-          />
-        </div>
+        <TokenInput
+          label="From"
+          value={fromAmount}
+          onChange={setFromAmount}
+          onTokenChange={setFromToken}
+          selectedToken={fromToken}
+        />
         
         <div className="flex justify-center">
           <Button
@@ -235,30 +161,14 @@ const SwapInterface = () => {
           </Button>
         </div>
 
-        <div className="space-y-2">
-          <div className="flex justify-between">
-            <label className="text-sm text-gray-400">To</label>
-            <Select value={toToken} onValueChange={setToToken}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="Select token" />
-              </SelectTrigger>
-              <SelectContent>
-                {TOKENS.map((token) => (
-                  <SelectItem key={token.mint} value={token.mint}>
-                    {token.symbol}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <Input
-            type="number"
-            placeholder="0.0"
-            value={toAmount}
-            onChange={(e) => setToAmount(e.target.value)}
-            disabled
-          />
-        </div>
+        <TokenInput
+          label="To"
+          value={toAmount}
+          onChange={setToAmount}
+          onTokenChange={setToToken}
+          selectedToken={toToken}
+          disabled
+        />
 
         {priceImpact && (
           <div className="text-sm text-gray-400">
