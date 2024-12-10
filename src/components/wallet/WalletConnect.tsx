@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Wallet, LogOut } from "lucide-react";
 import { toast } from "sonner";
-import { AppKit, WalletType } from '@reown/appkit';
-import { SolanaAdapter } from '@reown/appkit-adapter-solana';
+import { AppKit } from '@reown/appkit';
+import { SolanaAdapter, WalletType } from '@reown/appkit-adapter-solana';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Buffer } from 'buffer';
 
