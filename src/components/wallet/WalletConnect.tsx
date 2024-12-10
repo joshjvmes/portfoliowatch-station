@@ -17,17 +17,20 @@ import '@solana/wallet-adapter-react-ui/styles.css';
 import { Buffer } from 'buffer';
 globalThis.Buffer = Buffer;
 
+// Make sure to use a valid project ID from WalletConnect Cloud
 export const projectId = '3bc71515e830445a56ca773f191fe27e';
 
-const { publicClient, chains } = configureChains(
-  [mainnet, polygon],
+const chains = [mainnet, polygon];
+
+const { publicClient } = configureChains(
+  chains,
   [w3mProvider({ projectId })]
 );
 
 export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ 
-    projectId, 
+    projectId,
     chains,
   }),
   publicClient,
@@ -139,11 +142,6 @@ const WalletConnectButton = () => {
 const WalletConnect = () => {
   return (
     <>
-      <WalletProvider wallets={[phantomWallet]} autoConnect>
-        <WalletModalProvider>
-          <WalletConnectButton />
-        </WalletModalProvider>
-      </WalletProvider>
       <Web3Modal
         projectId={projectId}
         ethereumClient={ethereumClient}
@@ -153,6 +151,11 @@ const WalletConnect = () => {
           '--w3m-background-color': '#0B1221',
         }}
       />
+      <WalletProvider wallets={[phantomWallet]} autoConnect>
+        <WalletModalProvider>
+          <WalletConnectButton />
+        </WalletModalProvider>
+      </WalletProvider>
     </>
   );
 };
