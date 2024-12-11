@@ -9,7 +9,6 @@ import { PublicKey } from '@solana/web3.js';
 import JSBI from 'jsbi';
 import { TOKENS } from '@/utils/tokens';
 
-// Add type for Phantom window
 declare global {
   interface Window {
     solana?: {
@@ -20,6 +19,15 @@ declare global {
     };
   }
 }
+
+const handleProgramError = (error: any) => {
+  if (error?.code === 6000) { // Custom program error code
+    return "Transaction failed: Insufficient funds";
+  } else if (error?.code === 6001) {
+    return "Transaction failed: Invalid token account";
+  }
+  return error.message || "An unknown error occurred";
+};
 
 export const JupiterForm = () => {
   const [inputAmount, setInputAmount] = useState('');
@@ -68,7 +76,8 @@ export const JupiterForm = () => {
       }
     } catch (err: any) {
       console.error('Swap error:', err);
-      toast.error(err.message || 'Failed to execute swap');
+      const errorMessage = handleProgramError(err);
+      toast.error(errorMessage);
     }
   };
 
