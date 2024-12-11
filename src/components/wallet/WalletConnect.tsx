@@ -5,7 +5,22 @@ import { toast } from "sonner";
 import { NetworkStatus } from "./NetworkStatus";
 import { WalletInfo } from "./WalletInfo";
 import { Card, CardContent } from "@/components/ui/card";
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
+import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react';
+import { mainnet } from 'viem/chains';
+
+// WalletConnect configuration
+const projectId = '3bc71515e830445a56ca773f191fe27e';
+const metadata = {
+  name: 'Web3Modal',
+  description: 'Web3Modal Example',
+  url: 'https://web3modal.com', 
+  icons: ['https://avatars.githubusercontent.com/u/37784886']
+};
+
+const chains = [mainnet];
+const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
+
+createWeb3Modal({ wagmiConfig, projectId, chains });
 
 const WalletConnect = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -22,7 +37,7 @@ const WalletConnect = () => {
           setPublicKey(response.publicKey.toString());
           setIsConnected(true);
           setSelectedWallet('phantom');
-          toast.success('Wallet connected successfully');
+          toast.success('Phantom wallet connected successfully');
         }
       } catch (error) {
         console.error('Phantom connection error:', error);
@@ -61,12 +76,14 @@ const WalletConnect = () => {
 
   const handleWalletConnectConnect = async () => {
     try {
-      // For now, show a coming soon message while we implement WalletConnect
-      toast.info('WalletConnect integration coming soon!');
-      
-      // TODO: Implement WalletConnect when their Solana support is more stable
-      // Currently, WalletConnect's Solana support is in development
-      // We'll keep the placeholder for future implementation
+      // Open WalletConnect modal
+      const modal = document.getElementById('w3m-modal');
+      if (modal) {
+        modal.click();
+      } else {
+        // Fallback if modal element not found
+        (window as any).w3m.openModal();
+      }
     } catch (error) {
       console.error('WalletConnect error:', error);
       toast.error('Failed to connect with WalletConnect');
@@ -81,6 +98,9 @@ const WalletConnect = () => {
           await provider.disconnect();
           localStorage.removeItem('phantomConnected');
         }
+      } else if (selectedWallet === 'walletconnect') {
+        // Disconnect WalletConnect
+        (window as any).w3m.disconnect();
       }
       
       setIsConnected(false);
@@ -113,7 +133,7 @@ const WalletConnect = () => {
           className="w-full flex items-center justify-center gap-2 bg-[#AB9FF2] hover:bg-[#AB9FF2]/90 text-black"
         >
           <Wallet className="h-4 w-4" />
-          Connect Phantom
+          Connect Phantom (Solana)
         </Button>
         
         <Button
@@ -121,7 +141,7 @@ const WalletConnect = () => {
           className="w-full flex items-center justify-center gap-2 bg-[#3B99FC] hover:bg-[#3B99FC]/90 text-white"
         >
           <Wallet className="h-4 w-4" />
-          WalletConnect
+          WalletConnect (Ethereum)
         </Button>
       </CardContent>
     </Card>
