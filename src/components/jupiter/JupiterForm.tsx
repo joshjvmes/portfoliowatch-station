@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowDownUp } from "lucide-react";
@@ -8,6 +7,10 @@ import { useJupiter } from '@jup-ag/react-hook';
 import { PublicKey } from '@solana/web3.js';
 import JSBI from 'jsbi';
 import { TOKENS } from '@/utils/tokens';
+import { handleProgramError } from '@/utils/jupiterErrors';
+import { TokenSelect } from './TokenSelect';
+import { AmountInput } from './AmountInput';
+import { ErrorCard } from './ErrorCard';
 
 declare global {
   interface Window {
@@ -19,33 +22,6 @@ declare global {
     };
   }
 }
-
-const handleProgramError = (error: any) => {
-  try {
-    // Handle specific program error codes
-    if (error?.code === 6000) {
-      return "Transaction failed: Insufficient funds";
-    } else if (error?.code === 6001) {
-      return "Transaction failed: Invalid token account";
-    } else if (error?.message?.includes('u64')) {
-      return "Transaction failed: Number format error";
-    } else if (error?.message?.includes('TokenAccountNotFoundError')) {
-      return "Transaction failed: Token account not found";
-    }
-    
-    // Log the full error for debugging
-    console.error('Detailed error:', {
-      code: error?.code,
-      message: error?.message,
-      stack: error?.stack
-    });
-
-    return error?.message || "An unknown error occurred";
-  } catch (e) {
-    console.error('Error in handleProgramError:', e);
-    return "An unexpected error occurred";
-  }
-};
 
 export const JupiterForm = () => {
   const [inputAmount, setInputAmount] = useState('');
@@ -116,45 +92,23 @@ export const JupiterForm = () => {
   };
 
   if (jupiterError) {
-    return (
-      <Card className="bg-[#0B1221]/50 border-white/10">
-        <CardContent className="p-4">
-          <div className="text-center space-y-4">
-            <p className="text-red-500">{handleProgramError(jupiterError)}</p>
-            <Button onClick={handleRefresh} variant="outline">
-              Try Again
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return <ErrorCard error={jupiterError} onRetry={handleRefresh} />;
   }
 
   return (
     <div className="space-y-6">
       <Card className="bg-[#0B1221]/50 border-white/10">
         <CardContent className="p-4 space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm text-gray-400">You Pay</label>
-            <Input
-              type="number"
-              value={inputAmount}
-              onChange={(e) => setInputAmount(e.target.value)}
-              placeholder="0.00"
-              className="bg-[#1A2333] border-[#2A3441]"
-            />
-            <select
-              value={inputToken}
-              onChange={(e) => setInputToken(e.target.value)}
-              className="w-full p-2 bg-[#1A2333] border border-[#2A3441] rounded text-white"
-            >
-              {TOKENS.map((token) => (
-                <option key={token.mint} value={token.mint}>
-                  {token.symbol}
-                </option>
-              ))}
-            </select>
-          </div>
+          <AmountInput
+            value={inputAmount}
+            onChange={setInputAmount}
+            label="You Pay"
+          />
+          <TokenSelect
+            value={inputToken}
+            onChange={setInputToken}
+            label="Select Token"
+          />
 
           <div className="flex justify-center">
             <Button
@@ -170,27 +124,16 @@ export const JupiterForm = () => {
             </Button>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm text-gray-400">You Receive</label>
-            <Input
-              type="number"
-              value={outputAmount}
-              onChange={(e) => setOutputAmount(e.target.value)}
-              placeholder="0.00"
-              className="bg-[#1A2333] border-[#2A3441]"
-            />
-            <select
-              value={outputToken}
-              onChange={(e) => setOutputToken(e.target.value)}
-              className="w-full p-2 bg-[#1A2333] border border-[#2A3441] rounded text-white"
-            >
-              {TOKENS.map((token) => (
-                <option key={token.mint} value={token.mint}>
-                  {token.symbol}
-                </option>
-              ))}
-            </select>
-          </div>
+          <AmountInput
+            value={outputAmount}
+            onChange={setOutputAmount}
+            label="You Receive"
+          />
+          <TokenSelect
+            value={outputToken}
+            onChange={setOutputToken}
+            label="Select Token"
+          />
         </CardContent>
       </Card>
 
