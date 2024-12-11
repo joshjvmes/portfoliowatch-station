@@ -18,21 +18,22 @@ export const JupiterForm = () => {
   const {
     loading,
     exchange,
-    error,
+    error: jupiterError,
     refresh,
   } = useJupiter({
-    input: {
-      amount: JSBI.BigInt(Number(inputAmount) * 1e9 || 0),
-      mint: new PublicKey(inputToken),
-    },
-    output: {
-      mint: new PublicKey(outputToken),
-    },
+    amount: JSBI.BigInt(Number(inputAmount) * 1e9 || 0),
+    inputMint: new PublicKey(inputToken),
+    outputMint: new PublicKey(outputToken),
     slippageBps: 100,
   });
 
   const handleSwap = async () => {
     try {
+      if (!inputAmount || Number(inputAmount) <= 0) {
+        toast.error('Please enter a valid amount');
+        return;
+      }
+
       const result = await exchange();
       if (result) {
         toast.success('Swap executed successfully!');
@@ -46,9 +47,29 @@ export const JupiterForm = () => {
   };
 
   const handleRefresh = () => {
-    refresh();
-    toast.success('Routes refreshed');
+    try {
+      refresh();
+      toast.success('Routes refreshed');
+    } catch (err: any) {
+      console.error('Refresh error:', err);
+      toast.error(err.message || 'Failed to refresh routes');
+    }
   };
+
+  if (jupiterError) {
+    return (
+      <Card className="bg-[#0B1221]/50 border-white/10">
+        <CardContent className="p-4">
+          <div className="text-center space-y-4">
+            <p className="text-red-500">Failed to load Jupiter exchange</p>
+            <Button onClick={handleRefresh} variant="outline">
+              Try Again
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -126,15 +147,11 @@ export const JupiterForm = () => {
         <Button
           onClick={handleSwap}
           className="flex-1"
-          disabled={loading}
+          disabled={loading || !inputAmount}
         >
-          Swap
+          {loading ? 'Loading...' : 'Swap'}
         </Button>
       </div>
-
-      {error && (
-        <p className="text-red-500 text-sm">An error occurred during the swap</p>
-      )}
     </div>
   );
 };

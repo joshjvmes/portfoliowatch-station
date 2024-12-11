@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import DashboardLayout from "@/components/DashboardLayout";
 import { JupiterForm } from "@/components/jupiter/JupiterForm";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { toast } from "sonner";
 
 const JupiterExchange = () => {
@@ -48,26 +49,28 @@ const JupiterExchange = () => {
   return (
     <DashboardLayout>
       <div className="container mx-auto p-6">
-        <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
-          <CardHeader>
-            <CardTitle>Jupiter Exchange</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {!isWalletConnected ? (
-              <div className="text-center">
-                <p className="mb-4 text-gray-400">Connect your wallet to start trading</p>
-                <button
-                  onClick={handleConnect}
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                >
-                  Connect Phantom Wallet
-                </button>
-              </div>
-            ) : (
-              <JupiterForm />
-            )}
-          </CardContent>
-        </Card>
+        <ErrorBoundary>
+          <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
+            <CardHeader>
+              <CardTitle>Jupiter Exchange</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {!isWalletConnected ? (
+                <div className="text-center">
+                  <p className="mb-4 text-gray-400">Connect your wallet to start trading</p>
+                  <button
+                    onClick={handleConnect}
+                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                  >
+                    Connect Phantom Wallet
+                  </button>
+                </div>
+              ) : (
+                <JupiterForm />
+              )}
+            </CardContent>
+          </Card>
+        </ErrorBoundary>
       </div>
     </DashboardLayout>
   );
