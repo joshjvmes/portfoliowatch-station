@@ -1,0 +1,141 @@
+import { useState } from 'react';
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowDownUp } from "lucide-react";
+import { toast } from "sonner";
+import { useJupiter } from '@jup-ag/react-hook';
+
+export const JupiterForm = () => {
+  const [inputAmount, setInputAmount] = useState('');
+  const [outputAmount, setOutputAmount] = useState('');
+  const [inputToken, setInputToken] = useState('SOL');
+  const [outputToken, setOutputToken] = useState('USDC');
+
+  const {
+    loading,
+    routes,
+    exchange,
+    error,
+    refresh,
+  } = useJupiter({
+    amount: Number(inputAmount) || 0,
+    inputMint: inputToken,
+    outputMint: outputToken,
+    slippage: 1, // 1% slippage
+  });
+
+  const handleSwap = async () => {
+    try {
+      if (!routes?.[0]) {
+        toast.error('No routes available for swap');
+        return;
+      }
+
+      const result = await exchange(routes[0]);
+      if (result) {
+        toast.success('Swap executed successfully!');
+        // Reset form or update balances
+      }
+    } catch (error: any) {
+      console.error('Swap error:', error);
+      toast.error(error.message || 'Failed to execute swap');
+    }
+  };
+
+  const handleRefresh = () => {
+    refresh();
+    toast.success('Routes refreshed');
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card className="bg-[#0B1221]/50 border-white/10">
+        <CardContent className="p-4 space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm text-gray-400">You Pay</label>
+            <Input
+              type="number"
+              value={inputAmount}
+              onChange={(e) => setInputAmount(e.target.value)}
+              placeholder="0.00"
+              className="bg-[#1A2333] border-[#2A3441]"
+            />
+            <select
+              value={inputToken}
+              onChange={(e) => setInputToken(e.target.value)}
+              className="w-full p-2 bg-[#1A2333] border border-[#2A3441] rounded text-white"
+            >
+              <option value="SOL">SOL</option>
+              <option value="USDC">USDC</option>
+              {/* Add more tokens as needed */}
+            </select>
+          </div>
+
+          <div className="flex justify-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                const temp = inputToken;
+                setInputToken(outputToken);
+                setOutputToken(temp);
+              }}
+            >
+              <ArrowDownUp className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm text-gray-400">You Receive</label>
+            <Input
+              type="number"
+              value={outputAmount}
+              onChange={(e) => setOutputAmount(e.target.value)}
+              placeholder="0.00"
+              className="bg-[#1A2333] border-[#2A3441]"
+            />
+            <select
+              value={outputToken}
+              onChange={(e) => setOutputToken(e.target.value)}
+              className="w-full p-2 bg-[#1A2333] border border-[#2A3441] rounded text-white"
+            >
+              <option value="USDC">USDC</option>
+              <option value="SOL">SOL</option>
+              {/* Add more tokens as needed */}
+            </select>
+          </div>
+        </CardContent>
+      </Card>
+
+      {routes?.[0] && (
+        <div className="text-sm text-gray-400">
+          <p>Best price route:</p>
+          <p>Rate: {routes[0].outAmount / routes[0].inAmount} {outputToken}/{inputToken}</p>
+        </div>
+      )}
+
+      <div className="flex gap-2">
+        <Button
+          onClick={handleRefresh}
+          variant="outline"
+          className="flex-1"
+          disabled={loading}
+        >
+          Refresh Rates
+        </Button>
+        <Button
+          onClick={handleSwap}
+          className="flex-1"
+          disabled={loading || !routes?.[0]}
+        >
+          Swap
+        </Button>
+      </div>
+
+      {error && (
+        <p className="text-red-500 text-sm">{error.message || 'An error occurred'}</p>
+      )}
+    </div>
+  );
+};
