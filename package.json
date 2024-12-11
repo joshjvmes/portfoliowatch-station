@@ -23,7 +23,7 @@
     "@jup-ag/react-hook": "^6.0.0-alpha.7",
     "@jup-ag/wallet-adapter": "^0.2.1",
     "@mercurial-finance/dynamic-amm-sdk": "^1.1.19",
-    "@mercurial-finance/optimist": "^0.4.0",
+    "@mercurial-finance/optimist": "^0.3.0",
     "@mercurial-finance/vault-sdk": "^2.2.1",
     "@metamask/sdk-react": "^0.31.1",
     "@metaplex-foundation/mpl-token-metadata": "^3.3.0",
