@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 interface MarketData {
   name: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
   leverage: string;
   price: string;
   change24h: string;
