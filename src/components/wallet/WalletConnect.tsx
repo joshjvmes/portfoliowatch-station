@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { NetworkStatus } from "./NetworkStatus";
 import { WalletInfo } from "./WalletInfo";
 import { Card, CardContent } from "@/components/ui/card";
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 
 const WalletConnect = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -60,8 +61,12 @@ const WalletConnect = () => {
 
   const handleWalletConnectConnect = async () => {
     try {
-      // For now, show a coming soon message
+      // For now, show a coming soon message while we implement WalletConnect
       toast.info('WalletConnect integration coming soon!');
+      
+      // TODO: Implement WalletConnect when their Solana support is more stable
+      // Currently, WalletConnect's Solana support is in development
+      // We'll keep the placeholder for future implementation
     } catch (error) {
       console.error('WalletConnect error:', error);
       toast.error('Failed to connect with WalletConnect');
@@ -76,8 +81,6 @@ const WalletConnect = () => {
           await provider.disconnect();
           localStorage.removeItem('phantomConnected');
         }
-      } else if (selectedWallet === 'walletconnect') {
-        // Add WalletConnect disconnect logic here
       }
       
       setIsConnected(false);
