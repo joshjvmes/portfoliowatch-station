@@ -34,7 +34,11 @@ export default defineConfig(({ mode }) => ({
       '@jup-ag/common',
       'solana-transactions-wrapper',
       'crypto-exchange-arbitrage',
-      'axios'
+      'axios',
+      '@solana/web3.js',
+      'cross-fetch',
+      '@project-serum/anchor',
+      'bs58'
     ]
   },
   build: {
@@ -46,7 +50,11 @@ export default defineConfig(({ mode }) => ({
         /@jup-ag\/common/,
         /solana-transactions-wrapper/,
         /crypto-exchange-arbitrage/,
-        /axios/
+        /axios/,
+        /@solana\/web3\.js/,
+        /cross-fetch/,
+        /@project-serum\/anchor/,
+        /bs58/
       ]
     }
   },
