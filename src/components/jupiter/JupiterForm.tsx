@@ -21,14 +21,10 @@ export const JupiterForm = () => {
     error: jupiterError,
     refresh,
   } = useJupiter({
-    input: {
-      amount: JSBI.BigInt(Number(inputAmount) * 1e9 || 0),
-      mint: new PublicKey(inputToken),
-    },
-    output: {
-      mint: new PublicKey(outputToken),
-    },
-    slippage: 1.0, // 1% slippage
+    amount: JSBI.BigInt(Number(inputAmount) * 1e9 || 0),
+    inputMint: new PublicKey(inputToken),
+    outputMint: new PublicKey(outputToken),
+    slippageBps: 100,
   });
 
   const handleSwap = async () => {
