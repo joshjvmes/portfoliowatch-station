@@ -95,7 +95,7 @@
     "react-resizable-panels": "^2.1.3",
     "react-router-dom": "^6.26.2",
     "recharts": "^2.12.7",
-    "semver": "^7.5.4",
+    "semver": "^7.6.0",
     "solana-transactions-wrapper": "^3.0.0",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",
