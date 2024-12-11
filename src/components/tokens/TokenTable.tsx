@@ -12,16 +12,15 @@ import { Card } from "@/components/ui/card";
 import { ChartLine, Database, DollarSign, Clock, Zap, ArrowLeftRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
-interface RaydiumTokenData {
+interface JupiterPriceData {
+  id: string;
+  mintSymbol: string;
+  vsToken: string;
+  vsTokenSymbol: string;
   price: number;
-  priceChange24h: number;
-  volume24h: number;
-  liquidity: number;
 }
 
 const TokenTable = () => {
-  const [tokens, setTokens] = useState<TokenInfo[]>([]);
-  
   // Fetch token list
   const { data: tokenList, isLoading: isLoadingTokens } = useQuery({
     queryKey: ['tokenList'],
@@ -34,13 +33,13 @@ const TokenTable = () => {
     },
   });
 
-  // Fetch Raydium token data
-  const { data: tokenData, isLoading: isLoadingPrices } = useQuery({
-    queryKey: ['tokenPrices'],
+  // Fetch Jupiter price data
+  const { data: priceData, isLoading: isLoadingPrices } = useQuery({
+    queryKey: ['jupiterPrices'],
     queryFn: async () => {
-      const response = await fetch('https://api.raydium.io/v2/main/price');
+      const response = await fetch('https://price.jup.ag/v4/price');
       const data = await response.json();
-      return data as Record<string, RaydiumTokenData>;
+      return data.data as Record<string, JupiterPriceData>;
     },
     enabled: !!tokenList,
   });
@@ -129,7 +128,7 @@ const TokenTable = () => {
           </TableHeader>
           <TableBody>
             {tokenList?.map((token) => {
-              const data = tokenData?.[token.address];
+              const jupiterPrice = priceData?.[token.address];
               return (
                 <TableRow key={token.address}>
                   <TableCell>
@@ -149,13 +148,13 @@ const TokenTable = () => {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{formatPrice(data?.price)}</TableCell>
+                  <TableCell>{formatPrice(jupiterPrice?.price)}</TableCell>
                   <TableCell>
-                    <span className={data?.priceChange24h > 0 ? 'text-green-500' : 'text-red-500'}>
-                      {formatPercent(data?.priceChange24h)}
-                    </span>
+                    <span className="text-gray-500">Coming soon</span>
                   </TableCell>
-                  <TableCell>{formatLiquidity(data?.liquidity)}</TableCell>
+                  <TableCell>
+                    <span className="text-gray-500">Coming soon</span>
+                  </TableCell>
                   <TableCell>~2s</TableCell>
                   <TableCell>Coming soon</TableCell>
                   <TableCell>Coming soon</TableCell>
