@@ -32,6 +32,7 @@ export default defineConfig(({ mode }) => ({
     include: [
       'buffer', 
       '@jup-ag/common',
+      '@jup-ag/api',
       'solana-transactions-wrapper',
       'crypto-exchange-arbitrage',
       'axios',
@@ -48,6 +49,7 @@ export default defineConfig(({ mode }) => ({
         /buffer/,
         /node_modules/,
         /@jup-ag\/common/,
+        /@jup-ag\/api/,
         /solana-transactions-wrapper/,
         /crypto-exchange-arbitrage/,
         /axios/,
