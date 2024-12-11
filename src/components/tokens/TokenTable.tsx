@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { TokenListProvider } from "@solana/spl-token-registry";
+import { TokenListProvider, TokenInfo } from "@solana/spl-token-registry";
 import {
   Table,
   TableBody,
@@ -10,56 +10,20 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { ChartLine, Database, DollarSign, Clock, Zap, ArrowLeftRight } from "lucide-react";
-import { Connection } from "@solana/web3.js";
-import { TokenData } from "@/types/token";
-import { fetchOrcaPrices, fetchRaydiumPrices } from "@/utils/price-fetching";
-import { formatNumber, formatPrice, formatPercentage } from "@/utils/formatting";
 
 const TokenTable = () => {
-  const [tokens, setTokens] = useState<TokenData[]>([]);
+  const [tokens, setTokens] = useState<TokenInfo[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadTokens = async () => {
       try {
-        const connection = new Connection("https://api.mainnet-beta.solana.com");
         const tokenList = await new TokenListProvider().resolve();
         const filteredTokens = tokenList
           .filterByClusterSlug("mainnet-beta")
           .getList()
-          .slice(0, 50);
-
-        const tokenDataPromises = filteredTokens.map(async (token) => {
-          const [orcaPrice, raydiumPrice] = await Promise.all([
-            fetchOrcaPrices(connection, token.address),
-            fetchRaydiumPrices(connection, token.address),
-          ]);
-
-          const exchangeRates = {
-            orca: orcaPrice,
-            raydium: raydiumPrice,
-          };
-
-          // Calculate arbitrage opportunity if both prices exist
-          const arbitrage = orcaPrice && raydiumPrice 
-            ? Math.abs(orcaPrice - raydiumPrice) / Math.min(orcaPrice, raydiumPrice) * 100 
-            : undefined;
-
-          return {
-            symbol: token.symbol,
-            name: token.name,
-            logoURI: token.logoURI,
-            price: orcaPrice || raydiumPrice, // Use either price as reference
-            change24h: Math.random() * 20 - 10, // Placeholder for 24h change
-            liquidity: Math.random() * 1000000, // Placeholder for liquidity
-            avgTxTime: Math.random() * 1 + 0.1, // Placeholder for avg transaction time
-            exchangeRates,
-            arbitrage,
-          };
-        });
-
-        const tokenData = await Promise.all(tokenDataPromises);
-        setTokens(tokenData);
+          .slice(0, 50); // Limit to first 50 tokens for now
+        setTokens(filteredTokens);
       } catch (error) {
         console.error("Error loading tokens:", error);
       } finally {
@@ -126,8 +90,8 @@ const TokenTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tokens.map((token, index) => (
-              <TableRow key={index}>
+            {tokens.map((token) => (
+              <TableRow key={token.address}>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     {token.logoURI && (
@@ -145,29 +109,12 @@ const TokenTable = () => {
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>{formatPrice(token.price)}</TableCell>
-                <TableCell>
-                  <span className={token.change24h && token.change24h >= 0 ? "text-green-500" : "text-red-500"}>
-                    {formatPercentage(token.change24h)}
-                  </span>
-                </TableCell>
-                <TableCell>{formatPrice(token.liquidity)}</TableCell>
-                <TableCell>{token.avgTxTime ? `${formatNumber(token.avgTxTime)}s` : "N/A"}</TableCell>
-                <TableCell>
-                  <div className="space-y-1">
-                    <div>Orca: {formatPrice(token.exchangeRates?.orca)}</div>
-                    <div>Raydium: {formatPrice(token.exchangeRates?.raydium)}</div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {token.arbitrage ? (
-                    <span className={token.arbitrage > 1 ? "text-green-500" : "text-muted-foreground"}>
-                      {formatPercentage(token.arbitrage)}
-                    </span>
-                  ) : (
-                    "N/A"
-                  )}
-                </TableCell>
+                <TableCell>Coming soon</TableCell>
+                <TableCell>Coming soon</TableCell>
+                <TableCell>Coming soon</TableCell>
+                <TableCell>Coming soon</TableCell>
+                <TableCell>Coming soon</TableCell>
+                <TableCell>Coming soon</TableCell>
               </TableRow>
             ))}
           </TableBody>
