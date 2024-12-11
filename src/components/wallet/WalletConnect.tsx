@@ -107,22 +107,24 @@ const WalletConnect = () => {
 
   return (
     <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
-      <CardContent className="p-4 space-y-4">
-        <Button
-          onClick={handlePhantomConnect}
-          className="w-full flex items-center justify-center gap-2 bg-[#AB9FF2] hover:bg-[#AB9FF2]/90 text-black"
-        >
-          <Wallet className="h-4 w-4" />
-          Connect Phantom
-        </Button>
-        
-        <Button
-          onClick={handleWalletConnectConnect}
-          className="w-full flex items-center justify-center gap-2 bg-[#3B99FC] hover:bg-[#3B99FC]/90 text-white"
-        >
-          <Wallet className="h-4 w-4" />
-          WalletConnect
-        </Button>
+      <CardContent className="p-4">
+        <div className="flex gap-4">
+          <Button
+            onClick={handlePhantomConnect}
+            className="flex-1 flex items-center justify-center gap-2 bg-[#AB9FF2] hover:bg-[#AB9FF2]/90 text-black"
+          >
+            <Wallet className="h-4 w-4" />
+            Connect Phantom
+          </Button>
+          
+          <Button
+            onClick={handleWalletConnectConnect}
+            className="flex-1 flex items-center justify-center gap-2 bg-[#3B99FC] hover:bg-[#3B99FC]/90 text-white"
+          >
+            <Wallet className="h-4 w-4" />
+            WalletConnect
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
