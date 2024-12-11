@@ -1,5 +1,4 @@
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import { CategoricalChartProps } from "recharts";
 
 interface VaultChartProps {
   data: any[];
