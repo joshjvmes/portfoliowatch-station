@@ -34,7 +34,14 @@ export const JupiterForm = () => {
         return;
       }
 
-      const result = await exchange();
+      // Pass required parameters to exchange function
+      const result = await exchange({
+        wallet: window.solana,
+        onTransaction: async (txid) => {
+          toast.success(`Transaction sent: ${txid}`);
+        },
+      });
+
       if (result) {
         toast.success('Swap executed successfully!');
         setInputAmount('');
