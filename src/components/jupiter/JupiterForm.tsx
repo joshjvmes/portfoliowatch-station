@@ -20,16 +20,26 @@ export const JupiterForm = () => {
     exchange,
     error,
     refresh,
+    routes,
   } = useJupiter({
-    amount: JSBI.BigInt(Number(inputAmount) * 1e9 || 0), // Convert to lamports
+    amount: JSBI.BigInt(Number(inputAmount) * 1e9 || 0),
     inputMint: new PublicKey(inputToken),
     outputMint: new PublicKey(outputToken),
-    slippageBps: 100, // 1% slippage
+    slippageBps: 100,
   });
 
   const handleSwap = async () => {
     try {
-      const result = await exchange({});
+      if (!routes || routes.length === 0) {
+        toast.error('No routes available for swap');
+        return;
+      }
+
+      const result = await exchange({
+        routeInfo: routes[0],
+        quoteResponseMeta: routes[0].quoteResponseMeta,
+      });
+
       if (result) {
         toast.success('Swap executed successfully!');
         setInputAmount('');
@@ -42,7 +52,7 @@ export const JupiterForm = () => {
   };
 
   const handleRefresh = () => {
-    refresh({});
+    refresh();
     toast.success('Routes refreshed');
   };
 
