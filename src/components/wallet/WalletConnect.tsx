@@ -7,10 +7,6 @@ import { WalletInfo } from "./WalletInfo";
 import { Card, CardContent } from "@/components/ui/card";
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react';
 import { mainnet } from 'viem/chains';
-import { QueryClient } from '@tanstack/react-query';
-
-// Create a new QueryClient instance
-const queryClient = new QueryClient();
 
 // WalletConnect configuration
 const projectId = '3bc71515e830445a56ca773f191fe27e';
@@ -22,12 +18,7 @@ const metadata = {
 };
 
 const chains = [mainnet];
-const wagmiConfig = defaultWagmiConfig({ 
-  chains, 
-  projectId, 
-  metadata,
-  queryClient // Add queryClient to the configuration
-});
+const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
 
 createWeb3Modal({ wagmiConfig, projectId, chains });
 
