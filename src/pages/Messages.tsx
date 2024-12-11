@@ -53,20 +53,22 @@ const Messages = () => {
   return (
     <DashboardLayout>
       <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div className="space-y-1">
-            <CardTitle className="text-xl text-white">Messages</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Your recent notifications and updates
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="px-3 py-1 rounded-full bg-indigo-600/30 text-indigo-400 text-sm">
-              All Messages
-            </button>
-            <button className="px-3 py-1 rounded-full text-white/60 text-sm hover:bg-white/10 transition-colors">
-              Unread
-            </button>
+        <CardHeader className="space-y-4 sm:space-y-0">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="space-y-1">
+              <CardTitle className="text-xl text-white">Messages</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Your recent notifications and updates
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="px-3 py-1 rounded-full bg-indigo-600/30 text-indigo-400 text-sm whitespace-nowrap">
+                All Messages
+              </button>
+              <button className="px-3 py-1 rounded-full text-white/60 text-sm hover:bg-white/10 transition-colors whitespace-nowrap">
+                Unread
+              </button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -82,7 +84,7 @@ const Messages = () => {
                   }`}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`p-2 rounded-lg ${
+                  <div className={`p-2 rounded-lg shrink-0 ${
                     message.type === 'system' 
                       ? 'bg-indigo-500/20 text-indigo-400'
                       : message.type === 'alert'
@@ -98,7 +100,7 @@ const Messages = () => {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-start mb-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-1">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium text-white">
                           {message.sender}
@@ -109,7 +111,7 @@ const Messages = () => {
                           </span>
                         )}
                       </div>
-                      <span className="text-xs text-muted-foreground shrink-0">
+                      <span className="text-xs text-muted-foreground">
                         {message.date}
                       </span>
                     </div>
