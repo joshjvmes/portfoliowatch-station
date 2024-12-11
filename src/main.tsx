@@ -3,6 +3,12 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import { Buffer } from 'buffer';
+import PanicOverlay from 'panic-overlay';
+
+// Initialize PanicOverlay in development
+if (import.meta.env.DEV) {
+  new PanicOverlay();
+}
 
 // Polyfill Buffer for the browser
 window.Buffer = Buffer;
