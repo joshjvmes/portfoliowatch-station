@@ -1,7 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useState, useEffect } from "react";
-import ReactApexChart from "react-apexcharts";
-import { ApexOptions } from "apexcharts";
+import { Area, AreaChart, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface PriceData {
   date: string;
@@ -17,73 +15,9 @@ interface PriceChartProps {
 }
 
 const PriceChart = ({ data, loading }: PriceChartProps) => {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   if (loading) {
     return <div className="h-[400px] animate-pulse bg-white/5 rounded-lg" />;
   }
-
-  const options: ApexOptions = {
-    chart: {
-      type: 'line',
-      toolbar: {
-        show: false
-      },
-      background: 'transparent'
-    },
-    stroke: {
-      curve: 'smooth',
-      width: 2
-    },
-    xaxis: {
-      categories: data.map(d => d.date),
-      labels: {
-        style: {
-          colors: '#666'
-        }
-      }
-    },
-    yaxis: {
-      labels: {
-        style: {
-          colors: '#666'
-        },
-        formatter: (value) => `$${value.toLocaleString()}`
-      }
-    },
-    tooltip: {
-      theme: 'dark',
-      y: {
-        formatter: (value) => `$${value.toLocaleString()}`
-      }
-    },
-    colors: ['#2563eb', '#22c55e', '#22c55e', '#eab308']
-  };
-
-  const series = [
-    {
-      name: 'Price',
-      data: data.map(d => d.price)
-    },
-    {
-      name: 'Upper Band',
-      data: data.map(d => d.upperBand)
-    },
-    {
-      name: 'Lower Band',
-      data: data.map(d => d.lowerBand)
-    },
-    {
-      name: 'SMA20',
-      data: data.map(d => d.sma20)
-    }
-  ];
-
-  if (!mounted) return null;
 
   return (
     <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
@@ -92,12 +26,54 @@ const PriceChart = ({ data, loading }: PriceChartProps) => {
       </CardHeader>
       <CardContent>
         <div className="h-[400px]">
-          <ReactApexChart
-            options={options}
-            series={series}
-            type="line"
-            height="100%"
-          />
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={data}>
+              <XAxis 
+                dataKey="date" 
+                stroke="#666"
+                tick={{ fill: '#666' }}
+              />
+              <YAxis 
+                domain={['auto', 'auto']} 
+                stroke="#666"
+                tick={{ fill: '#666' }}
+                tickFormatter={(value) => `$${value.toLocaleString()}`}
+              />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1A2333',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '8px'
+                }}
+                labelStyle={{ color: '#fff' }}
+              />
+              <Area 
+                type="monotone" 
+                dataKey="price" 
+                stroke="#2563eb" 
+                fill="#2563eb" 
+                fillOpacity={0.1} 
+              />
+              <Area 
+                type="monotone" 
+                dataKey="upperBand" 
+                stroke="#22c55e" 
+                fill="none" 
+              />
+              <Area 
+                type="monotone" 
+                dataKey="lowerBand" 
+                stroke="#22c55e" 
+                fill="none" 
+              />
+              <Area 
+                type="monotone" 
+                dataKey="sma20" 
+                stroke="#eab308" 
+                fill="none" 
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </CardContent>
     </Card>
