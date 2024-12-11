@@ -20,7 +20,6 @@ export const JupiterForm = () => {
     exchange,
     error,
     refresh,
-    routes,
   } = useJupiter({
     amount: JSBI.BigInt(Number(inputAmount) * 1e9 || 0),
     inputMint: new PublicKey(inputToken),
@@ -30,16 +29,7 @@ export const JupiterForm = () => {
 
   const handleSwap = async () => {
     try {
-      if (!routes || routes.length === 0) {
-        toast.error('No routes available for swap');
-        return;
-      }
-
-      const result = await exchange({
-        routeInfo: routes[0],
-        quoteResponseMeta: routes[0].quoteResponseMeta,
-      });
-
+      const result = await exchange();
       if (result) {
         toast.success('Swap executed successfully!');
         setInputAmount('');
