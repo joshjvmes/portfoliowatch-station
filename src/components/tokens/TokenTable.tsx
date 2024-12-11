@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { TokenListProvider, TokenInfo } from "@solana/spl-token-registry";
+import { TokenListProvider } from "@solana/spl-token-registry";
 import {
   Table,
   TableBody,
@@ -10,67 +10,14 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { ChartLine, Database, DollarSign, Clock, Zap, ArrowLeftRight } from "lucide-react";
-import { Connection, PublicKey } from "@solana/web3.js";
-import { Market } from "@project-serum/serum";
-import { WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID } from "@orca-so/whirlpools-sdk";
-import { Percentage } from "@orca-so/common-sdk";
-
-interface TokenData {
-  symbol: string;
-  name: string;
-  logoURI?: string;
-  price?: number;
-  change24h?: number;
-  liquidity?: number;
-  avgTxTime?: number;
-  exchangeRates?: {
-    raydium?: number;
-    orca?: number;
-  };
-  arbitrage?: number;
-}
+import { Connection } from "@solana/web3.js";
+import { TokenData } from "@/types/token";
+import { fetchOrcaPrices, fetchRaydiumPrices } from "@/utils/price-fetching";
+import { formatNumber, formatPrice, formatPercentage } from "@/utils/formatting";
 
 const TokenTable = () => {
   const [tokens, setTokens] = useState<TokenData[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const fetchOrcaPrices = async (connection: Connection, tokenMint: string) => {
-    try {
-      const ctx = WhirlpoolContext.withConnection(connection, new PublicKey(ORCA_WHIRLPOOL_PROGRAM_ID));
-      const client = buildWhirlpoolClient(ctx);
-      const whirlpools = await client.getAllWhirlpools();
-      
-      // Find pools containing our token
-      const relevantPools = whirlpools.filter(pool => 
-        pool.tokenMintA.toString() === tokenMint || 
-        pool.tokenMintB.toString() === tokenMint
-      );
-
-      if (relevantPools.length > 0) {
-        // Use the most liquid pool for price
-        const pool = relevantPools[0];
-        const price = await pool.getData();
-        return price.sqrtPrice.toNumber();
-      }
-      return null;
-    } catch (error) {
-      console.error("Error fetching Orca price:", error);
-      return null;
-    }
-  };
-
-  const fetchRaydiumPrices = async (connection: Connection, tokenMint: string) => {
-    try {
-      // This is a simplified example - you would need to fetch actual Raydium pool data
-      const marketAddress = new PublicKey(tokenMint);
-      const market = await Market.load(connection, marketAddress, {}, "mainnet-beta");
-      const price = await market.loadBids(connection);
-      return price.getL2(1)[0]?.[0] || null;
-    } catch (error) {
-      console.error("Error fetching Raydium price:", error);
-      return null;
-    }
-  };
 
   useEffect(() => {
     const loadTokens = async () => {
@@ -122,27 +69,6 @@ const TokenTable = () => {
 
     loadTokens();
   }, []);
-
-  const formatNumber = (num?: number, decimals: number = 2) => {
-    if (num === undefined) return "N/A";
-    return new Intl.NumberFormat("en-US", {
-      minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals,
-    }).format(num);
-  };
-
-  const formatPrice = (price?: number) => {
-    if (price === undefined) return "N/A";
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(price);
-  };
-
-  const formatPercentage = (value?: number) => {
-    if (value === undefined) return "N/A";
-    return `${value >= 0 ? "+" : ""}${formatNumber(value)}%`;
-  };
 
   if (loading) {
     return (
