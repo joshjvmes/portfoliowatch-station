@@ -7,7 +7,7 @@ import {
   PDAUtil
 } from "@orca-so/whirlpools-sdk";
 import { AnchorProvider } from "@coral-xyz/anchor";
-import { Wallet } from "@project-serum/anchor/dist/cjs/provider";
+import { Wallet } from "@coral-xyz/anchor/dist/cjs/provider";
 
 // Create a dummy wallet for read-only operations
 class DummyWallet implements Wallet {
@@ -43,7 +43,6 @@ export const fetchOrcaPrices = async (connection: Connection, tokenMintStr: stri
     // Find whirlpools containing our token
     const whirlpoolPda = PDAUtil.getWhirlpool(
       ctx.program.programId,
-      ctx.program.provider.publicKey,
       tokenMint,
       tokenMint, // Using same token as both tokens for simplicity
       128 // Standard tick spacing
