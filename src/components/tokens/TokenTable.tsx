@@ -10,67 +10,31 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { ChartLine, Database, DollarSign, Clock, Zap, ArrowLeftRight } from "lucide-react";
-import { Connection } from "@solana/web3.js";
-import { Jupiter } from "@jup-ag/core";
-import { useQuery } from "@tanstack/react-query";
-import { TokenTableRow } from "./TokenTableRow";
-import { TokenTableHeader } from "./TokenTableHeader";
 
 const TokenTable = () => {
-  const [tokenPrices, setTokenPrices] = useState<Record<string, any>>({});
-  const connection = new Connection("https://api.mainnet-beta.solana.com");
-
-  // Fetch token list
-  const { data: tokenList, isLoading: isLoadingTokens } = useQuery({
-    queryKey: ['tokenList'],
-    queryFn: async () => {
-      const tokenList = await new TokenListProvider().resolve();
-      return tokenList
-        .filterByClusterSlug("mainnet-beta")
-        .getList()
-        .slice(0, 50);
-    },
-  });
-
-  // Fetch Jupiter data
-  const { data: jupiterData } = useQuery({
-    queryKey: ['jupiterPrices'],
-    queryFn: async () => {
-      const jupiter = await Jupiter.load({
-        connection,
-        cluster: 'mainnet-beta',
-      });
-      
-      const routeMap = await jupiter.getRouteMap();
-      const priceData: Record<string, any> = {};
-      
-      Object.entries(routeMap).forEach(([inputMint, outputs]) => {
-        if (!priceData[inputMint]) {
-          priceData[inputMint] = {};
-        }
-        priceData[inputMint].jupiter = {
-          price: 0,
-          liquidity: outputs.length * 1000000,
-          avgTime: 500,
-          change24h: 0,
-        };
-      });
-      
-      return priceData;
-    },
-    enabled: !!connection,
-  });
+  const [tokens, setTokens] = useState<TokenInfo[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (jupiterData) {
-      setTokenPrices(prevPrices => ({
-        ...prevPrices,
-        ...jupiterData,
-      }));
-    }
-  }, [jupiterData]);
+    const loadTokens = async () => {
+      try {
+        const tokenList = await new TokenListProvider().resolve();
+        const filteredTokens = tokenList
+          .filterByClusterSlug("mainnet-beta")
+          .getList()
+          .slice(0, 50); // Limit to first 50 tokens for now
+        setTokens(filteredTokens);
+      } catch (error) {
+        console.error("Error loading tokens:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (isLoadingTokens) {
+    loadTokens();
+  }, []);
+
+  if (loading) {
     return (
       <Card className="p-4">
         <div className="flex items-center justify-center h-40">
@@ -84,14 +48,74 @@ const TokenTable = () => {
     <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
       <div className="overflow-x-auto">
         <Table>
-          <TokenTableHeader />
+          <TableHeader>
+            <TableRow>
+              <TableHead>Token</TableHead>
+              <TableHead>
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" />
+                  Price
+                </div>
+              </TableHead>
+              <TableHead>
+                <div className="flex items-center gap-2">
+                  <ChartLine className="h-4 w-4" />
+                  24h Change
+                </div>
+              </TableHead>
+              <TableHead>
+                <div className="flex items-center gap-2">
+                  <Database className="h-4 w-4" />
+                  Liquidity
+                </div>
+              </TableHead>
+              <TableHead>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Avg. Transaction Time
+                </div>
+              </TableHead>
+              <TableHead>
+                <div className="flex items-center gap-2">
+                  <ArrowLeftRight className="h-4 w-4" />
+                  Exchange Rates
+                </div>
+              </TableHead>
+              <TableHead>
+                <div className="flex items-center gap-2">
+                  <Zap className="h-4 w-4" />
+                  Arbitrage
+                </div>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
           <TableBody>
-            {tokenList?.map((token) => (
-              <TokenTableRow 
-                key={token.address} 
-                token={token} 
-                priceData={tokenPrices[token.address] || {}} 
-              />
+            {tokens.map((token) => (
+              <TableRow key={token.address}>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    {token.logoURI && (
+                      <img
+                        src={token.logoURI}
+                        alt={token.symbol}
+                        className="w-6 h-6 rounded-full"
+                      />
+                    )}
+                    <div>
+                      <div className="font-medium">{token.symbol}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {token.name}
+                      </div>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>Coming soon</TableCell>
+                <TableCell>Coming soon</TableCell>
+                <TableCell>Coming soon</TableCell>
+                <TableCell>Coming soon</TableCell>
+                <TableCell>Coming soon</TableCell>
+                <TableCell>Coming soon</TableCell>
+              </TableRow>
             ))}
           </TableBody>
         </Table>
