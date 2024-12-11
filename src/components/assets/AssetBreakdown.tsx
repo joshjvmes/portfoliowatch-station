@@ -1,8 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import ReactApexChart from "react-apexcharts";
-import { ApexOptions } from "apexcharts";
 
 const COLORS = ['#00E5BE', '#2563EB', '#FF6B6B', '#FFD93D', '#4834D4', '#686DE0'];
 
@@ -20,88 +19,17 @@ const assetClassData = [
   { name: 'NFTs', value: 8, usdValue: '$92,162.07' },
 ];
 
-const PieChartComponent = ({ data }: { data: typeof currencyData | typeof assetClassData }) => {
-  const options: ApexOptions = {
-    chart: {
-      type: 'donut' as const,
-      background: 'transparent'
-    },
-    colors: COLORS,
-    labels: data.map(item => item.name),
-    legend: {
-      position: 'right',
-      labels: {
-        colors: '#9ca3af'
-      }
-    },
-    tooltip: {
-      y: {
-        formatter: (value: number) => {
-          const item = data.find(d => d.value === value);
-          return item ? `${item.usdValue} (${value}%)` : `${value}%`;
-        }
-      },
-      theme: 'dark'
-    },
-    plotOptions: {
-      pie: {
-        donut: {
-          size: '70%'
-        }
-      }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      colors: ['#0B1221']
-    }
-  };
-
-  const series = data.map(item => item.value);
-
-  return (
-    <div className="h-[250px] sm:h-[300px]">
-      <ReactApexChart
-        options={options}
-        series={series}
-        type="donut"
-        height="100%"
-      />
-    </div>
-  );
-};
-
-const AssetList = ({ data }: { data: typeof currencyData | typeof assetClassData }) => {
-  return (
-    <div className="space-y-3">
-      {data.map((item, index) => (
-        <div 
-          key={item.name}
-          className="bg-[#1A2333]/50 p-3 rounded-lg border border-white/10 hover:border-[#00E5BE]/50 transition-colors"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div 
-                className="w-2.5 h-2.5 rounded-full" 
-                style={{ backgroundColor: COLORS[index % COLORS.length] }}
-              />
-              <span className="text-white text-sm">{item.name}</span>
-            </div>
-            <span className="text-[#00E5BE] text-sm">{item.usdValue}</span>
-          </div>
-          <div className="mt-2">
-            <div className="bg-white/10 h-1.5 rounded-full">
-              <div 
-                className="h-full rounded-full bg-[#00E5BE]" 
-                style={{ width: `${item.value}%` }}
-              />
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-[#1A2333] p-4 rounded-lg border border-white/10">
+        <p className="text-white font-medium">{payload[0].payload.name}</p>
+        <p className="text-[#00E5BE]">{payload[0].payload.amount}</p>
+        <p className="text-gray-400">{payload[0].payload.usdValue}</p>
+      </div>
+    );
+  }
+  return null;
 };
 
 const AssetBreakdown = () => {
@@ -110,34 +38,86 @@ const AssetBreakdown = () => {
 
   return (
     <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
-      <CardHeader className="space-y-4 sm:space-y-0">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <CardTitle className="text-xl text-white">Asset Breakdown</CardTitle>
-            <p className="text-sm text-gray-400 mt-1">Total Portfolio Value: $1,152,025.79</p>
-          </div>
-          <div className="flex gap-2">
-            <Button 
-              variant={activeView === 'currency' ? 'default' : 'outline'}
-              onClick={() => setActiveView('currency')}
-              className={`text-sm px-3 py-1.5 ${activeView === 'currency' ? 'bg-[#00E5BE] hover:bg-[#00E5BE]/90' : 'border-white/10'}`}
-            >
-              By Currency
-            </Button>
-            <Button 
-              variant={activeView === 'class' ? 'default' : 'outline'}
-              onClick={() => setActiveView('class')}
-              className={`text-sm px-3 py-1.5 ${activeView === 'class' ? 'bg-[#00E5BE] hover:bg-[#00E5BE]/90' : 'border-white/10'}`}
-            >
-              By Asset Class
-            </Button>
-          </div>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle className="text-xl text-white">Asset Breakdown</CardTitle>
+          <p className="text-sm text-gray-400 mt-1">Total Portfolio Value: $1,152,025.79</p>
+        </div>
+        <div className="flex gap-2">
+          <Button 
+            variant={activeView === 'currency' ? 'default' : 'outline'}
+            onClick={() => setActiveView('currency')}
+            className={activeView === 'currency' ? 'bg-[#00E5BE] hover:bg-[#00E5BE]/90' : 'border-white/10'}
+          >
+            By Currency
+          </Button>
+          <Button 
+            variant={activeView === 'class' ? 'default' : 'outline'}
+            onClick={() => setActiveView('class')}
+            className={activeView === 'class' ? 'bg-[#00E5BE] hover:bg-[#00E5BE]/90' : 'border-white/10'}
+          >
+            By Asset Class
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <PieChartComponent data={data} />
-          <AssetList data={data} />
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={data}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  fill="#8884d8"
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+                <Legend 
+                  verticalAlign="middle" 
+                  align="right"
+                  layout="vertical"
+                  formatter={(value: string) => (
+                    <span className="text-gray-400">{value}</span>
+                  )}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="space-y-4">
+            {data.map((item, index) => (
+              <div 
+                key={item.name}
+                className="bg-[#1A2333]/50 p-4 rounded-lg border border-white/10 hover:border-[#00E5BE]/50 transition-colors"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div 
+                      className="w-3 h-3 rounded-full" 
+                      style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                    />
+                    <span className="text-white">{item.name}</span>
+                  </div>
+                  <span className="text-[#00E5BE]">{item.usdValue}</span>
+                </div>
+                <div className="mt-2">
+                  <div className="bg-white/10 h-1.5 rounded-full">
+                    <div 
+                      className="h-full rounded-full bg-[#00E5BE]" 
+                      style={{ width: `${item.value}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>

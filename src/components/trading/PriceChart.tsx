@@ -1,16 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-
-interface PriceData {
-  date: string;
-  price: number;
-  upperBand: number;
-  lowerBand: number;
-  sma20: number;
-}
+import { Area, AreaChart, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface PriceChartProps {
-  data: PriceData[];
+  data: any[];
   loading?: boolean;
 }
 

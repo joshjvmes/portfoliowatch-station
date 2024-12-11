@@ -40,21 +40,21 @@ const mockTransactions = [
 const History = () => {
   return (
     <DashboardLayout>
-      <div className="space-y-4">
-        <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h2 className="text-xl sm:text-2xl font-semibold text-white">Trading History</h2>
-            <p className="text-sm text-muted-foreground">View your recent trading activity</p>
+            <h2 className="text-2xl font-semibold text-white">Trading History</h2>
+            <p className="text-muted-foreground">View your recent trading activity</p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 sm:items-center w-full sm:w-auto">
-            <div className="relative flex-1 sm:flex-none sm:w-64">
+          <div className="flex items-center gap-4">
+            <div className="relative w-64">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search transactions..."
-                className="pl-10 bg-[#1A2333]/50 border-white/10 text-white placeholder:text-muted-foreground w-full"
+                className="pl-10 bg-[#1A2333]/50 border-white/10 text-white placeholder:text-muted-foreground"
               />
             </div>
-            <select className="bg-[#1A2333]/50 border border-white/10 rounded-lg px-4 py-2 text-white text-sm w-full sm:w-auto">
+            <select className="bg-[#1A2333]/50 border border-white/10 rounded-lg px-4 py-2 text-white text-sm">
               <option value="all">All Types</option>
               <option value="buy">Buy</option>
               <option value="sell">Sell</option>
@@ -62,70 +62,68 @@ const History = () => {
           </div>
         </div>
 
-        <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl overflow-x-auto">
+        <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
           <CardContent className="p-0">
-            <div className="min-w-[800px]">
-              <Table>
-                <TableHeader>
-                  <TableRow className="border-white/10 hover:bg-transparent">
-                    <TableHead className="text-muted-foreground">Validator</TableHead>
-                    <TableHead className="text-muted-foreground">Type</TableHead>
-                    <TableHead className="text-muted-foreground">Amount</TableHead>
-                    <TableHead className="text-muted-foreground">Price</TableHead>
-                    <TableHead className="text-muted-foreground">Total</TableHead>
-                    <TableHead className="text-muted-foreground">Date</TableHead>
-                    <TableHead className="text-muted-foreground">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockTransactions.map((transaction) => (
-                    <TableRow
-                      key={transaction.id}
-                      className="border-white/10 hover:bg-white/5"
-                    >
-                      <TableCell className="font-medium text-white">
-                        {transaction.validator}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          {transaction.type === "Buy" ? (
-                            <ArrowUpRight className="w-4 h-4 text-green-400" />
-                          ) : (
-                            <ArrowDownRight className="w-4 h-4 text-red-400" />
-                          )}
-                          <span
-                            className={`px-2 py-1 rounded text-xs ${
-                              transaction.type === "Buy"
-                                ? "bg-green-500/20 text-green-400"
-                                : "bg-red-500/20 text-red-400"
-                            }`}
-                          >
-                            {transaction.type}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-white font-medium">
-                        {transaction.amount}
-                      </TableCell>
-                      <TableCell className="text-white">
-                        {transaction.price}
-                      </TableCell>
-                      <TableCell className="text-white font-medium">
-                        {transaction.total}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {transaction.date}
-                      </TableCell>
-                      <TableCell>
-                        <span className="px-2 py-1 rounded text-xs bg-blue-500/20 text-blue-400">
-                          {transaction.status}
+            <Table>
+              <TableHeader>
+                <TableRow className="border-white/10 hover:bg-transparent">
+                  <TableHead className="text-muted-foreground">Validator</TableHead>
+                  <TableHead className="text-muted-foreground">Type</TableHead>
+                  <TableHead className="text-muted-foreground">Amount</TableHead>
+                  <TableHead className="text-muted-foreground">Price</TableHead>
+                  <TableHead className="text-muted-foreground">Total</TableHead>
+                  <TableHead className="text-muted-foreground">Date</TableHead>
+                  <TableHead className="text-muted-foreground">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {mockTransactions.map((transaction) => (
+                  <TableRow
+                    key={transaction.id}
+                    className="border-white/10 hover:bg-white/5"
+                  >
+                    <TableCell className="font-medium text-white">
+                      {transaction.validator}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        {transaction.type === "Buy" ? (
+                          <ArrowUpRight className="w-4 h-4 text-green-400" />
+                        ) : (
+                          <ArrowDownRight className="w-4 h-4 text-red-400" />
+                        )}
+                        <span
+                          className={`px-2 py-1 rounded text-xs ${
+                            transaction.type === "Buy"
+                              ? "bg-green-500/20 text-green-400"
+                              : "bg-red-500/20 text-red-400"
+                          }`}
+                        >
+                          {transaction.type}
                         </span>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-white font-medium">
+                      {transaction.amount}
+                    </TableCell>
+                    <TableCell className="text-white">
+                      {transaction.price}
+                    </TableCell>
+                    <TableCell className="text-white font-medium">
+                      {transaction.total}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {transaction.date}
+                    </TableCell>
+                    <TableCell>
+                      <span className="px-2 py-1 rounded text-xs bg-blue-500/20 text-blue-400">
+                        {transaction.status}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       </div>
