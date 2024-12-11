@@ -11,7 +11,8 @@ import {
   Settings,
   ArrowUp,
   LineChart,
-  Wallet
+  Wallet,
+  Coins
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -52,6 +53,7 @@ const SideNavigation = () => {
     { name: "Trading Bots", icon: Bot, route: "/trading-bots" },
     { name: "Trading Signals", icon: LineChart, route: "/trading-signals" },
     { name: "Wallet", icon: Wallet, route: "/wallet" },
+    { name: "Token List", icon: Coins, route: "/tokens" },
     { name: "Withdrawal", icon: ArrowDownLeft, route: "/withdrawal" },
   ];
 
