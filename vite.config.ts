@@ -16,7 +16,9 @@ export default defineConfig(({ mode }) => ({
     alias: {
       '@': path.resolve(__dirname, './src'),
       'buffer': 'buffer',
-      '@jup-ag/common': '@jup-ag/common'
+      '@jup-ag/common': '@jup-ag/common',
+      'crypto': 'crypto-browserify',
+      'stream': 'stream-browserify',
     },
   },
   define: {
@@ -27,12 +29,25 @@ export default defineConfig(({ mode }) => ({
     esbuildOptions: {
       target: 'esnext',
     },
-    include: ['buffer', '@jup-ag/common']
+    include: [
+      'buffer', 
+      '@jup-ag/common',
+      'solana-transactions-wrapper',
+      'crypto-exchange-arbitrage',
+      'axios'
+    ]
   },
   build: {
     target: 'esnext',
     commonjsOptions: {
-      include: [/buffer/, /node_modules/, /@jup-ag\/common/]
+      include: [
+        /buffer/,
+        /node_modules/,
+        /@jup-ag\/common/,
+        /solana-transactions-wrapper/,
+        /crypto-exchange-arbitrage/,
+        /axios/
+      ]
     }
   },
 }));
