@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AreaChart as RechartsChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface RSIData {
   date: string;
@@ -24,7 +24,7 @@ const RSIChart = ({ data, loading }: RSIChartProps) => {
       <CardContent>
         <div className="h-[200px]">
           <ResponsiveContainer width="100%" height="100%">
-            <RechartsChart data={data}>
+            <AreaChart data={data}>
               <XAxis 
                 dataKey="date" 
                 stroke="#666"
@@ -50,7 +50,7 @@ const RSIChart = ({ data, loading }: RSIChartProps) => {
                 fill="#8b5cf6" 
                 fillOpacity={0.1} 
               />
-            </RechartsChart>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       </CardContent>

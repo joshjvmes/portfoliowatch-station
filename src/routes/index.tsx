@@ -6,7 +6,7 @@ import WalletManagement from "@/pages/WalletManagement";
 import JupiterExchange from "@/pages/JupiterExchange";
 import PrivateRoute from "@/components/auth/PrivateRoute";
 
-const routes = [
+export const routes = [
   {
     path: "/",
     element: (
@@ -49,4 +49,4 @@ const routes = [
   },
 ];
 
-export default createBrowserRouter(routes);
+export default routes;

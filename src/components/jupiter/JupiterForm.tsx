@@ -5,6 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowDownUp } from "lucide-react";
 import { toast } from "sonner";
 import { useJupiter } from '@jup-ag/react-hook';
+import { PublicKey } from '@solana/web3.js';
+import JSBI from 'jsbi';
 
 export const JupiterForm = () => {
   const [inputAmount, setInputAmount] = useState('');
@@ -14,32 +16,32 @@ export const JupiterForm = () => {
 
   const {
     loading,
-    routes,
     exchange,
     error,
     refresh,
+    allTokenMints
   } = useJupiter({
-    amount: Number(inputAmount) || 0,
-    inputMint: inputToken,
-    outputMint: outputToken,
+    amount: JSBI.BigInt(Number(inputAmount) || 0),
+    inputMint: new PublicKey(inputToken),
+    outputMint: new PublicKey(outputToken),
     slippage: 1, // 1% slippage
   });
 
   const handleSwap = async () => {
     try {
-      if (!routes?.[0]) {
+      if (!allTokenMints) {
         toast.error('No routes available for swap');
         return;
       }
 
-      const result = await exchange(routes[0]);
+      const result = await exchange();
       if (result) {
         toast.success('Swap executed successfully!');
         // Reset form or update balances
       }
-    } catch (error: any) {
-      console.error('Swap error:', error);
-      toast.error(error.message || 'Failed to execute swap');
+    } catch (err) {
+      console.error('Swap error:', err);
+      toast.error('Failed to execute swap');
     }
   };
 
@@ -68,7 +70,6 @@ export const JupiterForm = () => {
             >
               <option value="SOL">SOL</option>
               <option value="USDC">USDC</option>
-              {/* Add more tokens as needed */}
             </select>
           </div>
 
@@ -102,18 +103,10 @@ export const JupiterForm = () => {
             >
               <option value="USDC">USDC</option>
               <option value="SOL">SOL</option>
-              {/* Add more tokens as needed */}
             </select>
           </div>
         </CardContent>
       </Card>
-
-      {routes?.[0] && (
-        <div className="text-sm text-gray-400">
-          <p>Best price route:</p>
-          <p>Rate: {routes[0].outAmount / routes[0].inAmount} {outputToken}/{inputToken}</p>
-        </div>
-      )}
 
       <div className="flex gap-2">
         <Button
@@ -127,14 +120,14 @@ export const JupiterForm = () => {
         <Button
           onClick={handleSwap}
           className="flex-1"
-          disabled={loading || !routes?.[0]}
+          disabled={loading}
         >
           Swap
         </Button>
       </div>
 
       {error && (
-        <p className="text-red-500 text-sm">{error.message || 'An error occurred'}</p>
+        <p className="text-red-500 text-sm">An error occurred during the swap</p>
       )}
     </div>
   );
