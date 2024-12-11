@@ -10,31 +10,91 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { ChartLine, Database, DollarSign, Clock, Zap, ArrowLeftRight } from "lucide-react";
+import { Connection } from "@solana/web3.js";
+import { Jupiter } from "@jup-ag/core";
+import { useQuery } from "@tanstack/react-query";
+
+interface TokenPriceData {
+  jupiter?: {
+    price?: number;
+    change24h?: number;
+    liquidity?: number;
+    avgTime?: number;
+  };
+  raydium?: {
+    price?: number;
+    change24h?: number;
+    liquidity?: number;
+    avgTime?: number;
+  };
+  orca?: {
+    price?: number;
+    change24h?: number;
+    liquidity?: number;
+    avgTime?: number;
+  };
+}
 
 const TokenTable = () => {
   const [tokens, setTokens] = useState<TokenInfo[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [tokenPrices, setTokenPrices] = useState<Record<string, TokenPriceData>>({});
+  const connection = new Connection("https://api.mainnet-beta.solana.com");
 
+  // Fetch token list
+  const { data: tokenList, isLoading: isLoadingTokens } = useQuery({
+    queryKey: ['tokenList'],
+    queryFn: async () => {
+      const tokenList = await new TokenListProvider().resolve();
+      return tokenList
+        .filterByClusterSlug("mainnet-beta")
+        .getList()
+        .slice(0, 50); // Limit to first 50 tokens for now
+    },
+  });
+
+  // Fetch Jupiter data
+  const { data: jupiterData } = useQuery({
+    queryKey: ['jupiterPrices'],
+    queryFn: async () => {
+      const jupiter = await Jupiter.load({
+        connection,
+        cluster: 'mainnet-beta',
+      });
+      
+      const routeMap = await jupiter.getRouteMap();
+      // Convert route map to price data
+      const priceData: Record<string, TokenPriceData> = {};
+      
+      // Process route map to extract price data
+      // This is a simplified example - you'd want to add more sophisticated price calculation
+      Object.entries(routeMap).forEach(([inputMint, outputs]) => {
+        if (!priceData[inputMint]) {
+          priceData[inputMint] = {};
+        }
+        priceData[inputMint].jupiter = {
+          price: 0, // You'd calculate this based on the route
+          liquidity: outputs.length * 1000000, // Simplified liquidity metric
+          avgTime: 500, // Milliseconds - you'd want to measure this
+          change24h: 0, // You'd need to track historical data
+        };
+      });
+      
+      return priceData;
+    },
+    enabled: !!connection,
+  });
+
+  // Update token prices when Jupiter data changes
   useEffect(() => {
-    const loadTokens = async () => {
-      try {
-        const tokenList = await new TokenListProvider().resolve();
-        const filteredTokens = tokenList
-          .filterByClusterSlug("mainnet-beta")
-          .getList()
-          .slice(0, 50); // Limit to first 50 tokens for now
-        setTokens(filteredTokens);
-      } catch (error) {
-        console.error("Error loading tokens:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (jupiterData) {
+      setTokenPrices(prevPrices => ({
+        ...prevPrices,
+        ...jupiterData,
+      }));
+    }
+  }, [jupiterData]);
 
-    loadTokens();
-  }, []);
-
-  if (loading) {
+  if (isLoadingTokens) {
     return (
       <Card className="p-4">
         <div className="flex items-center justify-center h-40">
@@ -43,6 +103,27 @@ const TokenTable = () => {
       </Card>
     );
   }
+
+  const formatPrice = (price?: number) => {
+    if (!price) return 'N/A';
+    return `$${price.toFixed(2)}`;
+  };
+
+  const formatChange = (change?: number) => {
+    if (!change) return 'N/A';
+    const color = change >= 0 ? 'text-green-500' : 'text-red-500';
+    return <span className={color}>{change.toFixed(2)}%</span>;
+  };
+
+  const formatLiquidity = (liquidity?: number) => {
+    if (!liquidity) return 'N/A';
+    return `$${(liquidity / 1000000).toFixed(2)}M`;
+  };
+
+  const formatTime = (time?: number) => {
+    if (!time) return 'N/A';
+    return `${time}ms`;
+  };
 
   return (
     <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
@@ -90,33 +171,60 @@ const TokenTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tokens.map((token) => (
-              <TableRow key={token.address}>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    {token.logoURI && (
-                      <img
-                        src={token.logoURI}
-                        alt={token.symbol}
-                        className="w-6 h-6 rounded-full"
-                      />
-                    )}
-                    <div>
-                      <div className="font-medium">{token.symbol}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {token.name}
+            {tokenList?.map((token) => {
+              const priceData = tokenPrices[token.address] || {};
+              return (
+                <TableRow key={token.address}>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {token.logoURI && (
+                        <img
+                          src={token.logoURI}
+                          alt={token.symbol}
+                          className="w-6 h-6 rounded-full"
+                        />
+                      )}
+                      <div>
+                        <div className="font-medium">{token.symbol}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {token.name}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell>Coming soon</TableCell>
-                <TableCell>Coming soon</TableCell>
-                <TableCell>Coming soon</TableCell>
-                <TableCell>Coming soon</TableCell>
-                <TableCell>Coming soon</TableCell>
-                <TableCell>Coming soon</TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-1">
+                      <div>Jupiter: {formatPrice(priceData.jupiter?.price)}</div>
+                      <div>Raydium: {formatPrice(priceData.raydium?.price)}</div>
+                      <div>Orca: {formatPrice(priceData.orca?.price)}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-1">
+                      <div>Jupiter: {formatChange(priceData.jupiter?.change24h)}</div>
+                      <div>Raydium: {formatChange(priceData.raydium?.change24h)}</div>
+                      <div>Orca: {formatChange(priceData.orca?.change24h)}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-1">
+                      <div>Jupiter: {formatLiquidity(priceData.jupiter?.liquidity)}</div>
+                      <div>Raydium: {formatLiquidity(priceData.raydium?.liquidity)}</div>
+                      <div>Orca: {formatLiquidity(priceData.orca?.liquidity)}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-1">
+                      <div>Jupiter: {formatTime(priceData.jupiter?.avgTime)}</div>
+                      <div>Raydium: {formatTime(priceData.raydium?.avgTime)}</div>
+                      <div>Orca: {formatTime(priceData.orca?.avgTime)}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>Coming soon</TableCell>
+                  <TableCell>Coming soon</TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
