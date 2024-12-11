@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
-import { ChartLine, Database, DollarSign, Clock, Zap, Swap } from "lucide-react";
+import { ChartLine, Database, DollarSign, Clock, Zap, ArrowLeftRight } from "lucide-react";
 
 const TokenTable = () => {
   const [tokens, setTokens] = useState<TokenInfo[]>([]);
@@ -77,7 +77,7 @@ const TokenTable = () => {
               </TableHead>
               <TableHead>
                 <div className="flex items-center gap-2">
-                  <Swap className="h-4 w-4" />
+                  <ArrowLeftRight className="h-4 w-4" />
                   Exchange Rates
                 </div>
               </TableHead>
