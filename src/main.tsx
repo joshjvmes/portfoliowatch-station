@@ -5,13 +5,18 @@ import './index.css';
 import { Buffer } from 'buffer';
 import PanicOverlay from 'panic-overlay';
 
-// Initialize PanicOverlay in development
-if (import.meta.env.DEV) {
-  new PanicOverlay();
-}
-
 // Polyfill Buffer for the browser
 window.Buffer = Buffer;
+globalThis.Buffer = Buffer;
+
+// Initialize PanicOverlay in development with configuration
+if (import.meta.env.DEV) {
+  new PanicOverlay({
+    // Default configuration
+    stackEntryClickHandler: true,
+    shortcutKey: 'Escape',
+  });
+}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
