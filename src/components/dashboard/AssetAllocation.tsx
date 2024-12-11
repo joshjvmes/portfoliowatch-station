@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { ResponsiveContainer } from "recharts";
+import { PieChart as ReChartsPieChart, Pie, Cell } from "recharts";
 
 const data = [
   { name: 'BTC', value: 45 },
@@ -18,7 +19,7 @@ const AssetAllocation = () => {
       <CardContent>
         <div className="h-[200px]">
           <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
+            <ReChartsPieChart>
               <Pie
                 data={data}
                 cx="50%"
@@ -33,7 +34,7 @@ const AssetAllocation = () => {
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-            </PieChart>
+            </ReChartsPieChart>
           </ResponsiveContainer>
         </div>
       </CardContent>

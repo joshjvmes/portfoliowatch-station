@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { ResponsiveContainer } from "recharts";
+import { AreaChart as RechartsAreaChart, Area, XAxis, YAxis, Tooltip } from "recharts";
 
 interface MACDData {
   date: string;
@@ -25,7 +26,7 @@ const MACDChart = ({ data, loading }: MACDChartProps) => {
       <CardContent>
         <div className="h-[200px]">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data}>
+            <RechartsAreaChart data={data}>
               <XAxis 
                 dataKey="date" 
                 stroke="#666"
@@ -57,7 +58,7 @@ const MACDChart = ({ data, loading }: MACDChartProps) => {
                 stroke="#f59e0b" 
                 fill="none" 
               />
-            </AreaChart>
+            </RechartsAreaChart>
           </ResponsiveContainer>
         </div>
       </CardContent>

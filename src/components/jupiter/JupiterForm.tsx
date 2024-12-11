@@ -7,46 +7,42 @@ import { toast } from "sonner";
 import { useJupiter } from '@jup-ag/react-hook';
 import { PublicKey } from '@solana/web3.js';
 import JSBI from 'jsbi';
+import { TOKENS } from '@/utils/tokens';
 
 export const JupiterForm = () => {
   const [inputAmount, setInputAmount] = useState('');
   const [outputAmount, setOutputAmount] = useState('');
-  const [inputToken, setInputToken] = useState('SOL');
-  const [outputToken, setOutputToken] = useState('USDC');
+  const [inputToken, setInputToken] = useState(TOKENS[0].mint);
+  const [outputToken, setOutputToken] = useState(TOKENS[1].mint);
 
   const {
     loading,
     exchange,
     error,
     refresh,
-    allTokenMints
   } = useJupiter({
-    amount: JSBI.BigInt(Number(inputAmount) || 0),
+    amount: JSBI.BigInt(Number(inputAmount) * 1e9 || 0), // Convert to lamports
     inputMint: new PublicKey(inputToken),
     outputMint: new PublicKey(outputToken),
-    slippage: 1, // 1% slippage
+    slippageBps: 100, // 1% slippage
   });
 
   const handleSwap = async () => {
     try {
-      if (!allTokenMints) {
-        toast.error('No routes available for swap');
-        return;
-      }
-
-      const result = await exchange();
+      const result = await exchange({});
       if (result) {
         toast.success('Swap executed successfully!');
-        // Reset form or update balances
+        setInputAmount('');
+        setOutputAmount('');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Swap error:', err);
-      toast.error('Failed to execute swap');
+      toast.error(err.message || 'Failed to execute swap');
     }
   };
 
   const handleRefresh = () => {
-    refresh();
+    refresh({});
     toast.success('Routes refreshed');
   };
 
@@ -68,8 +64,11 @@ export const JupiterForm = () => {
               onChange={(e) => setInputToken(e.target.value)}
               className="w-full p-2 bg-[#1A2333] border border-[#2A3441] rounded text-white"
             >
-              <option value="SOL">SOL</option>
-              <option value="USDC">USDC</option>
+              {TOKENS.map((token) => (
+                <option key={token.mint} value={token.mint}>
+                  {token.symbol}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -101,8 +100,11 @@ export const JupiterForm = () => {
               onChange={(e) => setOutputToken(e.target.value)}
               className="w-full p-2 bg-[#1A2333] border border-[#2A3441] rounded text-white"
             >
-              <option value="USDC">USDC</option>
-              <option value="SOL">SOL</option>
+              {TOKENS.map((token) => (
+                <option key={token.mint} value={token.mint}>
+                  {token.symbol}
+                </option>
+              ))}
             </select>
           </div>
         </CardContent>
