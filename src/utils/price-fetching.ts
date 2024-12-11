@@ -62,6 +62,7 @@ export const fetchOrcaPrices = async (connection: Connection, tokenMintStr: stri
 
 export const fetchRaydiumPrices = async (connection: Connection, tokenMintStr: string) => {
   try {
+    // Convert string to PublicKey before using it
     const marketAddress = new PublicKey(tokenMintStr);
     const market = await Market.load(connection, marketAddress, {}, "mainnet-beta");
     const price = await market.loadBids(connection);
