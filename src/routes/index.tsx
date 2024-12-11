@@ -20,6 +20,7 @@ import Settings from "@/pages/Settings";
 import TradingSignals from "@/pages/TradingSignals";
 import Wheel from "@/pages/Wheel";
 import WalletManagement from "@/pages/WalletManagement";
+import TokenList from "@/pages/TokenList";
 
 export const routes = [
   {
@@ -105,6 +106,10 @@ export const routes = [
   {
     path: "/wallet",
     element: <PrivateRoute><WalletManagement /></PrivateRoute>
+  },
+  {
+    path: "/tokens",
+    element: <PrivateRoute><TokenList /></PrivateRoute>
   },
   {
     path: "*",
