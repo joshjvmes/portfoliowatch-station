@@ -1,4 +1,4 @@
-import { Connection, PublicKey } from "@solana/web3.js";
+import { Connection, PublicKey, Transaction, VersionedTransaction } from "@solana/web3.js";
 import { Market } from "@project-serum/serum";
 import { 
   WhirlpoolContext, 
@@ -6,16 +6,16 @@ import {
   ORCA_WHIRLPOOL_PROGRAM_ID,
   PDAUtil
 } from "@orca-so/whirlpools-sdk";
-import { AnchorProvider } from "@project-serum/anchor";
+import { AnchorProvider } from "@coral-xyz/anchor";
 import { Wallet } from "@project-serum/anchor/dist/cjs/provider";
 
 // Create a dummy wallet for read-only operations
 class DummyWallet implements Wallet {
   constructor() {}
-  async signTransaction(): Promise<any> {
+  async signTransaction<T extends Transaction | VersionedTransaction>(tx: T): Promise<T> {
     return Promise.reject("Not implemented");
   }
-  async signAllTransactions(): Promise<any> {
+  async signAllTransactions<T extends Transaction | VersionedTransaction>(txs: T[]): Promise<T[]> {
     return Promise.reject("Not implemented");
   }
   get publicKey(): PublicKey {
