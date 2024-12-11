@@ -1,4 +1,4 @@
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { AreaChart as RechartsChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 interface VaultChartProps {
   data: Array<{
@@ -11,7 +11,7 @@ const VaultChart = ({ data }: VaultChartProps) => {
   return (
     <div className="h-[300px] md:h-[400px] mt-4">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data}>
+        <RechartsChart data={data}>
           <defs>
             <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#00E5BE" stopOpacity={0.3}/>
@@ -45,7 +45,7 @@ const VaultChart = ({ data }: VaultChartProps) => {
             fillOpacity={1}
             fill="url(#colorValue)"
           />
-        </AreaChart>
+        </RechartsChart>
       </ResponsiveContainer>
     </div>
   );

@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { LineChart, Line, ResponsiveContainer, Tooltip } from "recharts";
+import { LineChart as RechartsChart, Line, ResponsiveContainer, Tooltip } from "recharts";
 import { useState, useEffect } from "react";
 
 const generateData = () => {
@@ -35,7 +35,7 @@ const MarketIndicator = ({ title, color, value, change }: {
       <div className="text-xl font-medium text-white mb-4">{value.toFixed(2)}</div>
       <div className="h-16">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
+          <RechartsChart data={data}>
             <Line 
               type="monotone" 
               dataKey="value" 
@@ -51,7 +51,7 @@ const MarketIndicator = ({ title, color, value, change }: {
               }}
               labelStyle={{ color: '#fff' }}
             />
-          </LineChart>
+          </RechartsChart>
         </ResponsiveContainer>
       </div>
     </div>

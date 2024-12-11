@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import ReactApexChart from "react-apexcharts";
+import { ApexOptions } from "apexcharts";
 
 const COLORS = ['#00E5BE', '#2563EB', '#FF6B6B', '#FFD93D', '#4834D4', '#686DE0'];
 
@@ -20,9 +21,9 @@ const assetClassData = [
 ];
 
 const PieChartComponent = ({ data }: { data: typeof currencyData | typeof assetClassData }) => {
-  const options = {
+  const options: ApexOptions = {
     chart: {
-      type: 'donut',
+      type: 'donut' as const,
       background: 'transparent'
     },
     colors: COLORS,
