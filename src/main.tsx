@@ -7,7 +7,7 @@ import PanicOverlay from 'panic-overlay';
 
 // Initialize PanicOverlay in development
 if (import.meta.env.DEV) {
-  new PanicOverlay();
+  PanicOverlay();
 }
 
 // Polyfill Buffer for the browser
