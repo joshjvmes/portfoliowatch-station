@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import DashboardLayout from "@/components/DashboardLayout";
 import { MessageCircle, AlertCircle, Bell } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import MessageDetail from "@/components/messages/MessageDetail";
 
 const mockMessages = [
   {
@@ -10,7 +12,7 @@ const mockMessages = [
     preview: "Welcome to our platform! Here's how to get started...",
     date: "2024-03-15",
     unread: true,
-    type: "system",
+    type: "system" as const,
   },
   {
     id: 2,
@@ -19,7 +21,7 @@ const mockMessages = [
     preview: "Your recent transaction has been confirmed...",
     date: "2024-03-14",
     unread: false,
-    type: "transaction",
+    type: "transaction" as const,
   },
   {
     id: 3,
@@ -28,28 +30,45 @@ const mockMessages = [
     preview: "We've updated our security protocols...",
     date: "2024-03-13",
     unread: false,
-    type: "alert",
+    type: "alert" as const,
   },
 ];
 
 const Messages = () => {
+  const navigate = useNavigate();
+  const { messageId } = useParams();
+  
+  const selectedMessage = messageId 
+    ? mockMessages.find(m => m.id === parseInt(messageId))
+    : null;
+
+  if (selectedMessage) {
+    return (
+      <DashboardLayout>
+        <MessageDetail message={selectedMessage} />
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
       <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div className="space-y-1">
-            <CardTitle className="text-xl text-white">Messages</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Your recent notifications and updates
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="px-3 py-1 rounded-full bg-indigo-600/30 text-indigo-400 text-sm">
-              All Messages
-            </button>
-            <button className="px-3 py-1 rounded-full text-white/60 text-sm hover:bg-white/10 transition-colors">
-              Unread
-            </button>
+        <CardHeader className="space-y-4 sm:space-y-0">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="space-y-1">
+              <CardTitle className="text-xl text-white">Messages</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Your recent notifications and updates
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="px-3 py-1 rounded-full bg-indigo-600/30 text-indigo-400 text-sm whitespace-nowrap">
+                All Messages
+              </button>
+              <button className="px-3 py-1 rounded-full text-white/60 text-sm hover:bg-white/10 transition-colors whitespace-nowrap">
+                Unread
+              </button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -57,6 +76,7 @@ const Messages = () => {
             {mockMessages.map((message) => (
               <div
                 key={message.id}
+                onClick={() => navigate(`/messages/${message.id}`)}
                 className={`p-4 rounded-lg border transition-all duration-200 hover:bg-white/5 cursor-pointer
                   ${message.unread 
                     ? "bg-[#1A2333]/80 border-[#2563EB] shadow-lg shadow-blue-500/10" 
@@ -64,7 +84,7 @@ const Messages = () => {
                   }`}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`p-2 rounded-lg ${
+                  <div className={`p-2 rounded-lg shrink-0 ${
                     message.type === 'system' 
                       ? 'bg-indigo-500/20 text-indigo-400'
                       : message.type === 'alert'
@@ -80,7 +100,7 @@ const Messages = () => {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-start mb-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-1">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium text-white">
                           {message.sender}
@@ -91,7 +111,7 @@ const Messages = () => {
                           </span>
                         )}
                       </div>
-                      <span className="text-xs text-muted-foreground shrink-0">
+                      <span className="text-xs text-muted-foreground">
                         {message.date}
                       </span>
                     </div>

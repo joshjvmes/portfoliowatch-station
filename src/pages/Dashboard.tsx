@@ -29,7 +29,9 @@ const Dashboard = () => {
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-4">
           <VIPIndicator level={3} />
-          <WalletConnect />
+          <div className="hidden md:block">
+            <WalletConnect />
+          </div>
         </div>
         <Button
           variant="outline"

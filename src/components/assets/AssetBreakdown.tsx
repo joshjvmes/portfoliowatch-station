@@ -38,39 +38,41 @@ const AssetBreakdown = () => {
 
   return (
     <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle className="text-xl text-white">Asset Breakdown</CardTitle>
-          <p className="text-sm text-gray-400 mt-1">Total Portfolio Value: $1,152,025.79</p>
-        </div>
-        <div className="flex gap-2">
-          <Button 
-            variant={activeView === 'currency' ? 'default' : 'outline'}
-            onClick={() => setActiveView('currency')}
-            className={activeView === 'currency' ? 'bg-[#00E5BE] hover:bg-[#00E5BE]/90' : 'border-white/10'}
-          >
-            By Currency
-          </Button>
-          <Button 
-            variant={activeView === 'class' ? 'default' : 'outline'}
-            onClick={() => setActiveView('class')}
-            className={activeView === 'class' ? 'bg-[#00E5BE] hover:bg-[#00E5BE]/90' : 'border-white/10'}
-          >
-            By Asset Class
-          </Button>
+      <CardHeader className="space-y-4 sm:space-y-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <CardTitle className="text-xl text-white">Asset Breakdown</CardTitle>
+            <p className="text-sm text-gray-400 mt-1">Total Portfolio Value: $1,152,025.79</p>
+          </div>
+          <div className="flex gap-2">
+            <Button 
+              variant={activeView === 'currency' ? 'default' : 'outline'}
+              onClick={() => setActiveView('currency')}
+              className={`text-sm px-3 py-1.5 ${activeView === 'currency' ? 'bg-[#00E5BE] hover:bg-[#00E5BE]/90' : 'border-white/10'}`}
+            >
+              By Currency
+            </Button>
+            <Button 
+              variant={activeView === 'class' ? 'default' : 'outline'}
+              onClick={() => setActiveView('class')}
+              className={`text-sm px-3 py-1.5 ${activeView === 'class' ? 'bg-[#00E5BE] hover:bg-[#00E5BE]/90' : 'border-white/10'}`}
+            >
+              By Asset Class
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="h-[300px]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="h-[250px] sm:h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={data}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={100}
+                  innerRadius={45}
+                  outerRadius={80}
                   fill="#8884d8"
                   paddingAngle={5}
                   dataKey="value"
@@ -85,27 +87,27 @@ const AssetBreakdown = () => {
                   align="right"
                   layout="vertical"
                   formatter={(value: string) => (
-                    <span className="text-gray-400">{value}</span>
+                    <span className="text-gray-400 text-sm">{value}</span>
                   )}
                 />
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {data.map((item, index) => (
               <div 
                 key={item.name}
-                className="bg-[#1A2333]/50 p-4 rounded-lg border border-white/10 hover:border-[#00E5BE]/50 transition-colors"
+                className="bg-[#1A2333]/50 p-3 rounded-lg border border-white/10 hover:border-[#00E5BE]/50 transition-colors"
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <div 
-                      className="w-3 h-3 rounded-full" 
+                      className="w-2.5 h-2.5 rounded-full" 
                       style={{ backgroundColor: COLORS[index % COLORS.length] }}
                     />
-                    <span className="text-white">{item.name}</span>
+                    <span className="text-white text-sm">{item.name}</span>
                   </div>
-                  <span className="text-[#00E5BE]">{item.usdValue}</span>
+                  <span className="text-[#00E5BE] text-sm">{item.usdValue}</span>
                 </div>
                 <div className="mt-2">
                   <div className="bg-white/10 h-1.5 rounded-full">

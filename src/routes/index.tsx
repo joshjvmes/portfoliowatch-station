@@ -55,6 +55,10 @@ export const routes = [
     element: <PrivateRoute><Messages /></PrivateRoute>
   },
   {
+    path: "/messages/:messageId",
+    element: <PrivateRoute><Messages /></PrivateRoute>
+  },
+  {
     path: "/deposit",
     element: <PrivateRoute><Deposit /></PrivateRoute>
   },
