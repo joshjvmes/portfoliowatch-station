@@ -4,10 +4,9 @@ import {
   WhirlpoolContext, 
   buildWhirlpoolClient, 
   ORCA_WHIRLPOOL_PROGRAM_ID,
-  PDAUtil,
-  WhirlpoolClient
+  PDAUtil
 } from "@orca-so/whirlpools-sdk";
-import { Provider } from "@project-serum/anchor";
+import { AnchorProvider } from "@project-serum/anchor";
 import { Wallet } from "@project-serum/anchor/dist/cjs/provider";
 
 // Create a dummy wallet for read-only operations
@@ -27,32 +26,24 @@ class DummyWallet implements Wallet {
 export const fetchOrcaPrices = async (connection: Connection, tokenMintStr: string) => {
   try {
     // Create a provider with a dummy wallet for read-only operations
-    const provider = new Provider(
+    const wallet = new DummyWallet();
+    const provider = new AnchorProvider(
       connection,
-      new DummyWallet(),
-      Provider.defaultOptions()
+      wallet,
+      AnchorProvider.defaultOptions()
     );
 
     // Convert string to PublicKey
     const tokenMint = new PublicKey(tokenMintStr);
     
-    // Initialize WhirlpoolContext with the provider
-    const ctx = WhirlpoolContext.from(
-      provider,
-      new PublicKey(ORCA_WHIRLPOOL_PROGRAM_ID),
-      undefined
-    );
-    
+    // Initialize WhirlpoolContext
+    const ctx = WhirlpoolContext.withProvider(provider, ORCA_WHIRLPOOL_PROGRAM_ID);
     const client = buildWhirlpoolClient(ctx);
 
-    // Get whirlpool configs
-    const configs = await client.getConfig();
-    if (!configs) return null;
-
-    // Find a whirlpool that contains our token
+    // Find whirlpools containing our token
     const whirlpoolPda = PDAUtil.getWhirlpool(
       ctx.program.programId,
-      configs.configKeypair.publicKey,
+      ctx.program.provider.publicKey,
       tokenMint,
       tokenMint, // Using same token as both tokens for simplicity
       128 // Standard tick spacing
