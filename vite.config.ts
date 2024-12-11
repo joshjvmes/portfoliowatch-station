@@ -15,6 +15,8 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      'buffer': 'buffer',
+      '@jup-ag/common': '@jup-ag/common'
     },
   },
   define: {
@@ -25,8 +27,12 @@ export default defineConfig(({ mode }) => ({
     esbuildOptions: {
       target: 'esnext',
     },
+    include: ['buffer', '@jup-ag/common']
   },
   build: {
     target: 'esnext',
+    commonjsOptions: {
+      include: [/buffer/, /node_modules/, /@jup-ag\/common/]
+    }
   },
 }));
