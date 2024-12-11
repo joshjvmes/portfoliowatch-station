@@ -1,7 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import dynamic from "next/dynamic";
+import { ApexOptions } from "apexcharts";
+
+const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const COLORS = ['#00E5BE', '#2563EB', '#FF6B6B', '#FFD93D', '#4834D4', '#686DE0'];
 
@@ -19,54 +22,54 @@ const assetClassData = [
   { name: 'NFTs', value: 8, usdValue: '$92,162.07' },
 ];
 
-interface CustomTooltipProps {
-  active?: boolean;
-  payload?: any[];
-}
-
-const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-[#1A2333] p-4 rounded-lg border border-white/10">
-        <p className="text-white font-medium">{payload[0].payload.name}</p>
-        <p className="text-[#00E5BE]">{payload[0].payload.amount}</p>
-        <p className="text-gray-400">{payload[0].payload.usdValue}</p>
-      </div>
-    );
-  }
-  return null;
-};
-
 const PieChartComponent = ({ data }: { data: typeof currencyData | typeof assetClassData }) => {
+  const options: ApexOptions = {
+    chart: {
+      type: 'donut',
+      background: 'transparent',
+    },
+    colors: COLORS,
+    labels: data.map(item => item.name),
+    legend: {
+      position: 'right',
+      labels: {
+        colors: '#9ca3af',
+      },
+    },
+    tooltip: {
+      y: {
+        formatter: (value) => {
+          const item = data.find(d => d.value === value);
+          return item ? `${item.usdValue} (${value}%)` : `${value}%`;
+        }
+      },
+      theme: 'dark',
+    },
+    plotOptions: {
+      pie: {
+        donut: {
+          size: '70%'
+        }
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      colors: ['#0B1221']
+    }
+  };
+
+  const series = data.map(item => item.value);
+
   return (
     <div className="h-[250px] sm:h-[300px]">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={data}
-            cx="50%"
-            cy="50%"
-            innerRadius={45}
-            outerRadius={80}
-            fill="#8884d8"
-            paddingAngle={5}
-            dataKey="value"
-          >
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-            ))}
-          </Pie>
-          <Tooltip content={<CustomTooltip />} />
-          <Legend 
-            verticalAlign="middle" 
-            align="right"
-            layout="vertical"
-            formatter={(value: string) => (
-              <span className="text-gray-400 text-sm">{value}</span>
-            )}
-          />
-        </PieChart>
-      </ResponsiveContainer>
+      <ReactApexChart
+        options={options}
+        series={series}
+        type="donut"
+        height="100%"
+      />
     </div>
   );
 };

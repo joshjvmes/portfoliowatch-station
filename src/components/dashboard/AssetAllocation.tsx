@@ -1,5 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import dynamic from "next/dynamic";
+import { ApexOptions } from "apexcharts";
+
+const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const data = [
   { name: 'BTC', value: 45 },
@@ -10,6 +13,39 @@ const data = [
 const COLORS = ['#FF8042', '#00C49F', '#FFBB28'];
 
 const AssetAllocation = () => {
+  const options: ApexOptions = {
+    chart: {
+      type: 'donut',
+      background: 'transparent',
+    },
+    colors: COLORS,
+    labels: data.map(item => item.name),
+    legend: {
+      position: 'bottom',
+      labels: {
+        colors: '#9ca3af',
+      },
+    },
+    tooltip: {
+      theme: 'dark',
+    },
+    plotOptions: {
+      pie: {
+        donut: {
+          size: '70%'
+        }
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      colors: ['#0B1221']
+    }
+  };
+
+  const series = data.map(item => item.value);
+
   return (
     <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
       <CardHeader>
@@ -17,24 +53,12 @@ const AssetAllocation = () => {
       </CardHeader>
       <CardContent>
         <div className="h-[200px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={80}
-                fill="#8884d8"
-                paddingAngle={5}
-                dataKey="value"
-              >
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
+          <ReactApexChart
+            options={options}
+            series={series}
+            type="donut"
+            height="100%"
+          />
         </div>
       </CardContent>
     </Card>
