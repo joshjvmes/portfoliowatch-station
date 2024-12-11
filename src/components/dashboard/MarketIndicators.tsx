@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { LineChart, Line, ResponsiveContainer, Tooltip } from "recharts";
 import { useState, useEffect } from "react";
+import ReactApexChart from "react-apexcharts";
+import { ApexOptions } from "apexcharts";
 
 const generateData = () => {
   return Array(20).fill(0).map((_, i) => ({
@@ -24,6 +25,34 @@ const MarketIndicator = ({ title, color, value, change }: {
     return () => clearInterval(interval);
   }, []);
 
+  const options: ApexOptions = {
+    chart: {
+      type: 'line',
+      toolbar: {
+        show: false
+      },
+      sparkline: {
+        enabled: true
+      }
+    },
+    stroke: {
+      curve: 'smooth',
+      width: 2
+    },
+    tooltip: {
+      theme: 'dark'
+    },
+    grid: {
+      show: false
+    },
+    colors: [color]
+  };
+
+  const series = [{
+    name: 'Value',
+    data: data.map(d => d.value)
+  }];
+
   return (
     <div className="p-4 rounded-lg bg-black/20">
       <div className="flex items-center justify-between mb-2">
@@ -34,25 +63,12 @@ const MarketIndicator = ({ title, color, value, change }: {
       </div>
       <div className="text-xl font-medium text-white mb-4">{value.toFixed(2)}</div>
       <div className="h-16">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
-            <Line 
-              type="monotone" 
-              dataKey="value" 
-              stroke={color} 
-              strokeWidth={2} 
-              dot={false}
-            />
-            <Tooltip 
-              contentStyle={{ 
-                background: '#1A2333',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '8px'
-              }}
-              labelStyle={{ color: '#fff' }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <ReactApexChart
+          options={options}
+          series={series}
+          type="line"
+          height="100%"
+        />
       </div>
     </div>
   );

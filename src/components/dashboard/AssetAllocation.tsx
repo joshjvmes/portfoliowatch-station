@@ -1,8 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import dynamic from "next/dynamic";
+import { useState, useEffect } from "react";
 import { ApexOptions } from "apexcharts";
-
-const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
+import ReactApexChart from "react-apexcharts";
 
 const data = [
   { name: 'BTC', value: 45 },
@@ -13,6 +12,12 @@ const data = [
 const COLORS = ['#FF8042', '#00C49F', '#FFBB28'];
 
 const AssetAllocation = () => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const options: ApexOptions = {
     chart: {
       type: 'donut',
@@ -45,6 +50,8 @@ const AssetAllocation = () => {
   };
 
   const series = data.map(item => item.value);
+
+  if (!mounted) return null;
 
   return (
     <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">

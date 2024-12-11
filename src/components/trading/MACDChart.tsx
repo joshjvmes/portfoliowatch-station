@@ -1,5 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Area, AreaChart, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { useState, useEffect } from "react";
+import ReactApexChart from "react-apexcharts";
+import { ApexOptions } from "apexcharts";
 
 interface MACDData {
   date: string;
@@ -13,9 +15,61 @@ interface MACDChartProps {
 }
 
 const MACDChart = ({ data, loading }: MACDChartProps) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   if (loading) {
     return <div className="h-[200px] animate-pulse bg-white/5 rounded-lg" />;
   }
+
+  const options: ApexOptions = {
+    chart: {
+      type: 'line',
+      toolbar: {
+        show: false
+      },
+      background: 'transparent'
+    },
+    stroke: {
+      curve: 'smooth',
+      width: 2
+    },
+    xaxis: {
+      categories: data.map(d => d.date),
+      labels: {
+        style: {
+          colors: '#666'
+        }
+      }
+    },
+    yaxis: {
+      labels: {
+        style: {
+          colors: '#666'
+        }
+      }
+    },
+    tooltip: {
+      theme: 'dark'
+    },
+    colors: ['#ec4899', '#f59e0b']
+  };
+
+  const series = [
+    {
+      name: 'MACD',
+      data: data.map(d => d.macd)
+    },
+    {
+      name: 'Signal',
+      data: data.map(d => d.signal)
+    }
+  ];
+
+  if (!mounted) return null;
 
   return (
     <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
@@ -24,41 +78,12 @@ const MACDChart = ({ data, loading }: MACDChartProps) => {
       </CardHeader>
       <CardContent>
         <div className="h-[200px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data}>
-              <XAxis 
-                dataKey="date" 
-                stroke="#666"
-                tick={{ fill: '#666' }}
-              />
-              <YAxis 
-                domain={['auto', 'auto']} 
-                stroke="#666"
-                tick={{ fill: '#666' }}
-              />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#1A2333',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: '8px'
-                }}
-                labelStyle={{ color: '#fff' }}
-              />
-              <Area 
-                type="monotone" 
-                dataKey="macd" 
-                stroke="#ec4899" 
-                fill="#ec4899" 
-                fillOpacity={0.1} 
-              />
-              <Area 
-                type="monotone" 
-                dataKey="signal" 
-                stroke="#f59e0b" 
-                fill="none" 
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          <ReactApexChart
+            options={options}
+            series={series}
+            type="line"
+            height="100%"
+          />
         </div>
       </CardContent>
     </Card>
