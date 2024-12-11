@@ -55,6 +55,7 @@ export const JupiterForm = () => {
       const result = await exchange({
         quoteResponseMeta,
         userPublicKey: window.solana?.publicKey,
+        prioritizationFeeLamports: 'auto',
         onTransaction: async (txid) => {
           toast.success(`Transaction sent: ${txid}`);
         },
