@@ -10,7 +10,7 @@ import { useTour } from "@/contexts/TourContext";
 import { Button } from "@/components/ui/button";
 import { HelpCircle } from "lucide-react";
 
-// Mock data for the candlestick chart
+// Mock data for the trading chart
 const mockTradingData = [
   { time: '11/17', value: 500000, profit: 1130419.05 },
   { time: '11/20', value: 600000, profit: 1135000.00 },
@@ -26,7 +26,7 @@ const Dashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4 gap-4">
         <div className="flex items-center gap-4">
           <VIPIndicator level={3} />
           <div className="hidden md:block">
@@ -37,7 +37,7 @@ const Dashboard = () => {
           variant="outline"
           size="sm"
           onClick={startTour}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 whitespace-nowrap"
         >
           <HelpCircle className="h-4 w-4" />
           Platform Tour
