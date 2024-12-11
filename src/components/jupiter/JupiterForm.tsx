@@ -16,6 +16,7 @@ declare global {
       connect(): Promise<{ publicKey: PublicKey }>;
       disconnect(): Promise<void>;
       isPhantom?: boolean;
+      publicKey?: PublicKey;
     };
   }
 }
@@ -31,7 +32,7 @@ export const JupiterForm = () => {
     exchange,
     error: jupiterError,
     refresh,
-    quoteResponse
+    quoteResponseMeta
   } = useJupiter({
     amount: JSBI.BigInt(Number(inputAmount) * 1e9 || 0), // Convert to lamports
     inputMint: new PublicKey(inputToken),
@@ -46,13 +47,13 @@ export const JupiterForm = () => {
         return;
       }
 
-      if (!quoteResponse) {
+      if (!quoteResponseMeta) {
         toast.error('No quote available');
         return;
       }
 
       const result = await exchange({
-        quoteResponse,
+        quoteResponseMeta,
         userPublicKey: window.solana?.publicKey,
         onTransaction: async (txid) => {
           toast.success(`Transaction sent: ${txid}`);
