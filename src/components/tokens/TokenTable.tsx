@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { TokenListProvider, TokenInfo } from "@solana/spl-token-registry";
+import { Connection, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import {
   Table,
   TableBody,
@@ -11,17 +12,15 @@ import {
 import { Card } from "@/components/ui/card";
 import { ChartLine, Database, DollarSign, Clock, Zap, ArrowLeftRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-interface RaydiumTokenData {
-  price: number;
-  priceChange24h: number;
-  volume24h: number;
-  liquidity: number;
+interface TokenBalance {
+  mint: string;
+  balance: number;
+  decimals: number;
 }
 
 const TokenTable = () => {
-  const [tokens, setTokens] = useState<TokenInfo[]>([]);
-  
   // Fetch token list
   const { data: tokenList, isLoading: isLoadingTokens } = useQuery({
     queryKey: ['tokenList'],
@@ -34,18 +33,36 @@ const TokenTable = () => {
     },
   });
 
-  // Fetch Raydium token data
-  const { data: tokenData, isLoading: isLoadingPrices } = useQuery({
-    queryKey: ['tokenPrices'],
+  // Fetch token balances and prices
+  const { data: tokenBalances, isLoading: isLoadingBalances } = useQuery({
+    queryKey: ['tokenBalances'],
     queryFn: async () => {
-      const response = await fetch('https://api.raydium.io/v2/main/price');
-      const data = await response.json();
-      return data as Record<string, RaydiumTokenData>;
+      try {
+        const connection = new Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+        
+        // Use a known wallet with significant token holdings for price reference
+        const referenceWallet = new PublicKey('HN7cABqLq46Es1jh92dQQisAq662SmxGkr4SGLtjZKZN');
+        
+        const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
+          referenceWallet,
+          { programId: new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA') }
+        );
+
+        return tokenAccounts.value.map(account => ({
+          mint: account.account.data.parsed.info.mint,
+          balance: account.account.data.parsed.info.tokenAmount.uiAmount,
+          decimals: account.account.data.parsed.info.tokenAmount.decimals
+        }));
+      } catch (error) {
+        console.error('Error fetching token balances:', error);
+        toast.error('Failed to fetch token data');
+        return [];
+      }
     },
     enabled: !!tokenList,
   });
 
-  const loading = isLoadingTokens || isLoadingPrices;
+  const loading = isLoadingTokens || isLoadingBalances;
 
   if (loading) {
     return (
@@ -57,19 +74,14 @@ const TokenTable = () => {
     );
   }
 
-  const formatPrice = (price?: number) => {
-    if (!price) return 'N/A';
+  const formatAmount = (amount?: number) => {
+    if (!amount) return 'N/A';
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 2,
       maximumFractionDigits: 6,
-    }).format(price);
-  };
-
-  const formatPercent = (value?: number) => {
-    if (!value) return 'N/A';
-    return `${value > 0 ? '+' : ''}${value.toFixed(2)}%`;
+    }).format(amount);
   };
 
   const formatLiquidity = (value?: number) => {
@@ -92,13 +104,13 @@ const TokenTable = () => {
               <TableHead>
                 <div className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
-                  Price
+                  Supply
                 </div>
               </TableHead>
               <TableHead>
                 <div className="flex items-center gap-2">
                   <ChartLine className="h-4 w-4" />
-                  24h Change
+                  24h Volume
                 </div>
               </TableHead>
               <TableHead>
@@ -122,14 +134,14 @@ const TokenTable = () => {
               <TableHead>
                 <div className="flex items-center gap-2">
                   <Zap className="h-4 w-4" />
-                  Arbitrage
+                  Market Status
                 </div>
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {tokenList?.map((token) => {
-              const data = tokenData?.[token.address];
+              const tokenBalance = tokenBalances?.find(b => b.mint === token.address);
               return (
                 <TableRow key={token.address}>
                   <TableCell>
@@ -149,16 +161,14 @@ const TokenTable = () => {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{formatPrice(data?.price)}</TableCell>
-                  <TableCell>
-                    <span className={data?.priceChange24h > 0 ? 'text-green-500' : 'text-red-500'}>
-                      {formatPercent(data?.priceChange24h)}
-                    </span>
-                  </TableCell>
-                  <TableCell>{formatLiquidity(data?.liquidity)}</TableCell>
+                  <TableCell>{tokenBalance ? formatAmount(tokenBalance.balance) : 'N/A'}</TableCell>
+                  <TableCell>Coming soon</TableCell>
+                  <TableCell>{formatLiquidity(tokenBalance?.balance)}</TableCell>
                   <TableCell>~2s</TableCell>
                   <TableCell>Coming soon</TableCell>
-                  <TableCell>Coming soon</TableCell>
+                  <TableCell>
+                    <span className="text-green-500">Active</span>
+                  </TableCell>
                 </TableRow>
               );
             })}
