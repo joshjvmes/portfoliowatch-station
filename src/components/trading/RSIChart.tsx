@@ -1,8 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Area, AreaChart, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
+interface RSIData {
+  date: string;
+  rsi: number;
+}
+
 interface RSIChartProps {
-  data: any[];
+  data: RSIData[];
   loading?: boolean;
 }
 

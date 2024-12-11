@@ -1,14 +1,17 @@
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 interface VaultChartProps {
-  data: any[];
+  data: Array<{
+    time: string;
+    value: number;
+  }>;
 }
 
 const VaultChart = ({ data }: VaultChartProps) => {
   return (
     <div className="h-[300px] md:h-[400px] mt-4">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+        <AreaChart data={data}>
           <defs>
             <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#00E5BE" stopOpacity={0.3}/>
@@ -33,7 +36,7 @@ const VaultChart = ({ data }: VaultChartProps) => {
               borderRadius: '8px'
             }}
             labelStyle={{ color: '#fff' }}
-            formatter={(value: any) => [`$${value.toLocaleString()}`, 'Value']}
+            formatter={(value: number) => [`$${value.toLocaleString()}`, 'Value']}
           />
           <Area
             type="monotone"

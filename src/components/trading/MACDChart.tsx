@@ -1,8 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Area, AreaChart, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
+interface MACDData {
+  date: string;
+  macd: number;
+  signal: number;
+}
+
 interface MACDChartProps {
-  data: any[];
+  data: MACDData[];
   loading?: boolean;
 }
 
