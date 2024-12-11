@@ -9,6 +9,17 @@ import { PublicKey } from '@solana/web3.js';
 import JSBI from 'jsbi';
 import { TOKENS } from '@/utils/tokens';
 
+// Add type for Phantom window
+declare global {
+  interface Window {
+    solana?: {
+      connect(): Promise<{ publicKey: PublicKey }>;
+      disconnect(): Promise<void>;
+      isPhantom?: boolean;
+    };
+  }
+}
+
 export const JupiterForm = () => {
   const [inputAmount, setInputAmount] = useState('');
   const [outputAmount, setOutputAmount] = useState('');
@@ -20,8 +31,9 @@ export const JupiterForm = () => {
     exchange,
     error: jupiterError,
     refresh,
+    quoteResponse
   } = useJupiter({
-    amount: JSBI.BigInt(Number(inputAmount) * 1e9 || 0),
+    amount: JSBI.BigInt(Number(inputAmount) * 1e9 || 0), // Convert to lamports
     inputMint: new PublicKey(inputToken),
     outputMint: new PublicKey(outputToken),
     slippageBps: 100,
@@ -34,9 +46,14 @@ export const JupiterForm = () => {
         return;
       }
 
-      // Pass required parameters to exchange function
+      if (!quoteResponse) {
+        toast.error('No quote available');
+        return;
+      }
+
       const result = await exchange({
-        wallet: window.solana,
+        quoteResponse,
+        userPublicKey: window.solana?.publicKey,
         onTransaction: async (txid) => {
           toast.success(`Transaction sent: ${txid}`);
         },
