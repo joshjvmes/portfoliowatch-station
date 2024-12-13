@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PriceChart from "@/components/trading/PriceChart";
 import RSIChart from "@/components/trading/RSIChart";
 import MACDChart from "@/components/trading/MACDChart";
@@ -19,7 +18,6 @@ const EXCHANGES = [
 ];
 
 const TradingSignals = () => {
-  const [currentToken, setCurrentToken] = useState<'BTC' | 'ETH'>('BTC');
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,8 +37,7 @@ const TradingSignals = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // Remove toLowerCase() here as we want to use the uppercase token symbol
-        const rawData = await fetchCoinData(currentToken);
+        const rawData = await fetchCoinData('BTC');
         const formattedData = formatChartData(rawData);
         const dataWithIndicators = calculateIndicators(formattedData);
         setData(dataWithIndicators);
@@ -51,7 +48,7 @@ const TradingSignals = () => {
         setExchangePrices(prices);
 
         // Calculate arbitrage opportunities with fees
-        const arb = await calculateArbitrageOpportunities(prices, currentToken);
+        const arb = await calculateArbitrageOpportunities(prices, 'BTC');
         setOpportunities(arb);
 
       } catch (err) {
@@ -72,7 +69,7 @@ const TradingSignals = () => {
     // Refresh data every minute
     const interval = setInterval(fetchData, 60000);
     return () => clearInterval(interval);
-  }, [currentToken, toast]);
+  }, [toast]);
 
   if (error) {
     return (
@@ -88,39 +85,28 @@ const TradingSignals = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-white">Trading Signals</h1>
+          <h1 className="text-2xl font-bold text-white">Bitcoin Trading Signals</h1>
           <Badge variant="outline" className="bg-[#0B1221]/50">
             Live Data
           </Badge>
         </div>
 
-        <Tabs defaultValue="BTC" className="w-full" onValueChange={(v) => setCurrentToken(v as 'BTC' | 'ETH')}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="BTC">Bitcoin (BTC)</TabsTrigger>
-            <TabsTrigger value="ETH">Ethereum (ETH)</TabsTrigger>
-          </TabsList>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <PriceChart data={data} loading={loading} />
+          </div>
+          <div>
+            <ArbitrageOpportunities 
+              opportunities={opportunities} 
+              token="BTC"
+            />
+          </div>
+        </div>
 
-          {['BTC', 'ETH'].map((token) => (
-            <TabsContent key={token} value={token}>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
-                  <PriceChart data={data} loading={loading} />
-                </div>
-                <div>
-                  <ArbitrageOpportunities 
-                    opportunities={opportunities} 
-                    token={token}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                <RSIChart data={data} loading={loading} />
-                <MACDChart data={data} loading={loading} />
-              </div>
-            </TabsContent>
-          ))}
-        </Tabs>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <RSIChart data={data} loading={loading} />
+          <MACDChart data={data} loading={loading} />
+        </div>
       </div>
     </DashboardLayout>
   );
