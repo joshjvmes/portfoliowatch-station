@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { AlertCircle } from "lucide-react";
+import { Clock, DollarSign } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface ArbitrageOpportunity {
@@ -9,13 +10,16 @@ interface ArbitrageOpportunity {
   profitPercentage: number;
   buyPrice: number;
   sellPrice: number;
+  estimatedTimeMinutes: number;
+  totalFees: number;
 }
 
 interface Props {
   opportunities: ArbitrageOpportunity[];
+  token?: string;
 }
 
-const ArbitrageOpportunities = ({ opportunities }: Props) => {
+const ArbitrageOpportunities = ({ opportunities, token = "BTC" }: Props) => {
   const { toast } = useToast();
   const [previousCount, setPreviousCount] = useState(0);
 
@@ -24,7 +28,9 @@ const ArbitrageOpportunities = ({ opportunities }: Props) => {
       const newOpportunities = opportunities.length - previousCount;
       toast({
         title: "New Arbitrage Opportunity",
-        description: `Found ${newOpportunities} new arbitrage ${newOpportunities === 1 ? 'opportunity' : 'opportunities'}!`,
+        description: `Found ${newOpportunities} new arbitrage ${
+          newOpportunities === 1 ? "opportunity" : "opportunities"
+        }!`,
         duration: 5000,
       });
     }
@@ -35,11 +41,11 @@ const ArbitrageOpportunities = ({ opportunities }: Props) => {
     return (
       <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
         <CardHeader>
-          <CardTitle>Cross-Exchange Arbitrage</CardTitle>
+          <CardTitle>Cross-Exchange Arbitrage ({token})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center p-4 text-gray-400">
-            <AlertCircle className="mr-2 h-5 w-5" />
+            <DollarSign className="mr-2 h-5 w-5" />
             No arbitrage opportunities found
           </div>
         </CardContent>
@@ -50,7 +56,7 @@ const ArbitrageOpportunities = ({ opportunities }: Props) => {
   return (
     <Card className="bg-[#0B1221]/50 border-white/10 backdrop-blur-xl">
       <CardHeader>
-        <CardTitle>Cross-Exchange Arbitrage</CardTitle>
+        <CardTitle>Cross-Exchange Arbitrage ({token})</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -82,7 +88,22 @@ const ArbitrageOpportunities = ({ opportunities }: Props) => {
                 </span>
               </div>
               <div className="flex justify-between items-center border-t border-white/10 pt-2">
-                <span className="text-sm">Potential Profit</span>
+                <span className="text-sm flex items-center">
+                  <Clock className="h-4 w-4 mr-1" />
+                  Est. Time
+                </span>
+                <span className="text-gray-400">
+                  {opportunity.estimatedTimeMinutes} mins
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm">Total Fees</span>
+                <span className="text-red-400">
+                  ${opportunity.totalFees.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center border-t border-white/10 pt-2">
+                <span className="text-sm">Net Profit</span>
                 <span className="text-green-400 font-medium">
                   {opportunity.profitPercentage.toFixed(2)}%
                 </span>

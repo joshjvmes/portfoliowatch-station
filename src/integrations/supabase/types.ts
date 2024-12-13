@@ -69,6 +69,66 @@ export type Database = {
         }
         Relationships: []
       }
+      exchange_metadata: {
+        Row: {
+          avg_transfer_time_minutes: number
+          created_at: string
+          exchange_name: string
+          id: string
+          trading_fee_percentage: number
+          withdrawal_fee_flat: number
+        }
+        Insert: {
+          avg_transfer_time_minutes?: number
+          created_at?: string
+          exchange_name: string
+          id?: string
+          trading_fee_percentage?: number
+          withdrawal_fee_flat?: number
+        }
+        Update: {
+          avg_transfer_time_minutes?: number
+          created_at?: string
+          exchange_name?: string
+          id?: string
+          trading_fee_percentage?: number
+          withdrawal_fee_flat?: number
+        }
+        Relationships: []
+      }
+      price_discrepancies: {
+        Row: {
+          created_at: string
+          exchange_from: string
+          exchange_to: string
+          id: string
+          potential_profit_usd: number
+          price_difference_percentage: number
+          profitable_after_fees: boolean
+          token_symbol: string
+        }
+        Insert: {
+          created_at?: string
+          exchange_from: string
+          exchange_to: string
+          id?: string
+          potential_profit_usd: number
+          price_difference_percentage: number
+          profitable_after_fees: boolean
+          token_symbol: string
+        }
+        Update: {
+          created_at?: string
+          exchange_from?: string
+          exchange_to?: string
+          id?: string
+          potential_profit_usd?: number
+          price_difference_percentage?: number
+          profitable_after_fees?: boolean
+          token_symbol?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
