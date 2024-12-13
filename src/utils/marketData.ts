@@ -4,12 +4,24 @@ export interface MarketData {
   total_volumes: [number, number][];
 }
 
+const COINGECKO_IDS = {
+  'BTC': 'bitcoin',
+  'ETH': 'ethereum'
+};
+
 export const fetchCoinData = async (coinId: string, days: number = 90): Promise<MarketData> => {
+  const geckoId = COINGECKO_IDS[coinId as keyof typeof COINGECKO_IDS];
+  if (!geckoId) {
+    throw new Error('Unsupported coin ID');
+  }
+
   const response = await fetch(
-    `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}`
+    `https://api.coingecko.com/api/v3/coins/${geckoId}/market_chart?vs_currency=usd&days=${days}`
   );
   
   if (!response.ok) {
+    const errorData = await response.json();
+    console.error('CoinGecko API Error:', errorData);
     throw new Error('Failed to fetch market data');
   }
   
@@ -28,7 +40,7 @@ export const formatChartData = (data: MarketData) => {
 export const fetchExchangePrices = async (coinId: string) => {
   // This would be replaced with real exchange API calls
   const response = await fetch(
-    `https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`
+    `https://api.coingecko.com/api/v3/simple/price?ids=${COINGECKO_IDS[coinId as keyof typeof COINGECKO_IDS]}&vs_currencies=usd`
   );
   
   if (!response.ok) {
