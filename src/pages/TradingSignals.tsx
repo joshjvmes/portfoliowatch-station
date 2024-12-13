@@ -37,7 +37,7 @@ const TradingSignals = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const rawData = await fetchCoinData('BTC');
+        const rawData = await fetchCoinData('SOL');
         const formattedData = formatChartData(rawData);
         const dataWithIndicators = calculateIndicators(formattedData);
         setData(dataWithIndicators);
@@ -48,7 +48,7 @@ const TradingSignals = () => {
         setExchangePrices(prices);
 
         // Calculate arbitrage opportunities with fees
-        const arb = await calculateArbitrageOpportunities(prices, 'BTC');
+        const arb = await calculateArbitrageOpportunities(prices, 'SOL');
         setOpportunities(arb);
 
       } catch (err) {
@@ -85,7 +85,7 @@ const TradingSignals = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-white">Bitcoin Trading Signals</h1>
+          <h1 className="text-2xl font-bold text-white">Solana Trading Signals</h1>
           <Badge variant="outline" className="bg-[#0B1221]/50">
             Live Data
           </Badge>
@@ -98,7 +98,7 @@ const TradingSignals = () => {
           <div>
             <ArbitrageOpportunities 
               opportunities={opportunities} 
-              token="BTC"
+              token="SOL"
             />
           </div>
         </div>

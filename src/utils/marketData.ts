@@ -5,8 +5,7 @@ export interface MarketData {
 }
 
 const COINGECKO_IDS = {
-  'BTC': 'bitcoin',
-  'ETH': 'ethereum'
+  'SOL': 'solana'
 };
 
 export const fetchCoinData = async (coinId: string, days: number = 90): Promise<MarketData> => {
