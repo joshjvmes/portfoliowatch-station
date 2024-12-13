@@ -39,8 +39,8 @@ const TradingSignals = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const coinId = currentToken.toLowerCase();
-        const rawData = await fetchCoinData(coinId);
+        // Remove toLowerCase() here as we want to use the uppercase token symbol
+        const rawData = await fetchCoinData(currentToken);
         const formattedData = formatChartData(rawData);
         const dataWithIndicators = calculateIndicators(formattedData);
         setData(dataWithIndicators);
