@@ -24,9 +24,21 @@ export default defineConfig(({ mode }) => ({
       'zlib': 'browserify-zlib',
       'net': 'net-browserify',
       'tls': 'tls-browserify',
-      'http-proxy-agent': 'http-proxy-agent/dist/index.js',
-      'https-proxy-agent': 'https-proxy-agent/dist/index.js',
-      'socks-proxy-agent': 'socks-proxy-agent/dist/index.js',
+      'crypto': 'crypto-browserify',
+      'url': 'url',
+      'assert': 'assert',
+      'os': 'os-browserify/browser',
+      'constants': 'constants-browserify',
+      'path': 'path-browserify',
+      'fs': false,
+      'node:buffer': 'buffer',
+      'node:stream': 'stream-browserify',
+      'node:util': 'util',
+      'node:url': 'url',
+      'node:http': 'http-browserify',
+      'node:https': 'https-browserify',
+      'node:zlib': 'browserify-zlib',
+      'node:net': 'net-browserify',
     },
   },
   define: {
@@ -42,9 +54,17 @@ export default defineConfig(({ mode }) => ({
       'process/browser', 
       'util', 
       'stream-browserify',
-      'http-proxy-agent',
-      'https-proxy-agent',
-      'socks-proxy-agent',
+      'http-browserify',
+      'https-browserify',
+      'browserify-zlib',
+      'net-browserify',
+      'tls-browserify',
+      'crypto-browserify',
+      'url',
+      'assert',
+      'os-browserify/browser',
+      'constants-browserify',
+      'path-browserify',
       'ccxt'
     ]
   },
@@ -52,6 +72,9 @@ export default defineConfig(({ mode }) => ({
     target: 'esnext',
     rollupOptions: {
       external: [
+        'fs',
+        'path',
+        'crypto',
         'http',
         'https',
         'net',
@@ -61,20 +84,12 @@ export default defineConfig(({ mode }) => ({
         'stream',
         'buffer',
         'process',
-        'http-proxy-agent',
-        'https-proxy-agent',
-        'socks-proxy-agent'
+        'os',
+        'constants'
       ]
     },
     commonjsOptions: {
-      include: [
-        /buffer/, 
-        /node_modules/,
-        /http-proxy-agent/,
-        /https-proxy-agent/,
-        /socks-proxy-agent/,
-        /ccxt/
-      ],
+      include: [/node_modules/],
       transformMixedEsModules: true,
       strictRequires: true,
       esmExternals: true
