@@ -7,23 +7,6 @@ export interface MarketData {
   total_volumes: [number, number][];
 }
 
-const initializeCoinbaseClient = async () => {
-  const { data: secrets, error } = await supabase
-    .from('exchange_metadata')
-    .select('trading_fee_percentage')
-    .single();
-
-  if (error) {
-    console.error('Error fetching Coinbase configuration:', error);
-    throw new Error('Failed to initialize Coinbase client');
-  }
-
-  // Initialize with public API first (we'll use Edge Functions for private endpoints)
-  return new ccxt.coinbase({
-    enableRateLimit: true,
-  });
-};
-
 export const fetchCoinData = async (coinId: string, days: number = 90): Promise<MarketData> => {
   try {
     // Use Coinbase Pro API directly with axios
