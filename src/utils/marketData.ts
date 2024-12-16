@@ -1,50 +1,75 @@
+import ccxt from 'ccxt';
+import { supabase } from "@/integrations/supabase/client";
+
 export interface MarketData {
   prices: [number, number][];
   market_caps: [number, number][];
   total_volumes: [number, number][];
 }
 
-const COINGECKO_IDS = {
-  'SOL': 'solana'
+const initializeCoinbaseClient = async () => {
+  const { data: { value: apiKey }, error } = await supabase
+    .from('secrets')
+    .select('value')
+    .eq('name', 'COINBASE_API_KEY')
+    .single();
+
+  if (error) {
+    console.error('Error fetching Coinbase API key:', error);
+    throw new Error('Failed to initialize Coinbase client');
+  }
+
+  return new ccxt.coinbase({
+    apiKey: apiKey,
+    enableRateLimit: true,
+  });
 };
 
 export const fetchCoinData = async (coinId: string, days: number = 90): Promise<MarketData> => {
-  const geckoId = COINGECKO_IDS[coinId as keyof typeof COINGECKO_IDS];
-  if (!geckoId) {
-    throw new Error('Unsupported coin ID');
-  }
-
-  const response = await fetch(
-    `https://api.coingecko.com/api/v3/coins/${geckoId}/market_chart?vs_currency=usd&days=${days}`
-  );
-  
-  if (!response.ok) {
-    const errorData = await response.json();
-    console.error('CoinGecko API Error:', errorData);
+  try {
+    const exchange = await initializeCoinbaseClient();
+    const symbol = `${coinId}/USD`;
+    
+    // Fetch OHLCV data (Open, High, Low, Close, Volume)
+    const ohlcv = await exchange.fetchOHLCV(symbol, '1d', undefined, days);
+    
+    // Transform the data into the expected format
+    const prices = ohlcv.map(candle => [candle[0], candle[4]]); // timestamp and closing price
+    const volumes = ohlcv.map(candle => [candle[0], candle[5]]); // timestamp and volume
+    
+    return {
+      prices,
+      market_caps: prices, // Coinbase doesn't provide market cap data directly
+      total_volumes: volumes,
+    };
+  } catch (error) {
+    console.error('Error fetching data from Coinbase:', error);
     throw new Error('Failed to fetch market data');
   }
-  
-  return response.json();
 };
 
 export const formatChartData = (data: MarketData) => {
-  return data.prices.map(([timestamp, price]) => ({
+  return data.prices.map(([timestamp, price], index) => ({
     date: new Date(timestamp).toISOString().split('T')[0],
     price: price,
-    volume: data.total_volumes.find(([t]) => t === timestamp)?.[1] || 0
+    volume: data.total_volumes[index]?.[1] || 0
   }));
 };
 
-// For future real exchange integration
+// For real exchange integration
 export const fetchExchangePrices = async (coinId: string) => {
-  // This would be replaced with real exchange API calls
-  const response = await fetch(
-    `https://api.coingecko.com/api/v3/simple/price?ids=${COINGECKO_IDS[coinId as keyof typeof COINGECKO_IDS]}&vs_currencies=usd`
-  );
-  
-  if (!response.ok) {
+  try {
+    const exchange = await initializeCoinbaseClient();
+    const symbol = `${coinId}/USD`;
+    const ticker = await exchange.fetchTicker(symbol);
+    
+    return {
+      [coinId.toLowerCase()]: {
+        usd: ticker.last
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching exchange prices:', error);
     throw new Error('Failed to fetch exchange prices');
   }
-  
-  return response.json();
 };

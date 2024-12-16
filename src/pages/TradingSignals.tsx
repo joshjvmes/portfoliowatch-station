@@ -11,8 +11,8 @@ import { calculateArbitrageOpportunities } from "@/utils/arbitrage";
 import { useToast } from "@/hooks/use-toast";
 
 const EXCHANGES = [
-  { name: "Binance", price: 0 },
   { name: "Coinbase", price: 0 },
+  { name: "Binance", price: 0 },
   { name: "Kraken", price: 0 },
   { name: "Gemini", price: 0 }
 ];
@@ -25,14 +25,6 @@ const TradingSignals = () => {
   const [opportunities, setOpportunities] = useState<any[]>([]);
   const { toast } = useToast();
 
-  // Simulate different exchange prices with small variations
-  const simulateExchangePrices = (basePrice: number) => {
-    return EXCHANGES.map(exchange => ({
-      name: exchange.name,
-      price: basePrice * (1 + (Math.random() - 0.5) * 0.02) // +/- 1% variation
-    }));
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -44,10 +36,13 @@ const TradingSignals = () => {
 
         // Simulate exchange prices based on the latest price
         const latestPrice = formattedData[formattedData.length - 1].price;
-        const prices = simulateExchangePrices(latestPrice);
+        const prices = EXCHANGES.map(exchange => ({
+          name: exchange.name,
+          price: latestPrice * (1 + (Math.random() - 0.5) * 0.02) // +/- 1% variation
+        }));
         setExchangePrices(prices);
 
-        // Calculate arbitrage opportunities with fees
+        // Calculate arbitrage opportunities
         const arb = await calculateArbitrageOpportunities(prices, 'SOL');
         setOpportunities(arb);
 
@@ -87,7 +82,7 @@ const TradingSignals = () => {
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-white">Solana Trading Signals</h1>
           <Badge variant="outline" className="bg-[#0B1221]/50">
-            Live Data
+            Live Coinbase Data
           </Badge>
         </div>
 
