@@ -24,6 +24,9 @@ export default defineConfig(({ mode }) => ({
       'zlib': 'browserify-zlib',
       'net': 'net-browserify',
       'tls': 'tls-browserify',
+      'http-proxy-agent': 'http-proxy-agent/dist/index.js',
+      'https-proxy-agent': 'https-proxy-agent/dist/index.js',
+      'socks-proxy-agent': 'socks-proxy-agent/dist/index.js',
     },
   },
   define: {
@@ -34,7 +37,16 @@ export default defineConfig(({ mode }) => ({
     esbuildOptions: {
       target: 'esnext',
     },
-    include: ['buffer', 'process/browser', 'util', 'stream-browserify']
+    include: [
+      'buffer', 
+      'process/browser', 
+      'util', 
+      'stream-browserify',
+      'http-proxy-agent',
+      'https-proxy-agent',
+      'socks-proxy-agent',
+      'ccxt'
+    ]
   },
   build: {
     target: 'esnext',
@@ -48,11 +60,21 @@ export default defineConfig(({ mode }) => ({
         'util',
         'stream',
         'buffer',
-        'process'
+        'process',
+        'http-proxy-agent',
+        'https-proxy-agent',
+        'socks-proxy-agent'
       ]
     },
     commonjsOptions: {
-      include: [/buffer/, /node_modules/]
+      include: [
+        /buffer/, 
+        /node_modules/,
+        /http-proxy-agent/,
+        /https-proxy-agent/,
+        /socks-proxy-agent/,
+        /ccxt/
+      ]
     }
   },
 }));
