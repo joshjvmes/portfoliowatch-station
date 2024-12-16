@@ -39,6 +39,8 @@ export default defineConfig(({ mode }) => ({
       'node:https': 'https-browserify',
       'node:zlib': 'browserify-zlib',
       'node:net': 'node-libs-browser/mock/net',
+      'node:url': 'url',
+      'node:tls': 'node-libs-browser/mock/tls',
     }
   },
   define: {
@@ -89,7 +91,8 @@ export default defineConfig(({ mode }) => ({
         /@project-serum\/anchor/,
         /bs58/,
         /ccxt/
-      ]
+      ],
+      transformMixedEsModules: true
     }
   },
 }));
