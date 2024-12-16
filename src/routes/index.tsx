@@ -21,11 +21,12 @@ import TradingSignals from "@/pages/TradingSignals";
 import Wheel from "@/pages/Wheel";
 import WalletManagement from "@/pages/WalletManagement";
 import TokenList from "@/pages/TokenList";
+import Index from "@/pages/Index";
 
 export const routes = [
   {
     path: "/",
-    element: <Navigate to="/login" replace />
+    element: <Index />
   },
   {
     path: "/login",
