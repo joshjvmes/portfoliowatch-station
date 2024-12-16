@@ -2,7 +2,7 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import { toast } from "sonner";
 
 export const NETWORK_URLS = {
-  'mainnet-beta': 'https://api.mainnet-beta.solana.com',
+  'mainnet-beta': 'https://rpc.helius.xyz/?api-key=1aec5359-36e2-4c3c-9c49-b7cd31c93c6b',
   'devnet': 'https://api.devnet.solana.com'
 };
 

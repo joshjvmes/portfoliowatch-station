@@ -13,6 +13,7 @@ import { Card } from "@/components/ui/card";
 import { ChartLine, Database, DollarSign, Clock, Zap, ArrowLeftRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { NETWORK_URLS } from "@/utils/solana";
 
 interface TokenBalance {
   mint: string;
@@ -38,7 +39,7 @@ const TokenTable = () => {
     queryKey: ['tokenBalances'],
     queryFn: async () => {
       try {
-        const connection = new Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+        const connection = new Connection(NETWORK_URLS['mainnet-beta'], 'confirmed');
         
         // Use a known wallet with significant token holdings for price reference
         const referenceWallet = new PublicKey('HN7cABqLq46Es1jh92dQQisAq662SmxGkr4SGLtjZKZN');
