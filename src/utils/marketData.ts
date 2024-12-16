@@ -1,5 +1,4 @@
 import axios from 'axios';
-import ccxt from 'ccxt';
 import { supabase } from "@/integrations/supabase/client";
 
 export interface MarketData {
