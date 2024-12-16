@@ -1,5 +1,4 @@
 import ccxt from 'ccxt';
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const initializeCoinbaseClient = async () => {
@@ -47,6 +46,15 @@ export const fetchCoinData = async (coinId: string, days: number = 90): Promise<
     toast.error('Failed to fetch market data');
     throw error;
   }
+};
+
+export const formatChartData = (data: MarketData) => {
+  return data.prices.map(([timestamp, price], index) => ({
+    date: new Date(timestamp).toISOString().split('T')[0],
+    price: price,
+    volume: data.total_volumes[index]?.[1] || 0,
+    marketCap: data.market_caps[index]?.[1] || 0
+  }));
 };
 
 // Get current ticker information

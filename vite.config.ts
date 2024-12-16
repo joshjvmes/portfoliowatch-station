@@ -16,16 +16,14 @@ export default defineConfig(({ mode }) => ({
     alias: {
       '@': path.resolve(__dirname, './src'),
       'buffer': 'buffer',
-      '@jup-ag/common': '@jup-ag/common',
-      'crypto': 'crypto-browserify',
-      'stream': 'stream-browserify',
+      'process': 'process/browser',
       'util': 'util',
+      'stream': 'stream-browserify',
       'http': 'http-browserify',
       'https': 'https-browserify',
+      'zlib': 'browserify-zlib',
       'net': 'net-browserify',
       'tls': 'tls-browserify',
-      'zlib': 'browserify-zlib',
-      'process': 'process/browser',
     },
   },
   define: {
@@ -36,19 +34,7 @@ export default defineConfig(({ mode }) => ({
     esbuildOptions: {
       target: 'esnext',
     },
-    include: [
-      'buffer', 
-      '@jup-ag/common',
-      '@jup-ag/api',
-      'solana-transactions-wrapper',
-      'crypto-exchange-arbitrage',
-      'axios',
-      '@solana/web3.js',
-      'cross-fetch',
-      '@project-serum/anchor',
-      'bs58',
-      'ccxt'
-    ]
+    include: ['buffer', 'process/browser', 'util', 'stream-browserify']
   },
   build: {
     target: 'esnext',
@@ -56,33 +42,17 @@ export default defineConfig(({ mode }) => ({
       external: [
         'http',
         'https',
-        'http-proxy-agent',
-        'https-proxy-agent',
-        'socks-proxy-agent',
-        'ws',
         'net',
         'tls',
         'zlib',
         'util',
         'stream',
-        'buffer'
+        'buffer',
+        'process'
       ]
     },
     commonjsOptions: {
-      include: [
-        /buffer/,
-        /node_modules/,
-        /@jup-ag\/common/,
-        /@jup-ag\/api/,
-        /solana-transactions-wrapper/,
-        /crypto-exchange-arbitrage/,
-        /axios/,
-        /@solana\/web3\.js/,
-        /cross-fetch/,
-        /@project-serum\/anchor/,
-        /bs58/,
-        /ccxt/
-      ]
+      include: [/buffer/, /node_modules/]
     }
   },
 }));
