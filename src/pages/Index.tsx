@@ -6,7 +6,7 @@ const Index = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate("/dashboard");
+      navigate("/login");
     }, 100);
 
     return () => clearTimeout(timer);
