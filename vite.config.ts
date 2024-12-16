@@ -19,13 +19,6 @@ export default defineConfig(({ mode }) => ({
       '@jup-ag/common': '@jup-ag/common',
       'crypto': 'crypto-browserify',
       'stream': 'stream-browserify',
-      'util': 'util',
-      'http': 'http-browserify',
-      'https': 'https-browserify',
-      'net': 'net-browserify',
-      'tls': 'tls-browserify',
-      'zlib': 'browserify-zlib',
-      'process': 'process/browser',
     },
   },
   define: {
@@ -59,13 +52,7 @@ export default defineConfig(({ mode }) => ({
         'http-proxy-agent',
         'https-proxy-agent',
         'socks-proxy-agent',
-        'ws',
-        'net',
-        'tls',
-        'zlib',
-        'util',
-        'stream',
-        'buffer'
+        'ws'
       ]
     },
     commonjsOptions: {
