@@ -5,14 +5,8 @@ import { componentTagger } from "lovable-tagger";
 
 export default defineConfig(({ mode }) => ({
   server: {
-    host: true,
+    host: "::",
     port: 8080,
-    cors: true,
-    hmr: {
-      host: process.env.VITE_HMR_HOST || undefined,
-      protocol: 'wss',
-      clientPort: 443
-    },
   },
   plugins: [
     react(),
@@ -22,32 +16,17 @@ export default defineConfig(({ mode }) => ({
     alias: {
       '@': path.resolve(__dirname, './src'),
       'buffer': 'buffer',
-      'process': 'process/browser',
-      'util': 'util',
-      'stream': 'stream-browserify',
-      'http': 'stream-http',
-      'https': 'https-browserify',
-      'zlib': 'browserify-zlib',
-      'net': 'node-libs-browser/mock/net',
-      'tls': 'node-libs-browser/mock/tls',
-      'crypto': 'crypto-browserify',
-      'url': 'url',
-      'assert': 'assert',
-      'os': 'os-browserify/browser',
-      'constants': 'constants-browserify',
-      'timers': 'timers-browserify',
-      'path': 'path-browserify',
       '@jup-ag/common': '@jup-ag/common',
-      'node:stream': 'stream-browserify',
-      'node:util': 'util',
-      'node:buffer': 'buffer',
-      'node:http': 'stream-http',
-      'node:https': 'https-browserify',
-      'node:zlib': 'browserify-zlib',
-      'node:net': 'node-libs-browser/mock/net',
-      'node:url': 'url',
-      'node:tls': 'node-libs-browser/mock/tls',
-    }
+      'crypto': 'crypto-browserify',
+      'stream': 'stream-browserify',
+      'util': 'util',
+      'http': 'http-browserify',
+      'https': 'https-browserify',
+      'net': 'net-browserify',
+      'tls': 'tls-browserify',
+      'zlib': 'browserify-zlib',
+      'process': 'process/browser',
+    },
   },
   define: {
     'process.env': {},
@@ -80,7 +59,13 @@ export default defineConfig(({ mode }) => ({
         'http-proxy-agent',
         'https-proxy-agent',
         'socks-proxy-agent',
-        'ws'
+        'ws',
+        'net',
+        'tls',
+        'zlib',
+        'util',
+        'stream',
+        'buffer'
       ]
     },
     commonjsOptions: {
@@ -97,8 +82,7 @@ export default defineConfig(({ mode }) => ({
         /@project-serum\/anchor/,
         /bs58/,
         /ccxt/
-      ],
-      transformMixedEsModules: true
+      ]
     }
   },
 }));

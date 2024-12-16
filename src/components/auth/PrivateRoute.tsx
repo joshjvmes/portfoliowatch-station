@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Bolt } from "lucide-react";
 import { toast } from "sonner";
-import { AuthError, Session } from "@supabase/supabase-js";
+import { AuthError, Session, AuthChangeEvent } from "@supabase/supabase-js";
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -14,8 +14,14 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
     const initSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
+        console.log("Initial session check:", session);
+        
         if (error) {
           console.error("Session initialization error:", error);
+          await supabase.auth.signOut();
+          setSession(null);
+        } else if (!session) {
+          console.log("No active session found");
           setSession(null);
         } else {
           setSession(session);
@@ -32,9 +38,20 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
     initSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, currentSession) => {
-      setSession(currentSession);
-      setLoading(false);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
+      console.log("Auth state changed:", event, currentSession);
+      
+      if (event === 'SIGNED_OUT') {
+        setSession(null);
+        setLoading(false);
+      } else if (
+        event === 'SIGNED_IN' || 
+        event === 'TOKEN_REFRESHED' || 
+        event === 'USER_UPDATED'
+      ) {
+        setSession(currentSession);
+        setLoading(false);
+      }
     });
 
     return () => {
@@ -44,7 +61,7 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0B1221]">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0B1221] via-[#0d1829] to-[#0B1221]">
         <div className="flex flex-col items-center gap-4">
           <Bolt className="w-12 h-12 text-blue-500 animate-pulse" />
           <p className="text-blue-500 animate-fade-in">Loading your account...</p>
@@ -54,6 +71,7 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!session) {
+    console.log("No session, redirecting to login");
     return <Navigate to="/login" replace />;
   }
 
