@@ -1,5 +1,19 @@
 import ccxt from 'ccxt';
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+const initializeCoinbaseClient = async () => {
+  try {
+    const exchange = new ccxt.coinbase({
+      enableRateLimit: true,
+    });
+    return exchange;
+  } catch (error) {
+    console.error('Error initializing Coinbase client:', error);
+    toast.error('Failed to connect to Coinbase');
+    throw error;
+  }
+};
 
 export interface MarketData {
   prices: [number, number][];
@@ -7,39 +21,20 @@ export interface MarketData {
   total_volumes: [number, number][];
 }
 
-const initializeCoinbaseClient = async () => {
-  const { data: secrets, error } = await supabase
-    .from('exchange_metadata')
-    .select('trading_fee_percentage')
-    .single();
-
-  if (error) {
-    console.error('Error fetching Coinbase configuration:', error);
-    throw new Error('Failed to initialize Coinbase client');
-  }
-
-  // Initialize with public API first (we'll use Edge Functions for private endpoints)
-  return new ccxt.coinbase({
-    enableRateLimit: true,
-  });
-};
-
 export const fetchCoinData = async (coinId: string, days: number = 90): Promise<MarketData> => {
   try {
     const exchange = await initializeCoinbaseClient();
     const symbol = `${coinId}/USD`;
     
-    // Fetch OHLCV data (Open, High, Low, Close, Volume)
+    // Fetch OHLCV data
     const ohlcv = await exchange.fetchOHLCV(symbol, '1d', undefined, days);
     
-    // Ensure the data is in the correct [number, number][] format
+    // Format data for chart display
     const prices: [number, number][] = ohlcv.map(candle => [candle[0], candle[4]]);
     const volumes: [number, number][] = ohlcv.map(candle => [candle[0], candle[5]]);
-    
-    // For market caps, we'll use the price * volume as an approximation
     const marketCaps: [number, number][] = ohlcv.map(candle => [
       candle[0],
-      candle[4] * candle[5]
+      candle[4] * candle[5] // Approximate market cap using price * volume
     ]);
 
     return {
@@ -49,31 +44,59 @@ export const fetchCoinData = async (coinId: string, days: number = 90): Promise<
     };
   } catch (error) {
     console.error('Error fetching data from Coinbase:', error);
-    throw new Error('Failed to fetch market data');
+    toast.error('Failed to fetch market data');
+    throw error;
   }
 };
 
-export const formatChartData = (data: MarketData) => {
-  return data.prices.map(([timestamp, price], index) => ({
-    date: new Date(timestamp).toISOString().split('T')[0],
-    price: price,
-    volume: data.total_volumes[index]?.[1] || 0
-  }));
-};
-
-export const fetchExchangePrices = async (coinId: string) => {
+// Get current ticker information
+export const fetchTickerData = async (symbol: string) => {
   try {
     const exchange = await initializeCoinbaseClient();
-    const symbol = `${coinId}/USD`;
-    const ticker = await exchange.fetchTicker(symbol);
-    
-    return {
-      [coinId.toLowerCase()]: {
-        usd: ticker.last
-      }
-    };
+    const ticker = await exchange.fetchTicker(`${symbol}/USD`);
+    return ticker;
   } catch (error) {
-    console.error('Error fetching exchange prices:', error);
-    throw new Error('Failed to fetch exchange prices');
+    console.error('Error fetching ticker:', error);
+    toast.error('Failed to fetch ticker data');
+    throw error;
+  }
+};
+
+// Get order book data
+export const fetchOrderBook = async (symbol: string, limit: number = 20) => {
+  try {
+    const exchange = await initializeCoinbaseClient();
+    const orderBook = await exchange.fetchOrderBook(`${symbol}/USD`, limit);
+    return orderBook;
+  } catch (error) {
+    console.error('Error fetching order book:', error);
+    toast.error('Failed to fetch order book');
+    throw error;
+  }
+};
+
+// Get available trading pairs
+export const fetchTradingPairs = async () => {
+  try {
+    const exchange = await initializeCoinbaseClient();
+    const markets = await exchange.loadMarkets();
+    return markets;
+  } catch (error) {
+    console.error('Error fetching trading pairs:', error);
+    toast.error('Failed to fetch trading pairs');
+    throw error;
+  }
+};
+
+// Get recent trades
+export const fetchRecentTrades = async (symbol: string, limit: number = 50) => {
+  try {
+    const exchange = await initializeCoinbaseClient();
+    const trades = await exchange.fetchTrades(`${symbol}/USD`, undefined, limit);
+    return trades;
+  } catch (error) {
+    console.error('Error fetching recent trades:', error);
+    toast.error('Failed to fetch recent trades');
+    throw error;
   }
 };
