@@ -75,7 +75,9 @@ export default defineConfig(({ mode }) => ({
         /socks-proxy-agent/,
         /ccxt/
       ],
-      transformMixedEsModules: true
+      transformMixedEsModules: true,
+      strictRequires: true,
+      esmExternals: true
     }
   },
 }));

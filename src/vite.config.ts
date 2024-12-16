@@ -15,7 +15,10 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      'buffer': 'buffer'
+      'buffer': 'buffer',
+      'process': 'process/browser',
+      'util': 'util',
+      'stream': 'stream-browserify'
     },
   },
   define: {
@@ -26,13 +29,15 @@ export default defineConfig(({ mode }) => ({
     esbuildOptions: {
       target: 'esnext',
     },
-    include: ['buffer']
+    include: ['buffer', 'process/browser', 'util', 'stream-browserify']
   },
   build: {
     target: 'esnext',
     commonjsOptions: {
       include: [/buffer/, /node_modules/],
-      transformMixedEsModules: true
+      transformMixedEsModules: true,
+      strictRequires: true,
+      esmExternals: true
     }
   },
 }));
