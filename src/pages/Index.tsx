@@ -5,13 +5,7 @@ const Index = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user is authenticated and redirect accordingly
-    const isAuthenticated = false; // This will be replaced with actual auth check
-    if (isAuthenticated) {
-      navigate("/dashboard");
-    } else {
-      navigate("/login");
-    }
+    navigate("/dashboard");
   }, [navigate]);
 
   return (

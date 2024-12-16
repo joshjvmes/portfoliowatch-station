@@ -16,8 +16,9 @@ export default defineConfig(({ mode }) => ({
     alias: {
       '@': path.resolve(__dirname, './src'),
       'buffer': 'buffer',
-      'process': 'process/browser',
-      'util': 'util',
+      '@jup-ag/common': '@jup-ag/common',
+      'crypto': 'crypto-browserify',
+      'stream': 'stream-browserify',
     },
   },
   define: {
@@ -29,16 +30,34 @@ export default defineConfig(({ mode }) => ({
       target: 'esnext',
     },
     include: [
-      'buffer',
-      'process',
-      'util',
-      'axios'
+      'buffer', 
+      '@jup-ag/common',
+      '@jup-ag/api',
+      'solana-transactions-wrapper',
+      'crypto-exchange-arbitrage',
+      'axios',
+      '@solana/web3.js',
+      'cross-fetch',
+      '@project-serum/anchor',
+      'bs58'
     ]
   },
   build: {
     target: 'esnext',
     commonjsOptions: {
-      include: [/node_modules/]
+      include: [
+        /buffer/,
+        /node_modules/,
+        /@jup-ag\/common/,
+        /@jup-ag\/api/,
+        /solana-transactions-wrapper/,
+        /crypto-exchange-arbitrage/,
+        /axios/,
+        /@solana\/web3\.js/,
+        /cross-fetch/,
+        /@project-serum\/anchor/,
+        /bs58/
+      ]
     }
   },
 }));

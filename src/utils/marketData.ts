@@ -1,78 +1,50 @@
-import axios from 'axios';
-import { supabase } from "@/integrations/supabase/client";
-
 export interface MarketData {
   prices: [number, number][];
   market_caps: [number, number][];
   total_volumes: [number, number][];
 }
 
+const COINGECKO_IDS = {
+  'SOL': 'solana'
+};
+
 export const fetchCoinData = async (coinId: string, days: number = 90): Promise<MarketData> => {
-  try {
-    // Use Coinbase Pro API directly with axios
-    const response = await axios.get(
-      `https://api.pro.coinbase.com/products/${coinId}-USD/candles`,
-      {
-        params: {
-          granularity: 86400, // Daily candles
-          start: new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString(),
-          end: new Date().toISOString(),
-        },
-      }
-    );
+  const geckoId = COINGECKO_IDS[coinId as keyof typeof COINGECKO_IDS];
+  if (!geckoId) {
+    throw new Error('Unsupported coin ID');
+  }
 
-    const candles = response.data;
-    
-    // Convert Coinbase Pro format to our format
-    // Coinbase Pro format: [timestamp, open, high, low, close, volume]
-    const prices: [number, number][] = candles.map((candle: number[]) => [
-      candle[0] * 1000, // Convert to milliseconds
-      candle[4], // Close price
-    ]);
-
-    const volumes: [number, number][] = candles.map((candle: number[]) => [
-      candle[0] * 1000,
-      candle[5],
-    ]);
-
-    // Calculate market caps (price * volume)
-    const marketCaps: [number, number][] = candles.map((candle: number[]) => [
-      candle[0] * 1000,
-      candle[4] * candle[5],
-    ]);
-
-    return {
-      prices,
-      market_caps: marketCaps,
-      total_volumes: volumes,
-    };
-  } catch (error) {
-    console.error('Error fetching data from Coinbase:', error);
+  const response = await fetch(
+    `https://api.coingecko.com/api/v3/coins/${geckoId}/market_chart?vs_currency=usd&days=${days}`
+  );
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.error('CoinGecko API Error:', errorData);
     throw new Error('Failed to fetch market data');
   }
+  
+  return response.json();
 };
 
 export const formatChartData = (data: MarketData) => {
-  return data.prices.map(([timestamp, price], index) => ({
+  return data.prices.map(([timestamp, price]) => ({
     date: new Date(timestamp).toISOString().split('T')[0],
     price: price,
-    volume: data.total_volumes[index]?.[1] || 0
+    volume: data.total_volumes.find(([t]) => t === timestamp)?.[1] || 0
   }));
 };
 
+// For future real exchange integration
 export const fetchExchangePrices = async (coinId: string) => {
-  try {
-    const response = await axios.get(
-      `https://api.pro.coinbase.com/products/${coinId}-USD/ticker`
-    );
-    
-    return {
-      [coinId.toLowerCase()]: {
-        usd: parseFloat(response.data.price)
-      }
-    };
-  } catch (error) {
-    console.error('Error fetching exchange prices:', error);
+  // This would be replaced with real exchange API calls
+  const response = await fetch(
+    `https://api.coingecko.com/api/v3/simple/price?ids=${COINGECKO_IDS[coinId as keyof typeof COINGECKO_IDS]}&vs_currencies=usd`
+  );
+  
+  if (!response.ok) {
     throw new Error('Failed to fetch exchange prices');
   }
+  
+  return response.json();
 };
