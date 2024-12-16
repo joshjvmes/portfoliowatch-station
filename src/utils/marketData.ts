@@ -1,3 +1,4 @@
+import axios from 'axios';
 import ccxt from 'ccxt';
 import { supabase } from "@/integrations/supabase/client";
 
@@ -26,20 +27,36 @@ const initializeCoinbaseClient = async () => {
 
 export const fetchCoinData = async (coinId: string, days: number = 90): Promise<MarketData> => {
   try {
-    const exchange = await initializeCoinbaseClient();
-    const symbol = `${coinId}/USD`;
+    // Use Coinbase Pro API directly with axios
+    const response = await axios.get(
+      `https://api.pro.coinbase.com/products/${coinId}-USD/candles`,
+      {
+        params: {
+          granularity: 86400, // Daily candles
+          start: new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString(),
+          end: new Date().toISOString(),
+        },
+      }
+    );
+
+    const candles = response.data;
     
-    // Fetch OHLCV data (Open, High, Low, Close, Volume)
-    const ohlcv = await exchange.fetchOHLCV(symbol, '1d', undefined, days);
-    
-    // Ensure the data is in the correct [number, number][] format
-    const prices: [number, number][] = ohlcv.map(candle => [candle[0], candle[4]]);
-    const volumes: [number, number][] = ohlcv.map(candle => [candle[0], candle[5]]);
-    
-    // For market caps, we'll use the price * volume as an approximation
-    const marketCaps: [number, number][] = ohlcv.map(candle => [
-      candle[0],
-      candle[4] * candle[5]
+    // Convert Coinbase Pro format to our format
+    // Coinbase Pro format: [timestamp, open, high, low, close, volume]
+    const prices: [number, number][] = candles.map((candle: number[]) => [
+      candle[0] * 1000, // Convert to milliseconds
+      candle[4], // Close price
+    ]);
+
+    const volumes: [number, number][] = candles.map((candle: number[]) => [
+      candle[0] * 1000,
+      candle[5],
+    ]);
+
+    // Calculate market caps (price * volume)
+    const marketCaps: [number, number][] = candles.map((candle: number[]) => [
+      candle[0] * 1000,
+      candle[4] * candle[5],
     ]);
 
     return {
@@ -63,13 +80,13 @@ export const formatChartData = (data: MarketData) => {
 
 export const fetchExchangePrices = async (coinId: string) => {
   try {
-    const exchange = await initializeCoinbaseClient();
-    const symbol = `${coinId}/USD`;
-    const ticker = await exchange.fetchTicker(symbol);
+    const response = await axios.get(
+      `https://api.pro.coinbase.com/products/${coinId}-USD/ticker`
+    );
     
     return {
       [coinId.toLowerCase()]: {
-        usd: ticker.last
+        usd: parseFloat(response.data.price)
       }
     };
   } catch (error) {
