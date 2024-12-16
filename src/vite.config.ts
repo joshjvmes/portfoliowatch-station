@@ -15,7 +15,21 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      'buffer': 'buffer'
+      'buffer': 'buffer',
+      'process': 'process/browser',
+      'util': 'util',
+      'stream': 'stream-browserify',
+      'http': 'http-browserify',
+      'https': 'https-browserify',
+      'zlib': 'browserify-zlib',
+      'net': 'net-browserify',
+      'tls': 'tls-browserify',
+      'crypto': 'crypto-browserify',
+      'url': 'url',
+      'http-proxy-agent': 'http-proxy-agent/dist/index.js',
+      'https-proxy-agent': 'https-proxy-agent/dist/index.js',
+      'socks-proxy-agent': 'socks-proxy-agent/dist/index.js',
+      'ws': 'ws/browser.js'
     },
   },
   define: {
@@ -26,12 +40,46 @@ export default defineConfig(({ mode }) => ({
     esbuildOptions: {
       target: 'esnext',
     },
-    include: ['buffer']
+    include: [
+      'buffer',
+      'process',
+      'util',
+      'stream-browserify',
+      'http-browserify',
+      'https-browserify',
+      'browserify-zlib',
+      'net-browserify',
+      'tls-browserify',
+      'crypto-browserify',
+      'url',
+      'axios',
+      'http-proxy-agent',
+      'https-proxy-agent',
+      'socks-proxy-agent',
+      'ws'
+    ]
   },
   build: {
     target: 'esnext',
+    rollupOptions: {
+      external: [
+        'node:http',
+        'node:https',
+        'node:zlib',
+        'node:stream',
+        'node:buffer',
+        'node:util',
+        'node:url',
+        'node:net',
+        'node:tls',
+        'http-proxy-agent',
+        'https-proxy-agent',
+        'socks-proxy-agent',
+        'ws'
+      ]
+    },
     commonjsOptions: {
-      include: [/buffer/, /node_modules/]
+      include: [/node_modules/]
     }
   },
 }));

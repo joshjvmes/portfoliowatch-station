@@ -26,6 +26,10 @@ export default defineConfig(({ mode }) => ({
       'tls': 'tls-browserify',
       'crypto': 'crypto-browserify',
       'url': 'url',
+      'http-proxy-agent': 'http-proxy-agent/dist/index.js',
+      'https-proxy-agent': 'https-proxy-agent/dist/index.js',
+      'socks-proxy-agent': 'socks-proxy-agent/dist/index.js',
+      'ws': 'ws/browser.js'
     },
   },
   define: {
@@ -48,7 +52,11 @@ export default defineConfig(({ mode }) => ({
       'tls-browserify',
       'crypto-browserify',
       'url',
-      'axios'
+      'axios',
+      'http-proxy-agent',
+      'https-proxy-agent',
+      'socks-proxy-agent',
+      'ws'
     ]
   },
   build: {
@@ -62,7 +70,12 @@ export default defineConfig(({ mode }) => ({
         'node:buffer',
         'node:util',
         'node:url',
-        'node:net'
+        'node:net',
+        'node:tls',
+        'http-proxy-agent',
+        'https-proxy-agent',
+        'socks-proxy-agent',
+        'ws'
       ]
     },
     commonjsOptions: {
