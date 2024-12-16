@@ -25,7 +25,7 @@ import TokenList from "@/pages/TokenList";
 export const routes = [
   {
     path: "/",
-    element: <Navigate to="/login" replace />
+    element: <Navigate to="/dashboard" replace />
   },
   {
     path: "/login",
