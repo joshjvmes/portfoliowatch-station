@@ -5,8 +5,14 @@ import { componentTagger } from "lovable-tagger";
 
 export default defineConfig(({ mode }) => ({
   server: {
-    host: "::",
+    host: true,
     port: 8080,
+    cors: true,
+    hmr: {
+      host: process.env.VITE_HMR_HOST || undefined,
+      protocol: 'wss',
+      clientPort: 443
+    },
   },
   plugins: [
     react(),
