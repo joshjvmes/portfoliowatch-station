@@ -39,11 +39,22 @@ export default defineConfig(({ mode }) => ({
       '@solana/web3.js',
       'cross-fetch',
       '@project-serum/anchor',
-      'bs58'
+      'bs58',
+      'ccxt'
     ]
   },
   build: {
     target: 'esnext',
+    rollupOptions: {
+      external: [
+        'http',
+        'https',
+        'http-proxy-agent',
+        'https-proxy-agent',
+        'socks-proxy-agent',
+        'ws'
+      ]
+    },
     commonjsOptions: {
       include: [
         /buffer/,
@@ -56,7 +67,8 @@ export default defineConfig(({ mode }) => ({
         /@solana\/web3\.js/,
         /cross-fetch/,
         /@project-serum\/anchor/,
-        /bs58/
+        /bs58/,
+        /ccxt/
       ]
     }
   },

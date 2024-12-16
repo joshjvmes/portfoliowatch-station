@@ -8,19 +8,18 @@ export interface MarketData {
 }
 
 const initializeCoinbaseClient = async () => {
-  const { data: { value: apiKey }, error } = await supabase
-    .from('secrets')
-    .select('value')
-    .eq('name', 'COINBASE_API_KEY')
+  const { data: secrets, error } = await supabase
+    .from('exchange_metadata')
+    .select('trading_fee_percentage')
     .single();
 
   if (error) {
-    console.error('Error fetching Coinbase API key:', error);
+    console.error('Error fetching Coinbase configuration:', error);
     throw new Error('Failed to initialize Coinbase client');
   }
 
+  // Initialize with public API first (we'll use Edge Functions for private endpoints)
   return new ccxt.coinbase({
-    apiKey: apiKey,
     enableRateLimit: true,
   });
 };
@@ -33,13 +32,19 @@ export const fetchCoinData = async (coinId: string, days: number = 90): Promise<
     // Fetch OHLCV data (Open, High, Low, Close, Volume)
     const ohlcv = await exchange.fetchOHLCV(symbol, '1d', undefined, days);
     
-    // Transform the data into the expected format
-    const prices = ohlcv.map(candle => [candle[0], candle[4]]); // timestamp and closing price
-    const volumes = ohlcv.map(candle => [candle[0], candle[5]]); // timestamp and volume
+    // Ensure the data is in the correct [number, number][] format
+    const prices: [number, number][] = ohlcv.map(candle => [candle[0], candle[4]]);
+    const volumes: [number, number][] = ohlcv.map(candle => [candle[0], candle[5]]);
     
+    // For market caps, we'll use the price * volume as an approximation
+    const marketCaps: [number, number][] = ohlcv.map(candle => [
+      candle[0],
+      candle[4] * candle[5]
+    ]);
+
     return {
       prices,
-      market_caps: prices, // Coinbase doesn't provide market cap data directly
+      market_caps: marketCaps,
       total_volumes: volumes,
     };
   } catch (error) {
@@ -56,7 +61,6 @@ export const formatChartData = (data: MarketData) => {
   }));
 };
 
-// For real exchange integration
 export const fetchExchangePrices = async (coinId: string) => {
   try {
     const exchange = await initializeCoinbaseClient();
