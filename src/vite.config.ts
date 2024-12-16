@@ -31,7 +31,8 @@ export default defineConfig(({ mode }) => ({
   build: {
     target: 'esnext',
     commonjsOptions: {
-      include: [/buffer/, /node_modules/]
+      include: [/buffer/, /node_modules/],
+      transformMixedEsModules: true
     }
   },
 }));

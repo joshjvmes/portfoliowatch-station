@@ -74,7 +74,8 @@ export default defineConfig(({ mode }) => ({
         /https-proxy-agent/,
         /socks-proxy-agent/,
         /ccxt/
-      ]
+      ],
+      transformMixedEsModules: true
     }
   },
 }));
